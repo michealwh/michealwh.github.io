@@ -1,0 +1,19 @@
+{
+    "resources": [
+        "../assets/audio/SlorgsEatery.mp3",
+        "../assets/audio/SlorgsEatery.ogg"
+
+    ],
+    "spritemap": {
+        "testaudio": {
+            "start": 0,
+            "end":1,
+            "loop": false
+        },
+        "testaudioloop": {
+            "start": 2,
+            "end": 3,
+            "loop": true
+        }
+    }
+}

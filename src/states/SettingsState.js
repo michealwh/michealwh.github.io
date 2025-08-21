@@ -1,0 +1,78 @@
+var SettingsState = {
+  preload() {
+
+  },
+
+  create() {
+    const order_background = this.add.image(0, 0, "order_background").setOrigin(0, 0).setInteractive()
+    this.add.text(500, 300, "Paused", {
+      fontFamily: "font1",
+      fontSize: "50px",
+      fill: "black",
+    }).setOrigin(.5, .5)
+    this.add.text(500, 380, "[Statistics]", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black",
+    }).setOrigin(.5, .5)
+
+    this.points_text = this.add.text(500, 430, "Points: 0", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black",
+      wordWrap: { width: 300 },
+      align: 'center'
+    }).setOrigin(.5, 0)
+
+    this.order_text = this.add.text(500, 480, "Total Orders: 0", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black",
+      wordWrap: { width: 300 },
+      align: 'center'
+    }).setOrigin(.5, 0)
+
+    this.pres_text = this.add.text(500, 530, "Presentation: 0/100", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black",
+      wordWrap: { width: 300 },
+      align: 'center'
+    }).setOrigin(.5, 0)
+
+    this.punc_text = this.add.text(500, 580, "Punctuality: 0/100", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black",
+      wordWrap: { width: 300 },
+      align: 'center'
+    }).setOrigin(.5, 0)
+
+    this.prec_text = this.add.text(500, 630, "Precision: 0/100", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black",
+      wordWrap: { width: 300 },
+      align: 'center'
+    }).setOrigin(.5, 0)
+  },
+  update() {
+    if (this.registry.get("Points")) {
+      this.points_text.text = "Points: " + this.registry.get("Points")
+    }
+    if (this.registry.get("Total_Orders")) {
+      this.order_text.text = "Total orders: " + this.registry.get("Total_Orders")
+    }
+    if (this.registry.get("Average_Presentation")) {
+      this.pres_text.text = "Presentation: " + this.registry.get("Average_Presentation") + "/100"
+    }
+    if (this.registry.get("Average_Punctuality")) {
+      this.punc_text.text = "Punctuality: " + this.registry.get("Average_Punctuality") + "/100"
+    }
+    if (this.registry.get("Average_Precision")) {
+      this.prec_text.text = "Precision: " + this.registry.get("Average_Precision") + "/100"
+    }
+  }
+};
+
+export default SettingsState;

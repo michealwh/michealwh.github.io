@@ -1,0 +1,465 @@
+const physicsObjectHandler = (object, game, currentlyHolding) => {
+  object.setInteractive({
+    draggable: true,
+  });
+
+  object.setFriction(10, 5);
+  object.setDamping(true);
+  let objectCurrentVelocityX = 0;
+  let objectCurrentVelocityY = 0;
+
+  object.on("dragstart", (pointer, dragX, dragY) => {
+    // const diff = Math.floor(Math.random() * 50) * -0.01
+    //   game.food_sfx.setRate(1.2+diff);      
+      game.food_click.play();
+    if (game.used_ingredients.includes(object)) {
+      game.mealPosition = [object.x, object.y];
+    }
+  });
+
+  object.on("drag", (pointer, dragX, dragY) => {
+    game.active_drag_object = object;
+    if (game.used_ingredients.includes(object)) {
+      const xDif = object.x - dragX;
+      const yDif = object.y - dragY;
+
+      for (const i in game.used_ingredients) {
+        const currobject = game.used_ingredients[i];
+        const targetX = currobject.x - xDif;
+        const targetY = currobject.y - yDif;
+        if (
+          (targetX > 0 &&
+            targetX < game.scale.gameSize.width - currobject.width &&
+            targetY > 0 &&
+            targetY < game.scale.gameSize.height - currobject.height) !== true
+        ) {
+          return;
+        }
+      }
+
+      for (const i in game.used_ingredients) {
+        const ingredient = game.used_ingredients[i];
+        ingredient.x = ingredient.x - xDif;
+        ingredient.y = ingredient.y - yDif;
+      }
+
+      return;
+    }
+
+    object.depth = game.top_ingredient.depth + 1;
+
+    let velocityY = (dragY - object.y) * 10;
+    let velocityX = (dragX - object.x) * 10;
+    object.body.setAllowGravity(false);
+    object.setVelocity(0, 0);
+    if (
+      dragX > 0 &&
+      dragX < game.scale.gameSize.width - object.width &&
+      dragY > 0 &&
+      dragY < game.scale.gameSize.height - object.height
+    ) {
+      object.x = dragX;
+      object.y = dragY;
+      objectCurrentVelocityX = velocityX;
+      objectCurrentVelocityY = velocityY;
+    }
+  });
+
+  game.active_ingredients.push(object);
+  console.log("after addition", game.active_ingredients);
+
+  object.on("dragend", (pointer, gameObject, dropped) => {
+    game.active_drag_object = null;
+    if (game.used_ingredients.includes(object)) {
+      const xDif = object.x - game.mealPosition[0];
+      const yDif = object.y - game.mealPosition[1];
+
+      for (const i in game.used_ingredients) {
+        const ingredient = game.used_ingredients[i];
+        ingredient.x = ingredient.x - xDif;
+        ingredient.y = ingredient.y - yDif;
+      }
+
+      return;
+    }
+    console.log("dragend", dropped);
+
+    object.body.setAllowGravity(true);
+    let velocityY = objectCurrentVelocityY;
+    let velocityX = objectCurrentVelocityX;
+    console.log("after dragend: velocityX", velocityX, "velocityY", velocityY);
+    object.setVelocity(velocityX, velocityY);
+  });
+
+  object.setBounce(0.2, 0.2);
+  object.setCollideWorldBounds(true);
+};
+
+const foodButtonHandler = (object, game) => {
+  object.scale = 0.5;
+  let image_key = object.texture.key;
+
+  object.on("pointerdown", (pointer, gameObject) => {
+    if (game.active_ingredients.length < game.max_ingredients) {
+      game.food_click.play();
+      const clone = game.physics.add
+        .image(object.x - 90, object.y, image_key)
+        .setOrigin(0, 0);
+      physicsObjectHandler(clone, game, true);
+    }
+    // game.pointer = pointer
+    // game.draggedObject = clone
+    // game.objectDragging=true
+  });
+
+  object.on("pointerover", (pointer, gameObject) => {
+    if (game.active_ingredients.length < game.max_ingredients) {
+      game.tweens.add({
+        targets: object,
+        scale: 0.55,
+        ease: "Linear",
+        duration: 10,
+        repeat: 0,
+        yoyo: false,
+      });
+    }
+  });
+
+  object.on("pointerout", (pointer, gameObject) => {
+    if (game.active_ingredients.length < game.max_ingredients) {
+      game.tweens.add({
+        targets: object,
+        scale: 0.5,
+        ease: "Linear",
+        duration: 10,
+        repeat: 0,
+        yoyo: false,
+      });
+    }
+  });
+
+  // object.on('pointerup', (pointer, gameObject) => {
+  //   console.log("POINTER IS UP THIS SHOULD STOP")
+  //   game.objectDragging=false
+  //   game.draggedObject=null
+  //   });
+};
+
+const submitButtonhandler = (object, game) => {
+  object.scale = 0.2;
+  object.on("pointerdown", (pointer, gameObject) => {
+    if (game.used_ingredients.length >= 1) {
+      if (game.scene.isActive("KitchenState") && game.submitDebounce !== true) {
+        game.submitDebounce = true;
+
+        let Burger_Ingredients = [];
+        let distOff = 0;
+
+        const removeIngredient = (i) => {
+          game.used_ingredients[i].destroy();
+        };
+
+        for (let i = 0; i < game.used_ingredients.length; i++) {
+          if (i + 1 < game.used_ingredients.length) {
+            distOff += Math.abs(
+              game.used_ingredients[i].x - game.used_ingredients[i + 1].x
+            );
+          }
+          Burger_Ingredients.push(game.used_ingredients[i].texture.key);
+          game.time.addEvent({
+            delay: 310,
+            callback: function () {
+              removeIngredient(i);
+            },
+            callbackScope: game,
+            loop: false,
+          });
+        }
+        console.log(distOff / Burger_Ingredients.length);
+        console.log(Math.min(50, distOff / Burger_Ingredients.length));
+        const presentationStat = Math.min(
+          100,
+          (50 - Math.min(50, distOff / Burger_Ingredients.length - 1)) * 2 + 5
+        ); // 5 is perfect 10 is good 50 is cut off for bad
+        console.log("Presentation stat", presentationStat);
+
+        const currentPresentationStat = game.registry.get(
+          "Average_Presentation"
+        );
+        let presentationToSet = Math.floor(presentationStat);
+        game.registry.set("Current_Presentation", presentationToSet);
+        if (currentPresentationStat > 0) {
+          presentationToSet = Math.floor(
+            (currentPresentationStat + presentationStat) / 2
+          );
+        }
+        game.click_sfx.play();
+
+        game.tweens.add({
+          targets: object,
+          scale: 0.15,
+          rotation: 0,
+          ease: "Linear",
+          duration: 100,
+          repeat: 0,
+          yoyo: true,
+          onComplete: function () {
+            const submitOrder = () => {
+              game.registry.set("Average_Presentation", presentationToSet);
+              game.top_ingredient = game.servingplate;
+              game.used_ingredients = [];
+              game.registry.set("Burger", Burger_Ingredients);
+              game.submitDebounce = false;
+              game.scene.pause("KitchenState").run("GameState");
+              game.scene.bringToTop("GameState");
+              game.scene.bringToTop("MenuState");
+              game.registry.set("Order_Complete", true);
+            };
+
+            game.time.addEvent({
+              delay: 200,
+              callback: submitOrder,
+              callbackScope: game,
+              loop: false,
+            });
+          },
+        });
+      }
+    }
+  });
+};
+var KitchenState = {
+  preload() {},
+
+  create() {
+    // this.bgMusic = this.sound.add("bgMusic")
+    // this.bgMusic.setLoop(true);
+    // this.bgMusic.volume = 0.1;
+    // this.bgMusic.play()
+
+    this.food_sfx = this.sound.add("food_sfx1");
+    this.food_sfx.setVolume(0.9);
+    this.click_sfx = this.sound.add("submit_click");
+    this.trash_sfx = this.sound.add("trash_sfx");
+    this.food_click = this.sound.add("food_click");
+
+    this.add.image(0, 0, "kitchen").setOrigin(0, 0);
+
+    const bottomBunBtn = this.add
+      .image(10 + 70, 685 + 25, "bottomBun")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(bottomBunBtn, this);
+
+    const topBunBtn = this.add
+      .image(150 + 70, 675 + 25, "topBun")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(topBunBtn, this);
+
+    const beefpattyBtn = this.add
+      .image(300 + 70, 700 + 10, "beefpatty")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(beefpattyBtn, this);
+
+    const lettuceBtn = this.add
+      .image(450 + 70, 700 + 10, "lettuce")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(lettuceBtn, this);
+    const onionBtn = this.add
+      .image(20 + 70, 545 + 5, "onion")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(onionBtn, this);
+    const tomatoBtn = this.add
+      .image(160 + 70, 545 + 5, "tomato")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(tomatoBtn, this);
+    const ketchupBtn = this.add
+      .image(30 + 60, 370 + 20, "ketchup")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(ketchupBtn, this);
+    const mustardBtn = this.add
+      .image(180 + 60, 370 + 20, "mustard")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(mustardBtn, this);
+    const bbqBtn = this.add
+      .image(330 + 60, 370 + 20, "bbq")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(bbqBtn, this);
+    const ranchBtn = this.add
+      .image(480 + 60, 370 + 20, "ranch")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    foodButtonHandler(ranchBtn, this);
+
+    const submitBtn = this.add
+      .image(735 + 70, 940 + 10, "submit_button")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    submitButtonhandler(submitBtn, this);
+
+    this.trashcan = this.physics.add
+      .image(100, 850, "trashcan")
+      .setOrigin(0, 0);
+    this.trashcan.body.setAllowGravity(false);
+    this.trashcan.body.setSize(
+      this.trashcan.width / 2,
+      this.trashcan.height / 4,
+      this.trashcan.width / 4,
+      this.trashcan.height / 4
+    );
+
+    this.servingplate = this.physics.add
+      .image(650, 850, "servingplate")
+      .setOrigin(0, 0);
+    this.servingplate.body.setAllowGravity(false);
+    this.servingplate.body.setSize(
+      this.servingplate.width / 2,
+      this.servingplate.height / 8,
+      this.servingplate.width / 4,
+      -this.servingplate.height
+    );
+
+    this.top_ingredient = this.servingplate;
+
+    this.max_ingredients = 10;
+
+    this.active_ingredients = [];
+
+    this.used_ingredients = [];
+    this.registry.set("Burger", this.used_ingredients);
+  },
+  update() {
+    if (this.active_ingredients.length > 0) {
+      for (let i = 0; i < this.active_ingredients.length; i++) {
+        const objectTrashed = (object, trashcan) => {
+          this.trash_sfx.play();
+          this.active_ingredients.splice(i, 1);
+          console.log("there was an overlap");
+          const game = this;
+          this.tweens.add({
+            targets: object,
+            x: this.trashcan.x + this.trashcan.width / 2,
+            y: this.trashcan.y + this.trashcan.height / 2,
+            scale: 0,
+            rotation: 180 * (Math.PI / 180),
+            ease: "Power1",
+            duration: 500,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+              console.log("after removal", game.active_ingredients);
+              object.destroy();
+            },
+          });
+        };
+
+        const ingredientAdded = (object, top_ingredient) => {
+          if (
+            this.active_drag_object !== object &&
+            (object.y < this.top_ingredient.y ||
+              (object.height < 40 && object.y < this.top_ingredient.y + 30))
+          ) {
+            const diff = Math.floor(Math.random() * 50) * -0.01
+            this.food_sfx.setRate(1.2+diff);
+            this.food_sfx.play();
+            object.body.setAllowGravity(false);
+            object.setVelocity(0, 0);
+            this.top_ingredient = object;
+            this.used_ingredients.push(object);
+            let Burger_Ingredients = [];
+            let Burger_Information = [];
+            for (let i = 0; i < this.used_ingredients.length; i++) {
+              let ingredient_string = this.used_ingredients[i].texture.key;
+              let xPos = this.servingplate.x - this.used_ingredients[i].x;
+              let yPos = this.servingplate.y - this.used_ingredients[i].y;
+              const ingredient_object = { xPos, yPos, ingredient_string };
+              console.log(ingredient_object);
+              Burger_Information.push(ingredient_object);
+              Burger_Ingredients.push(ingredient_string);
+            }
+
+            this.registry.set("Burger_Information", Burger_Information);
+            this.registry.set("Burger", Burger_Ingredients);
+
+            const index = this.active_ingredients.indexOf(object);
+            this.active_ingredients.splice(index, 1);
+            console.log("setting objects size");
+            object.body.setSize(
+              this.top_ingredient.width / 4,
+              object.height / 2,
+              object.width / 2.5,
+              object.height / 2
+            );
+            object.body.setOffset(object.width / 2.5, object.height / 2);
+          }
+        };
+
+        this.physics.overlap(
+          this.active_ingredients[i],
+          this.trashcan,
+          objectTrashed,
+          null,
+          this
+        );
+        if (this.active_ingredients[i]) {
+          this.physics.overlap(
+            this.active_ingredients[i],
+            this.top_ingredient,
+            ingredientAdded,
+            null,
+            this
+          );
+        }
+      }
+    }
+    if (this.used_ingredients.length > 0) {
+      for (let i = 0; i < this.used_ingredients.length; i++) {
+        const objectTrashed = (object, trashcan) => {
+          console.log("USED INGREDIENTS GETTING TRASHED");
+          if (this.top_ingredient == this.servingplate) {
+            console.log("returning for sum reason");
+            return;
+          }
+          this.top_ingredient = this.servingplate;
+          this.trash_sfx.play();
+          for (let z = 0; z < this.used_ingredients.length; z++) {
+            const zObject = this.used_ingredients[z];
+            this.tweens.add({
+              targets: zObject,
+              x: this.trashcan.x + this.trashcan.width / 2,
+              y: this.trashcan.y + this.trashcan.height / 2,
+              scale: 0,
+              rotation: 180 * (Math.PI / 180),
+              ease: "Power1",
+              duration: 500,
+              repeat: 0,
+              yoyo: false,
+              onComplete: function () {
+                zObject.destroy();
+              },
+            });
+          }
+          this.used_ingredients = [];
+        };
+
+        this.physics.overlap(
+          this.used_ingredients[i],
+          this.trashcan,
+          objectTrashed,
+          null,
+          this
+        );
+      }
+    }
+  },
+};
+
+export default KitchenState;
