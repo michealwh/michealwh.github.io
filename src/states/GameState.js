@@ -274,6 +274,7 @@ const orderCompleteHandler = (game) => {
       }
       game.registry.set("Average_Precision", precisionToSet);
 
+      const presentationStat = game.registry.get("Current_Presentation");
       const punctualityStat = Math.floor(
         100 - Math.min(100, game.registry.get("Order_Time_Finished") / expected_order.length)
       );
@@ -284,13 +285,18 @@ const orderCompleteHandler = (game) => {
         );
         const good_response = dialog_dictionary.success[index];
         const current_points = game.registry.get("Points");
-
-        const new_points = Math.floor(((precisionToSet+orderAccuracy+punctualityStat)/4.6)*10) /100;
+        let new_points = Math.floor(((presentationStat+orderAccuracy+punctualityStat)/4.6)*10) /100;
+        if (presentationStat < 10){
+          new_points = new_points * (presentationStat/100)
+        }
+        if (punctualityStat < 50){
+          new_points = new_points * (punctualityStat/100)
+        }
         let new_total_points = parseFloat(current_points) + new_points;
         if (npc_dictionary[game.current_customer_index].name === "Glorbdon") {
           new_total_points = parseFloat(current_points) + (new_points*2);
         }
-        console.log("new points to add: " + new_points);
+
         if (npc_dictionary[game.current_customer_index].sprite_sheet) {
           game.npc.play("glob_happy");
         }
@@ -303,12 +309,13 @@ const orderCompleteHandler = (game) => {
         const index = Math.floor(Math.random() * dialog_dictionary.fail.length);
         const bad_response = dialog_dictionary.fail[index];
         if (bad_response.includes("money")) {
-        const current_points = game.registry.get("Points");
-          const new_points = current_points - 10;
+          const current_points = game.registry.get("Points");
+          const new_points = current_points - 9.99;
           if (npc_dictionary[game.current_customer_index].name === "Glorbdon") {
-            new_points = current_points - 20;
+            new_points = current_points - 19.99;
+          }
+          game.registry.set("Points", new_points.toFixed(2));
         }
-        game.registry.set("Points", new_points.toFixed(2));
         const sound_num = Math.floor(Math.random() * 3) + 1;
         game["spooky_sfx" + sound_num].play();
         dialogHandler(bad_response, game);

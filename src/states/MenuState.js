@@ -54,7 +54,7 @@ var MenuState = {
     globIcon.scale = 0.2;
     this.globIcon = globIcon;
 
-    const globText = this.add.text(915, 55, "0", {
+    const globText = this.add.text(915, 60, "0", {
       fontFamily: "font1",
       fontSize: "50px",
       fill: "rgba(157, 255, 122, 1)",

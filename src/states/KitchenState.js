@@ -381,19 +381,26 @@ var KitchenState = {
 
     this.top_ingredient = this.servingplate;
 
-    this.input.on(Phaser.Input.Events.POINTER_UP, (pointer) => {
+    const objectDragCheck = (pointer) => {
+      const savedPointer = pointer;
       if (this.objectDragging === true && this.active_drag_object != undefined) {
         this.objectDragging = false;
         const object = this.active_drag_object;
-        const dragX = pointer.x - (object.width * object.scale) / 2;
-        const dragY = pointer.y - (object.height * object.scale) / 2;
-        let velocityY = (dragY - object.y) * 10;
-        let velocityX = (dragX - object.x) * 10;
         this.active_drag_object.body.setAllowGravity(true);
+        const prevPosition = savedPointer.prevPosition;
+        const velocityX = (this.active_drag_object.x-prevPosition.x)/4; // might need change to match force of normal drag
+        const velocityY = (this.active_drag_object.y-prevPosition.y)/4;
         object.setVelocity(velocityX, velocityY);
         this.active_drag_object = null;
       }
+    }
+    this.input.on(Phaser.Input.Events.POINTER_UP, (pointer) => {
+      objectDragCheck(pointer);
     });
+
+    this.input.on(Phaser.Input.Events.POINTER_UP_OUTSIDE, function(pointer) {
+      objectDragCheck(pointer);
+});
   },
   update() {
     if (this.objectDragging === true && this.active_drag_object) {
@@ -404,7 +411,6 @@ var KitchenState = {
         this.input.mousePointer.y -
         (this.active_drag_object.height * this.active_drag_object.scale) / 2;
       const object = this.active_drag_object;
-
       if (mouseX > 0 && mouseX < this.scale.gameSize.width - object.width) {
         object.depth = this.top_ingredient.depth + 1;
         object.x = mouseX;
