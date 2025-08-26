@@ -303,13 +303,12 @@ const orderCompleteHandler = (game) => {
         const index = Math.floor(Math.random() * dialog_dictionary.fail.length);
         const bad_response = dialog_dictionary.fail[index];
         if (bad_response.includes("money")) {
-          const current_points = game.registry.get("Points");
-          if (npc_dictionary[game.current_customer_index].name !== "Glorbdon") {
-            game.registry.set("Points", current_points - 10);
-          } else {
-            game.registry.set("Points", -20);
-          }
+        const current_points = game.registry.get("Points");
+          const new_points = current_points - 10;
+          if (npc_dictionary[game.current_customer_index].name === "Glorbdon") {
+            new_points = current_points - 20;
         }
+        game.registry.set("Points", new_points.toFixed(2));
         const sound_num = Math.floor(Math.random() * 3) + 1;
         game["spooky_sfx" + sound_num].play();
         dialogHandler(bad_response, game);
