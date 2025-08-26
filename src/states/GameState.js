@@ -262,44 +262,6 @@ const orderCompleteHandler = (game) => {
 
       console.log("ingredients missed", ingredients_missed);
 
-      if (recieved_order.length <= 0 && ingredients_missed.length === 0) {
-        const index = Math.floor(
-          Math.random() * dialog_dictionary.success.length
-        );
-        const good_response = dialog_dictionary.success[index];
-        const current_points = game.registry.get("Points");
-
-        if (npc_dictionary[game.current_customer_index].name !== "Glorbdon") {
-          game.registry.set("Points", current_points + 1);
-        } else { 
-          game.registry.set("Points", current_points+2);
-        }
-        if (npc_dictionary[game.current_customer_index].sprite_sheet) {
-          game.npc.play("glob_happy");
-        }
-        const current_correct = game.registry.get("Total_Correct") || 0;
-        game.registry.set("Total_Correct", current_correct + 1);
-        game.success_sfx1.play();
-        dialogHandler(good_response, game);
-      } else {
-        const index = Math.floor(Math.random() * dialog_dictionary.fail.length);
-        const bad_response = dialog_dictionary.fail[index];
-        if (bad_response.includes("money")) {
-          const current_points = game.registry.get("Points");
-          if (npc_dictionary[game.current_customer_index].name !== "Glorbdon") {
-            game.registry.set("Points", current_points - 1);
-          } else {
-            game.registry.set("Points", -2);
-          }
-        }
-        const sound_num = Math.floor(Math.random() * 3) + 1;
-        game["spooky_sfx" + sound_num].play();
-        dialogHandler(bad_response, game);
-        if (npc_dictionary[game.current_customer_index].sprite_sheet) {
-          game.npc.play("glob_angry");
-        }
-      }
-
       const current_orders = game.registry.get("Total_Orders");
       game.registry.set("Total_Orders", current_orders + 1);
 
@@ -311,6 +273,50 @@ const orderCompleteHandler = (game) => {
         );
       }
       game.registry.set("Average_Precision", precisionToSet);
+
+      const punctualityStat = Math.floor(
+        100 - Math.min(100, game.registry.get("Order_Time_Finished") / expected_order.length)
+      );
+
+      if (recieved_order.length <= 0 && ingredients_missed.length === 0) {
+        const index = Math.floor(
+          Math.random() * dialog_dictionary.success.length
+        );
+        const good_response = dialog_dictionary.success[index];
+        const current_points = game.registry.get("Points");
+
+        const new_points = Math.floor(((precisionToSet+orderAccuracy+punctualityStat)/4.6)*10) /100;
+        let new_total_points = parseFloat(current_points) + new_points;
+        if (npc_dictionary[game.current_customer_index].name === "Glorbdon") {
+          new_total_points = parseFloat(current_points) + (new_points*2);
+        }
+
+        if (npc_dictionary[game.current_customer_index].sprite_sheet) {
+          game.npc.play("glob_happy");
+        }
+        game.registry.set("Points", new_total_points.toFixed(2));
+        const current_correct = game.registry.get("Total_Correct") || 0;
+        game.registry.set("Total_Correct", current_correct + 1);
+        game.success_sfx1.play();
+        dialogHandler(good_response, game);
+      } else {
+        const index = Math.floor(Math.random() * dialog_dictionary.fail.length);
+        const bad_response = dialog_dictionary.fail[index];
+        if (bad_response.includes("money")) {
+          const current_points = game.registry.get("Points");
+          if (npc_dictionary[game.current_customer_index].name !== "Glorbdon") {
+            game.registry.set("Points", current_points - 10);
+          } else {
+            game.registry.set("Points", -20);
+          }
+        }
+        const sound_num = Math.floor(Math.random() * 3) + 1;
+        game["spooky_sfx" + sound_num].play();
+        dialogHandler(bad_response, game);
+        if (npc_dictionary[game.current_customer_index].sprite_sheet) {
+          game.npc.play("glob_angry");
+        }
+      }
 
       function newCustomer() {
         function shakeDoor() {

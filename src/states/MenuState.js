@@ -2,9 +2,9 @@
 // I.E. GAMESTATE BEFORE KITCHENSTATE
 
 const globUpdateHandler = (game) => {
-  const currentAmount = parseInt(game.globText.text);
+  const currentAmount = parseFloat(game.globText.text);
   const newAmount = game.registry.get("Points");
-  const difference = newAmount - currentAmount;
+  const difference = (newAmount - currentAmount).toFixed(2);
   game.globText.setText(newAmount.toString());
   if (difference > 0) {
     game.addedText.setText("+" + difference);
