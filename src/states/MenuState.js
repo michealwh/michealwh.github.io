@@ -1,6 +1,31 @@
 // NOTE THAT WHICHEVER THE STARTING SCENE IS FOR SOME REASON NEEDS TO BE IN THE IF ELSE STATEMENT FIRST BEFORE THE OTHER.
 // I.E. GAMESTATE BEFORE KITCHENSTATE
 
+const globUpdateHandler = (game) => {
+  const currentAmount = parseInt(game.globText.text);
+  const newAmount = game.registry.get("Points");
+  const difference = newAmount - currentAmount;
+  game.globText.setText(newAmount.toString());
+  if (difference > 0) {
+    game.addedText.setText("+" + difference);
+    game.addedText.setFill("rgba(89, 141, 64, 1)");
+  } else {
+    game.addedText.setText(difference.toString());
+    game.addedText.setFill("rgba(209, 69, 69, 1)");
+  }
+  game.addedText.y = 55;
+  game.addedText.alpha = 1;
+  game.tweens.add({
+    targets: game.addedText,
+    y: game.addedText.y + 100,
+    alpha: 0,
+    ease: "Linear",
+    duration: 500,
+    repeat: 0,
+    yoyo: false,
+  });
+};
+
 var MenuState = {
   preload() {},
 
@@ -21,6 +46,34 @@ var MenuState = {
       .image(340, 45, "desk_icon")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+
+    const globIcon = this.add
+      .image(1000, 55, "holy_glob")
+      .setOrigin(1, 1)
+      .setInteractive();
+    globIcon.scale = 0.2;
+    this.globIcon = globIcon;
+
+    const globText = this.add.text(915, 55, "0", {
+      fontFamily: "font1",
+      fontSize: "50px",
+      fill: "rgba(157, 255, 122, 1)",
+    });
+    globText.setOrigin(1, 1);
+    globText.depth = 1;
+    globText.setStyle({
+      stroke: "rgba(115, 90, 90, 1)",
+      strokeThickness: 4,
+    });
+    this.globText = globText;
+
+    const addedText = this.add.text(915, 55, "", {
+      fontFamily: "font1",
+      fontSize: "50px",
+      fill: "rgba(47, 73, 37, 1)",
+    });
+    addedText.setOrigin(1, 1);
+    this.addedText = addedText;
 
     const click_sfx = this.sound.add("menu_click");
     this.time_paused = 0;
@@ -176,6 +229,12 @@ var MenuState = {
   },
 
   update() {
+    if (
+      this.registry.get("Points") !== undefined &&
+      this.globText.text !== this.registry.get("Points").toString()
+    ) {
+      globUpdateHandler(this);
+    }
     if (this.registry.get("Order_Began") === true) {
       this.registry.set("Order_Began", false);
       this.time_order_began = this.time.now;

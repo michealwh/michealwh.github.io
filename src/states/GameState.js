@@ -37,7 +37,7 @@ const customerHandler = (customer, game) => {
     game.npc.destroy();
   }
   const object = game.add.sprite(500, 500, customer.sprite).setOrigin(0.5, 0.5);
-  const customer_scale = customer.scale
+  const customer_scale = customer.scale;
   object.depth = 1;
   game.npc = object;
   object.x = 500;
@@ -136,7 +136,7 @@ const customerHandler = (customer, game) => {
           " the burger with" +
           order_list +
           ".";
-        if (npc_dictionary[game.current_customer_index].sprite_sheet){
+        if (npc_dictionary[game.current_customer_index].sprite_sheet) {
           object.play("glob_talk");
           //game.talk_sfx.play();
         }
@@ -268,19 +268,34 @@ const orderCompleteHandler = (game) => {
         );
         const good_response = dialog_dictionary.success[index];
         const current_points = game.registry.get("Points");
-        game.registry.set("Points", current_points + 1);
-        if (npc_dictionary[game.current_customer_index].sprite_sheet){
+
+        if (npc_dictionary[game.current_customer_index].name !== "Glorbdon") {
+          game.registry.set("Points", current_points + 1);
+        } else { 
+          game.registry.set("Points", current_points+2);
+        }
+        if (npc_dictionary[game.current_customer_index].sprite_sheet) {
           game.npc.play("glob_happy");
         }
+        const current_correct = game.registry.get("Total_Correct") || 0;
+        game.registry.set("Total_Correct", current_correct + 1);
         game.success_sfx1.play();
         dialogHandler(good_response, game);
       } else {
         const index = Math.floor(Math.random() * dialog_dictionary.fail.length);
         const bad_response = dialog_dictionary.fail[index];
+        if (bad_response.includes("money")) {
+          const current_points = game.registry.get("Points");
+          if (npc_dictionary[game.current_customer_index].name !== "Glorbdon") {
+            game.registry.set("Points", current_points - 1);
+          } else {
+            game.registry.set("Points", -2);
+          }
+        }
         const sound_num = Math.floor(Math.random() * 3) + 1;
         game["spooky_sfx" + sound_num].play();
         dialogHandler(bad_response, game);
-        if (npc_dictionary[game.current_customer_index].sprite_sheet){
+        if (npc_dictionary[game.current_customer_index].sprite_sheet) {
           game.npc.play("glob_angry");
         }
       }
@@ -310,11 +325,10 @@ const orderCompleteHandler = (game) => {
             yoyo: true,
             onComplete: function () {
               game.door_hinge.rotation = 0;
-              game.current_customer_index = Math.floor(Math.random() * npc_dictionary.length)
-              const customer =
-                npc_dictionary[
-                  game.current_customer_index
-                ];
+              game.current_customer_index = Math.floor(
+                Math.random() * npc_dictionary.length
+              );
+              const customer = npc_dictionary[game.current_customer_index];
               customerHandler(customer, game);
               const doorsfx = game.sound.add("door_open");
               doorsfx.setVolume(1);
@@ -348,7 +362,7 @@ const orderCompleteHandler = (game) => {
           yoyo: false,
           onComplete: function () {
             const doorsfx = game.sound.add("door_rattling");
-            doorsfx.setVolume(.2);
+            doorsfx.setVolume(0.2);
             doorsfx.play();
             shakeDoor();
           },
@@ -386,7 +400,6 @@ var GameState = {
     this.spooky_sfx3 = this.sound.add("spooky_sfx3");
     this.success_sfx1 = this.sound.add("success_sfx1");
 
-
     this.anims.create({
       key: "glob_talk",
       frames: this.anims.generateFrameNumbers("glob_man_sheet", {
@@ -396,7 +409,7 @@ var GameState = {
       repeat: 2,
     });
 
-        this.anims.create({
+    this.anims.create({
       key: "glob_happy",
       frames: this.anims.generateFrameNumbers("glob_man_sheet", {
         frames: [2],
@@ -422,10 +435,11 @@ var GameState = {
 
     const counter = this.add.image(0, 0, "counter").setOrigin(0, 0);
     counter.depth = 2;
-    
-    this.current_customer_index = Math.floor(Math.random() * npc_dictionary.length)
-    const customer =
-      npc_dictionary[this.current_customer_index];
+
+    this.current_customer_index = Math.floor(
+      Math.random() * npc_dictionary.length
+    );
+    const customer = npc_dictionary[this.current_customer_index];
     customerHandler(customer, this);
   },
 

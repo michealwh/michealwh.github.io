@@ -8,16 +8,25 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
   let objectCurrentVelocityX = 0;
   let objectCurrentVelocityY = 0;
 
+  game.active_ingredients.push(object);
+  console.log("after addition", game.active_ingredients);
+
+  object.setBounce(0.2, 0.2);
+  object.setCollideWorldBounds(true);
+
   object.on("dragstart", (pointer, dragX, dragY) => {
     // const diff = Math.floor(Math.random() * 50) * -0.01
-    //   game.food_sfx.setRate(1.2+diff);      
-      game.food_click.play();
+    //   game.food_sfx.setRate(1.2+diff);
+    game.food_click.play();
     if (game.used_ingredients.includes(object)) {
       game.mealPosition = [object.x, object.y];
     }
   });
 
   object.on("drag", (pointer, dragX, dragY) => {
+    // if (object.body.allowGravity == false){
+    //   return
+    // }
     game.active_drag_object = object;
     if (game.used_ingredients.includes(object)) {
       const xDif = object.x - dragX;
@@ -39,6 +48,7 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
 
       for (const i in game.used_ingredients) {
         const ingredient = game.used_ingredients[i];
+
         ingredient.x = ingredient.x - xDif;
         ingredient.y = ingredient.y - yDif;
       }
@@ -54,19 +64,17 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
     object.setVelocity(0, 0);
     if (
       dragX > 0 &&
-      dragX < game.scale.gameSize.width - object.width &&
-      dragY > 0 &&
+      dragX < game.scale.gameSize.width - object.width){
+         object.x = dragX;
+         objectCurrentVelocityX = velocityX;
+      }
+      if (dragY > 0 &&
       dragY < game.scale.gameSize.height - object.height
     ) {
-      object.x = dragX;
       object.y = dragY;
-      objectCurrentVelocityX = velocityX;
       objectCurrentVelocityY = velocityY;
     }
   });
-
-  game.active_ingredients.push(object);
-  console.log("after addition", game.active_ingredients);
 
   object.on("dragend", (pointer, gameObject, dropped) => {
     game.active_drag_object = null;
@@ -90,21 +98,39 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
     console.log("after dragend: velocityX", velocityX, "velocityY", velocityY);
     object.setVelocity(velocityX, velocityY);
   });
-
-  object.setBounce(0.2, 0.2);
-  object.setCollideWorldBounds(true);
 };
 
 const foodButtonHandler = (object, game) => {
   object.scale = 0.5;
   let image_key = object.texture.key;
-
+  if (image_key.includes("Bottle")){
+    image_key = image_key.replace("Bottle", "")
+  }
   object.on("pointerdown", (pointer, gameObject) => {
-    if (game.active_ingredients.length < game.max_ingredients) {
+    if (
+      game.active_ingredients.length < game.max_ingredients &&
+      game.objectDragging !== true
+    ) {
       game.food_click.play();
       const clone = game.physics.add
-        .image(object.x - 90, object.y, image_key)
+        .image(object.x -90, object.y, image_key)
         .setOrigin(0, 0);
+      if(clone.x<clone.width/2){
+        clone.x=clone.width/2
+      }
+      game.active_drag_object = clone;
+      clone.body.setAllowGravity(false);
+      clone.scale = 1;
+      game.tweens.add({
+        targets: clone,
+        scale: 1,
+        ease: "Linear",
+        duration: 10,
+        repeat: 0,
+        yoyo: false,
+      });
+      object.scale=.5;
+      game.objectDragging = true;
       physicsObjectHandler(clone, game, true);
     }
     // game.pointer = pointer
@@ -113,7 +139,10 @@ const foodButtonHandler = (object, game) => {
   });
 
   object.on("pointerover", (pointer, gameObject) => {
-    if (game.active_ingredients.length < game.max_ingredients) {
+    if (
+      game.active_ingredients.length < game.max_ingredients &&
+      game.objectDragging !== true
+    ) {
       game.tweens.add({
         targets: object,
         scale: 0.55,
@@ -237,6 +266,13 @@ var KitchenState = {
     // this.bgMusic.volume = 0.1;
     // this.bgMusic.play()
 
+    this.max_ingredients = 10;
+
+    this.active_ingredients = [];
+
+    this.used_ingredients = [];
+    this.registry.set("Burger", this.used_ingredients);
+
     this.food_sfx = this.sound.add("food_sfx1");
     this.food_sfx.setVolume(0.9);
     this.click_sfx = this.sound.add("submit_click");
@@ -245,58 +281,74 @@ var KitchenState = {
 
     this.add.image(0, 0, "kitchen").setOrigin(0, 0);
 
-    const bottomBunBtn = this.add
+    const bottomBunBtn = this.physics.add
       .image(10 + 70, 685 + 25, "bottomBun")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+
+    bottomBunBtn.body.setAllowGravity(false);
     foodButtonHandler(bottomBunBtn, this);
 
-    const topBunBtn = this.add
+    const topBunBtn = this.physics.add
       .image(150 + 70, 675 + 25, "topBun")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+
+    topBunBtn.body.setAllowGravity(false);
     foodButtonHandler(topBunBtn, this);
 
-    const beefpattyBtn = this.add
+    const beefpattyBtn = this.physics.add
       .image(300 + 70, 700 + 10, "beefpatty")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+
+    beefpattyBtn.body.setAllowGravity(false);
     foodButtonHandler(beefpattyBtn, this);
 
-    const lettuceBtn = this.add
+    const lettuceBtn = this.physics.add
       .image(450 + 70, 700 + 10, "lettuce")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+
+    lettuceBtn.body.setAllowGravity(false);
     foodButtonHandler(lettuceBtn, this);
-    const onionBtn = this.add
+    const onionBtn = this.physics.add
       .image(20 + 70, 545 + 5, "onion")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+
+    onionBtn.body.setAllowGravity(false);
     foodButtonHandler(onionBtn, this);
-    const tomatoBtn = this.add
+    const tomatoBtn = this.physics.add
       .image(160 + 70, 545 + 5, "tomato")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+
+    tomatoBtn.body.setAllowGravity(false);
     foodButtonHandler(tomatoBtn, this);
-    const ketchupBtn = this.add
-      .image(30 + 60, 370 + 20, "ketchup")
+    const ketchupBtn = this.physics.add
+      .image(30 + 60, 305 + 20, "ketchupBottle")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+    ketchupBtn.body.setAllowGravity(false);
     foodButtonHandler(ketchupBtn, this);
-    const mustardBtn = this.add
-      .image(180 + 60, 370 + 20, "mustard")
+    const mustardBtn = this.physics.add
+      .image(120 + 60, 305 + 20, "mustardBottle")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+    mustardBtn.body.setAllowGravity(false);
     foodButtonHandler(mustardBtn, this);
-    const bbqBtn = this.add
-      .image(330 + 60, 370 + 20, "bbq")
+    const bbqBtn = this.physics.add
+      .image(210 + 60, 305 + 20, "bbqBottle")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+    bbqBtn.body.setAllowGravity(false);
     foodButtonHandler(bbqBtn, this);
-    const ranchBtn = this.add
-      .image(480 + 60, 370 + 20, "ranch")
+    const ranchBtn = this.physics.add
+      .image(300 + 60, 305 + 20, "ranchBottle")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+    ranchBtn.body.setAllowGravity(false);
     foodButtonHandler(ranchBtn, this);
 
     const submitBtn = this.add
@@ -329,17 +381,57 @@ var KitchenState = {
 
     this.top_ingredient = this.servingplate;
 
-    this.max_ingredients = 10;
-
-    this.active_ingredients = [];
-
-    this.used_ingredients = [];
-    this.registry.set("Burger", this.used_ingredients);
+    this.input.on(Phaser.Input.Events.POINTER_UP, (pointer) => {
+      if (this.objectDragging === true && this.active_drag_object != undefined) {
+        this.objectDragging = false;
+        const object = this.active_drag_object;
+        const dragX = pointer.x - (object.width * object.scale) / 2;
+        const dragY = pointer.y - (object.height * object.scale) / 2;
+        let velocityY = (dragY - object.y) * 10;
+        let velocityX = (dragX - object.x) * 10;
+        this.active_drag_object.body.setAllowGravity(true);
+        object.setVelocity(velocityX, velocityY);
+        this.active_drag_object = null;
+      }
+    });
   },
   update() {
+    if (this.objectDragging === true && this.active_drag_object) {
+      const mouseX =
+        this.input.mousePointer.x -
+        (this.active_drag_object.width * this.active_drag_object.scale) / 2;
+      const mouseY =
+        this.input.mousePointer.y -
+        (this.active_drag_object.height * this.active_drag_object.scale) / 2;
+      const object = this.active_drag_object;
+
+      if (mouseX > 0 && mouseX < this.scale.gameSize.width - object.width) {
+        object.depth = this.top_ingredient.depth + 1;
+        object.x = mouseX;
+      } else {
+        object.x = Math.min(
+          Math.max(mouseX, 0),
+          this.scale.gameSize.width - object.width
+        );
+      }
+      if (mouseY > 0 && mouseY < this.scale.gameSize.height - object.height) {
+        object.depth = this.top_ingredient.depth + 1;
+
+        object.y = mouseY;
+      } else {
+        object.y = Math.min(
+          Math.max(mouseY, 0),
+          this.scale.gameSize.height - object.height
+        );
+      }
+    }
+
     if (this.active_ingredients.length > 0) {
       for (let i = 0; i < this.active_ingredients.length; i++) {
         const objectTrashed = (object, trashcan) => {
+          if (object === this.active_drag_object) {
+            this.objectDragging = false;
+          }
           this.trash_sfx.play();
           this.active_ingredients.splice(i, 1);
           console.log("there was an overlap");
@@ -367,8 +459,8 @@ var KitchenState = {
             (object.y < this.top_ingredient.y ||
               (object.height < 40 && object.y < this.top_ingredient.y + 30))
           ) {
-            const diff = Math.floor(Math.random() * 50) * -0.01
-            this.food_sfx.setRate(1.2+diff);
+            const diff = Math.floor(Math.random() * 50) * -0.01;
+            this.food_sfx.setRate(1.2 + diff);
             this.food_sfx.play();
             object.body.setAllowGravity(false);
             object.setVelocity(0, 0);

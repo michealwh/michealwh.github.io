@@ -44,6 +44,10 @@ import mustard from "../assets/game/food/mustard.png";
 import onion from "../assets/game/food/onion.png";
 import ranch from "../assets/game/food/ranch.png";
 import tomato from "../assets/game/food/tomato.png";
+import ketchupBottle from "../assets/game/food/ketchupBottle.png";
+import mustardBottle from "../assets/game/food/mustardBottle.png";
+import bbqBottle from "../assets/game/food/bbqBottle2.png";
+import ranchBottle from "../assets/game/food/ranchBottle.png";
 
 // UI ASSETS
 import chef_icon from "../assets/ui/chef_icon.png";
@@ -53,6 +57,7 @@ import notebook_icon from "../assets/ui/notebook_icon.png";
 import order_background from "../assets/ui/order_background.png";
 import dialog_frame from "../assets/ui/dialog_frame.png";
 import submit_button from "../assets/ui/submit_button.png";
+import holy_glob from "../assets/ui/holy_glob2.png";
 
 // SOUND ASSETS
 import door_open from "../assets/sounds/door_opening.mp3";
@@ -144,6 +149,7 @@ var LoadState = {
     this.load.image("order_background", order_background);
     this.load.image("dialog_frame", dialog_frame);
     this.load.image("submit_button", submit_button);
+    this.load.image("holy_glob", holy_glob);
 
     this.load.image("sky", skyBg);
     this.load.image("room", roomBg);
@@ -179,6 +185,10 @@ var LoadState = {
     this.load.image("onion", onion);
     this.load.image("ranch", ranch);
     this.load.image("tomato", tomato);
+    this.load.image("ketchupBottle", ketchupBottle);
+    this.load.image("mustardBottle", mustardBottle);
+    this.load.image("bbqBottle", bbqBottle);
+    this.load.image("ranchBottle", ranchBottle);
   },
 
   create() {

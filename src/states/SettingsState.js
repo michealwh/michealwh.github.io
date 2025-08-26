@@ -16,7 +16,7 @@ var SettingsState = {
       fill: "black",
     }).setOrigin(.5, .5)
 
-    this.points_text = this.add.text(500, 430, "Points: 0", {
+    this.order_text = this.add.text(500, 430, "Total Orders: 0", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -24,7 +24,7 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(.5, 0)
 
-    this.order_text = this.add.text(500, 480, "Total Orders: 0", {
+     this.points_text = this.add.text(500, 480, "Total Correct: 0", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -57,11 +57,11 @@ var SettingsState = {
     }).setOrigin(.5, 0)
   },
   update() {
-    if (this.registry.get("Points")) {
-      this.points_text.text = "Points: " + this.registry.get("Points")
-    }
     if (this.registry.get("Total_Orders")) {
-      this.order_text.text = "Total orders: " + this.registry.get("Total_Orders")
+      this.order_text.text = "Total Orders: " + this.registry.get("Total_Orders")
+    }
+    if (this.registry.get("Total_Correct")) {
+      this.points_text.text = "Total Correct: " + this.registry.get("Total_Correct")
     }
     if (this.registry.get("Average_Presentation")) {
       this.pres_text.text = "Presentation: " + this.registry.get("Average_Presentation") + "/100"
