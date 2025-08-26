@@ -290,7 +290,7 @@ const orderCompleteHandler = (game) => {
         if (npc_dictionary[game.current_customer_index].name === "Glorbdon") {
           new_total_points = parseFloat(current_points) + (new_points*2);
         }
-
+        console.log("new points to add: " + new_points);
         if (npc_dictionary[game.current_customer_index].sprite_sheet) {
           game.npc.play("glob_happy");
         }
