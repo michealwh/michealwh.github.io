@@ -1,0 +1,11 @@
+{
+  "purchasables": {
+    "bouncyball": {
+      "key": "bouncyball",
+      "title": "Super Bouncy Ball Mystery Pack",
+      "description": "bouncy ball mystery pack",
+      "cost": 5.99,
+      "repeatable": true
+    }
+  }
+}
