@@ -16,7 +16,7 @@ var SettingsState = {
       fill: "black",
     }).setOrigin(.5, .5)
 
-    this.order_text = this.add.text(500, 430, "Total Orders: 0", {
+    this.day_text = this.add.text(500, 430, "Day: 0", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -24,7 +24,7 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(.5, 0)
 
-     this.points_text = this.add.text(500, 480, "Total Correct: 0", {
+    this.order_text = this.add.text(500, 480, "Total Orders: 0", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -32,7 +32,7 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(.5, 0)
 
-    this.pres_text = this.add.text(500, 530, "Presentation: 0/100", {
+     this.points_text = this.add.text(500, 530, "Total Correct: 0", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -40,7 +40,7 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(.5, 0)
 
-    this.punc_text = this.add.text(500, 580, "Punctuality: 0/100", {
+    this.pres_text = this.add.text(500, 580, "Presentation: 0/100", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -48,7 +48,15 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(.5, 0)
 
-    this.prec_text = this.add.text(500, 630, "Precision: 0/100", {
+    this.punc_text = this.add.text(500, 630, "Punctuality: 0/100", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black",
+      wordWrap: { width: 300 },
+      align: 'center'
+    }).setOrigin(.5, 0)
+
+    this.prec_text = this.add.text(500, 680, "Precision: 0/100", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -57,6 +65,9 @@ var SettingsState = {
     }).setOrigin(.5, 0)
   },
   update() {
+    if (this.registry.get("Day")) {
+      this.day_text.text = "Day: " + this.registry.get("Day")
+    }
     if (this.registry.get("Total_Orders")) {
       this.order_text.text = "Total Orders: " + this.registry.get("Total_Orders")
     }

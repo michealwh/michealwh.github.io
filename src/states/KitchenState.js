@@ -12,6 +12,11 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
   console.log("after addition", game.active_ingredients);
 
   object.setBounce(0.2, 0.2);
+  if (object.texture.key.includes("ball")){
+    const bounce = Math.random() * (1.2-.5) + .5;
+    console.log(bounce)
+    object.setBounce(bounce);
+  }
   object.setCollideWorldBounds(true);
 
   object.on("dragstart", (pointer, dragX, dragY) => {
@@ -99,6 +104,15 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
     object.setVelocity(velocityX, velocityY);
   });
 };
+
+const newKitchenItem = (game,image_key) =>{
+  const object = game.physics.add
+        .image(500, 500, image_key)
+        .setOrigin(0, 0);
+      object.body.setAllowGravity(true);
+      object.scale = 1;
+      physicsObjectHandler(object,game,false)
+}
 
 const foodButtonHandler = (object, game) => {
   object.scale = 0.5;
@@ -271,6 +285,7 @@ var KitchenState = {
     this.active_ingredients = [];
 
     this.used_ingredients = [];
+    this.adding_items=false;
     this.registry.set("Burger", this.used_ingredients);
 
     this.food_sfx = this.sound.add("food_sfx1");
@@ -403,6 +418,21 @@ var KitchenState = {
 });
   },
   update() {
+
+
+    if(this.registry.get("NewKitchenItem").length>0 && this.adding_items==false){
+      this.adding_items = true
+      console.log("NEW KITCHEN ITESM ADDED")
+      const itemList = this.registry.get("NewKitchenItem")
+      
+      console.log("NEW KITCHEN ITESM ADDED",itemList)
+      for (let i = 0; i < itemList.length; i++){
+        newKitchenItem(this,itemList[i]);
+      }
+      this.registry.set("NewKitchenItem",[]);
+      this.adding_items = false
+    }
+
     if (this.objectDragging === true && this.active_drag_object) {
       const mouseX =
         this.input.mousePointer.x -
@@ -435,6 +465,9 @@ var KitchenState = {
     if (this.active_ingredients.length > 0) {
       for (let i = 0; i < this.active_ingredients.length; i++) {
         const objectTrashed = (object, trashcan) => {
+          if(object.texture.key.includes("ball")){
+            return
+          }
           if (object === this.active_drag_object) {
             this.objectDragging = false;
           }

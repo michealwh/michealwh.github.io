@@ -26,6 +26,35 @@ const globUpdateHandler = (game) => {
   });
 };
 
+const healthHandler = (game) => {
+  const new_health = game.registry.get("Health");
+
+  if (new_health < game.health) {
+    // health was taken away
+    game.health -= 1;
+    const targetHealthPart = game.healthItems[0];
+    targetHealthPart.rotation = -5 * (Math.PI / 180);
+    game.tweens.add({
+      targets: targetHealthPart,
+      rotation: 5 * (Math.PI / 180),
+      ease: "Linear",
+      duration: 100,
+      repeat: 1,
+      yoyo: true,
+      onComplete: function () {
+        targetHealthPart.body.setAllowGravity(true);
+        let direction = Math.round(Math.random());
+        if (direction !== 1) {
+          direction = -1;
+        }
+        targetHealthPart.setVelocity(direction * Math.random() * 15, -15);
+
+        game.healthItems.splice(0, 1);
+      },
+    });
+  }
+};
+
 var MenuState = {
   preload() {},
 
@@ -46,6 +75,18 @@ var MenuState = {
       .image(340, 45, "desk_icon")
       .setOrigin(0.5, 0.5)
       .setInteractive();
+
+    const shopBtn = this.add
+      .image(440, 45, "shop_icon")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+
+
+    gearBtn.scale = 0.6;
+    orderBtn.scale = 0.6;
+    kitchenBtn.scale = 0.6;
+    counterBtn.scale = 0.6;
+    shopBtn.scale = 0.6;
 
     const globIcon = this.add
       .image(1000, 55, "holy_glob")
@@ -75,22 +116,97 @@ var MenuState = {
     addedText.setOrigin(1, 1);
     this.addedText = addedText;
 
+    // health items
+
+    // const tintColor = Phaser.Display.Color.GetColor(10, 10, 10);
+    // const burgerBottomBG = this.physics.add
+    //   .image(955, 105, "bottomBun")
+    //   .setOrigin(0.5, 0.5);
+    // burgerBottomBG.scale = 0.3;
+    // burgerBottomBG.setTint(tintColor);
+    // burgerBottomBG.tintFill = true;
+    // burgerBottomBG.body.setAllowGravity(false);
+    // const beefpattyBG = this.physics.add
+    //   .image(955, 100, "beefpatty")
+    //   .setOrigin(0.5, 0.5);
+    // beefpattyBG.scale = 0.3;
+    // beefpattyBG.setTint(tintColor);
+    // beefpattyBG.tintFill = true;
+    // beefpattyBG.body.setAllowGravity(false);
+    // const lettuceBG = this.physics.add
+    //   .image(955, 95, "lettuce")
+    //   .setOrigin(0.5, 0.5);
+    // lettuceBG.scale = 0.3;
+    // lettuceBG.setTint(tintColor);
+    // lettuceBG.tintFill = true;
+    // lettuceBG.body.setAllowGravity(false);
+    // const ketchupBG = this.physics.add
+    //   .image(955, 90, "ketchup")
+    //   .setOrigin(0.5, 0.5);
+    // ketchupBG.scale = 0.3;
+    // ketchupBG.setTint(tintColor);
+    // ketchupBG.tintFill = true;
+    // ketchupBG.body.setAllowGravity(false);
+    // const burgerTopBG = this.physics.add
+    //   .image(955, 80, "topBun")
+    //   .setOrigin(0.5, 0.5);
+    // burgerTopBG.setTint(tintColor);
+    // burgerTopBG.tintFill = true;
+    // burgerTopBG.scale = 0.3;
+    // burgerTopBG.body.setAllowGravity(false);
+
+    const burgerBottom = this.physics.add
+      .image(955, 105, "bottomBun")
+      .setOrigin(0.5, 0.5);
+    burgerBottom.scale = 0.3;
+    burgerBottom.body.setAllowGravity(false);
+    const beefpatty = this.physics.add
+      .image(955, 100, "beefpatty")
+      .setOrigin(0.5, 0.5);
+    beefpatty.scale = 0.3;
+    beefpatty.body.setAllowGravity(false);
+    const lettuce = this.physics.add
+      .image(955, 95, "lettuce")
+      .setOrigin(0.5, 0.5);
+    lettuce.scale = 0.3;
+    lettuce.body.setAllowGravity(false);
+    const ketchup = this.physics.add
+      .image(955, 90, "ketchup")
+      .setOrigin(0.5, 0.5);
+    ketchup.scale = 0.3;
+    ketchup.body.setAllowGravity(false);
+    const burgerTop = this.physics.add
+      .image(955, 80, "topBun")
+      .setOrigin(0.5, 0.5);
+    burgerTop.scale = 0.3;
+    burgerTop.body.setAllowGravity(false);
+
+    this.healthItems = [burgerTop, ketchup, lettuce, beefpatty, burgerBottom];
+    this.health = 5;
+
     const click_sfx = this.sound.add("menu_click");
     this.time_paused = 0;
 
     const hoverEffectHandler = (object) => {
       object.on("pointerover", (pointer, gameObject) => {
+        if (this.registry.get("SwitchNotAllowed") === true) {
+          return;
+        }
         if (
           (this.scene.isActive("SettingsState") === false &&
             this.scene.isActive("OrderState") === false &&
-            (object === kitchenBtn || object === counterBtn)) ||
+            (object === kitchenBtn || object === counterBtn || object === shopBtn)) ||
           object === orderBtn ||
           object === gearBtn
         ) {
           if (
             (object === kitchenBtn && this.scene.isActive("KitchenState")) ||
-            (object === counterBtn && this.scene.isActive("GameState"))
+            (object === counterBtn && this.scene.isActive("GameState")) ||
+            (object === shopBtn && this.scene.isActive("ShopState"))
           ) {
+            return;
+          }
+          if ( object === orderBtn && this.scene.isActive("SettingsState")){
             return;
           }
           this.tweens.add({
@@ -122,13 +238,18 @@ var MenuState = {
     hoverEffectHandler(orderBtn);
     hoverEffectHandler(kitchenBtn);
     hoverEffectHandler(counterBtn);
+    hoverEffectHandler(shopBtn);
 
     gearBtn.on("pointerdown", (pointer, gameObject) => {
-      click_sfx.play();
       if (this.scene.isActive("SettingsState") === false) {
+        if (this.registry.get("SwitchNotAllowed") === true) {
+          return;
+        }
+        click_sfx.play();
         this.time_paused_start = this.time.now;
         console.log("setting start of paused time", this.time_paused_start);
       } else {
+        click_sfx.play();
         console.log("stopping paused time");
         this.time_paused += this.time.now - this.time_paused_start;
         console.log(this.time_paused, this.time_paused_start, this.time.now);
@@ -156,18 +277,23 @@ var MenuState = {
         this.scene.pause("GameState").run("SettingsState");
         this.scene.bringToTop("SettingsState");
         this.scene.bringToTop();
+      } else if (this.scene.isActive("ShopState") && this.scene.isPaused("ShopState") === false){
+        this.lastScene = "ShopState";
+        this.scene.pause("ShopState").run("SettingsState");
+        this.scene.bringToTop("SettingsState");
+        this.scene.bringToTop();
       }
     });
 
     orderBtn.on("pointerdown", (pointer, gameObject) => {
+      if (
+        this.registry.get("SwitchNotAllowed") === true ||
+        this.scene.isActive("SettingsState")
+      ) {
+        return;
+      }
       click_sfx.play();
-      if (this.scene.isActive("SettingsState")) {
-        this.time_paused += this.time.now - this.time_paused_start;
-        this.scene.pause("SettingsState").run("OrderState");
-        this.scene.bringToTop(this.lastScene);
-        this.scene.bringToTop("OrderState");
-        this.scene.bringToTop();
-      } else if (
+      if (
         this.scene.isActive("OrderState") &&
         this.scene.isPaused("OrderState") === false
       ) {
@@ -184,10 +310,18 @@ var MenuState = {
         this.scene.pause("GameState").run("OrderState");
         this.scene.bringToTop("OrderState");
         this.scene.bringToTop();
+      } else if (this.scene.isActive("ShopState")){
+         this.lastScene = "ShopState";
+        this.scene.pause("ShopState").run("OrderState");
+        this.scene.bringToTop("OrderState");
+        this.scene.bringToTop();
       }
     });
 
     kitchenBtn.on("pointerdown", (pointer, gameObject) => {
+      if (this.registry.get("SwitchNotAllowed") === true) {
+        return;
+      }
       if (this.scene.isActive("GameState")) {
         click_sfx.play();
         this.tweens.add({
@@ -202,9 +336,26 @@ var MenuState = {
         this.scene.pause("GameState").run("KitchenState");
         this.scene.bringToTop("KitchenState");
         this.scene.bringToTop();
+      } else if (this.scene.isActive("ShopState")){
+        click_sfx.play();
+        this.tweens.add({
+          targets: kitchenBtn,
+          scale: 0.6,
+          rotation: 0 * (Math.PI / 180),
+          ease: "Linear",
+          duration: 10,
+          repeat: 0,
+          yoyo: false,
+        });
+        this.scene.pause("ShopState").run("KitchenState");
+        this.scene.bringToTop("KitchenState");
+        this.scene.bringToTop();
       }
     });
     counterBtn.on("pointerdown", (pointer, gameObject) => {
+      if (this.registry.get("SwitchNotAllowed") === true) {
+        return;
+      }
       if (this.scene.isActive("KitchenState")) {
         click_sfx.play();
         this.tweens.add({
@@ -219,16 +370,64 @@ var MenuState = {
         this.scene.pause("KitchenState").run("GameState");
         this.scene.bringToTop("GameState");
         this.scene.bringToTop();
+      } else if (this.scene.isActive("ShopState")) {
+        click_sfx.play();
+        this.tweens.add({
+          targets: counterBtn,
+          scale: 0.6,
+          rotation: 0 * (Math.PI / 180),
+          ease: "Linear",
+          duration: 10,
+          repeat: 0,
+          yoyo: false,
+        });
+        this.scene.pause("ShopState").run("GameState");
+        this.scene.bringToTop("GameState");
+        this.scene.bringToTop();
       }
     });
-
-    gearBtn.scale = 0.6;
-    orderBtn.scale = 0.6;
-    kitchenBtn.scale = 0.6;
-    counterBtn.scale = 0.6;
+    shopBtn.on("pointerdown", (pointer, gameObject) => {
+      if (this.registry.get("SwitchNotAllowed") === true) {
+        return;
+      }
+      if (this.scene.isActive("KitchenState")) {
+        click_sfx.play();
+        this.tweens.add({
+          targets: shopBtn,
+          scale: 0.6,
+          rotation: 0 * (Math.PI / 180),
+          ease: "Linear",
+          duration: 10,
+          repeat: 0,
+          yoyo: false,
+        });
+        this.scene.pause("KitchenState").run("ShopState");
+        this.scene.bringToTop("ShopState");
+        this.scene.bringToTop();
+      } else if(this.scene.isActive("GameState")) {
+        click_sfx.play();
+        this.tweens.add({
+          targets: shopBtn,
+          scale: 0.6,
+          rotation: 0 * (Math.PI / 180),
+          ease: "Linear",
+          duration: 10,
+          repeat: 0,
+          yoyo: false,
+        });
+        this.scene.pause("GameState").run("ShopState");
+        this.scene.bringToTop("ShopState");
+        this.scene.bringToTop();
+      }
+    });
   },
 
   update() {
+    if (this.registry.get("ChangedHealth") === true) {
+      console.log("GOT CHANGED HEALTH ON MENU");
+      this.registry.set("ChangedHealth", false);
+      healthHandler(this);
+    }
     if (
       this.registry.get("Points") !== undefined &&
       this.globText.text !== this.registry.get("Points").toString()

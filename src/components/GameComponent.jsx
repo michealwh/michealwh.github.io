@@ -9,6 +9,7 @@ import MenuState from '../states/MenuState.js';
 import OrderState from '../states/OrderState.js';
 import SettingsState from '../states/SettingsState.js'
 import ShakeState from '../states/ShakeState.js'
+import ShopState from '../states/ShopState.js';
 
 
 
@@ -22,6 +23,7 @@ const GameComponent = ({config}) => {
         game.scene.add("ShakeState",ShakeState,false)
         game.scene.add('GameState', GameState, false);
         game.scene.add('KitchenState',KitchenState,false);
+        game.scene.add('ShopState',ShopState,false);
         game.scene.add('MenuState',MenuState,false);
         game.scene.add('BootState',BootState,false);
         game.scene.add("OrderState",OrderState,false);

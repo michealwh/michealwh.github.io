@@ -13,7 +13,12 @@ import hands from "../assets/game/jebsHands2.0.png";
 
 import guy3 from "../assets/game/npcs/guy3.png";
 import guy4 from "../assets/game/npcs/guy4.png";
+import guy41 from "../assets/game/npcs/guy4.1.png";
+import guy42 from "../assets/game/npcs/guy4.2.png";
+import guy43 from "../assets/game/npcs/guy4.3.png";
 import glob_man from "../assets/game/npcs/glob_man2.0.png";
+import glob_man2 from "../assets/game/npcs/glob_man2.png";
+import glob_man3 from "../assets/game/npcs/glob_man3.png";
 import cool_gruy from "../assets/game/npcs/cool_gruy.png";
 import mouf_galf from "../assets/game/npcs/mouf_galf.png";
 import smorg_bloo from "../assets/game/npcs/smorg_bloo.png";
@@ -21,6 +26,7 @@ import smorg_boo from "../assets/game/npcs/smorg_boo.png";
 import smorg_gloo from "../assets/game/npcs/smorg_gloo.png";
 import smorg_groo from "../assets/game/npcs/smorg_groo.png";
 import smorg_moo from "../assets/game/npcs/smorg_moo.png";
+import greenmaiden from "../assets/game/npcs/gorl.png";
 
 // SPRITESHEET ASSETS
 
@@ -49,15 +55,37 @@ import mustardBottle from "../assets/game/food/mustardBottle.png";
 import bbqBottle from "../assets/game/food/bbqBottle2.png";
 import ranchBottle from "../assets/game/food/ranchBottle.png";
 
+// SHOP ASSETS
+import purple_bg from "../assets/game/purple_bg.png"
+import rarebouncyball25 from "../assets/game/shop/rarebouncyball2.5.png"
+import bouncyballbox from "../assets/game/shop/bouncyballbox.png"
+import blueball from "../assets/game/shop/bluebouncyball.png"
+import redball from "../assets/game/shop/redbouncyball.png"
+import greenball from "../assets/game/shop/greenbouncyball.png"
+import yellowball from "../assets/game/shop/yellowbouncyball.png"
+
+
 // UI ASSETS
 import chef_icon from "../assets/ui/chef_icon.png";
 import desk_icon from "../assets/ui/desk_icon.png";
 import gear_icon from "../assets/ui/gear_icon.png";
 import notebook_icon from "../assets/ui/notebook_icon.png";
+import shop_icon from "../assets/ui/shop_icon2.png";
 import order_background from "../assets/ui/order_background.png";
 import dialog_frame from "../assets/ui/dialog_frame.png";
 import submit_button from "../assets/ui/submit_button.png";
+import day_button from "../assets/ui/day_button.png";
 import holy_glob from "../assets/ui/holy_glob2.png";
+import notice_bg from "../assets/ui/notice_background.png"
+import notice_bg2 from "../assets/ui/notice_background2.png"
+import purchase_button from "../assets/ui/purchase_button.png"
+import purchase_button2 from "../assets/ui/purchase_button2.png"
+import info_frame from "../assets/ui/info_frame.png"
+import yes_button from "../assets/ui/yes_button.png"
+import no_button from "../assets/ui/no_button.png"
+import yellow_hue from "../assets/ui/yellow_hue.png"
+
+
 
 // SOUND ASSETS
 import door_open from "../assets/sounds/door_opening.mp3";
@@ -146,10 +174,21 @@ var LoadState = {
     this.load.image("desk_icon", desk_icon);
     this.load.image("gear_icon", gear_icon);
     this.load.image("notebook_icon", notebook_icon);
+    this.load.image("shop_icon",shop_icon);
     this.load.image("order_background", order_background);
     this.load.image("dialog_frame", dialog_frame);
     this.load.image("submit_button", submit_button);
+    this.load.image("day_button", day_button);
     this.load.image("holy_glob", holy_glob);
+    this.load.image("notice_background",notice_bg)
+    this.load.image("notice_background2",notice_bg2)
+    this.load.image("purchase_button",purchase_button)
+    this.load.image("purchase_button2",purchase_button2)
+    this.load.image("info_frame",info_frame)
+    this.load.image("yes_button",yes_button)
+    this.load.image("no_button",no_button)
+    this.load.image("yellow_hue",yellow_hue)
+
 
     this.load.image("sky", skyBg);
     this.load.image("room", roomBg);
@@ -161,8 +200,13 @@ var LoadState = {
     this.load.image("hands", hands);
 
     this.load.image("guy4",guy4)
+    this.load.image("guy4.1",guy41)
+    this.load.image("guy4.2",guy42)
+    this.load.image("guy4.3",guy43)
     this.load.image("guy3",guy3)
     this.load.image("glob_man2.0", glob_man);
+    this.load.image("glob_man2", glob_man2);
+    this.load.image("glob_man3", glob_man3);
     this.load.image("cool_gruy", cool_gruy);
     this.load.image("mouf_galf", mouf_galf);
     this.load.image("smorg_bloo", smorg_bloo);
@@ -170,6 +214,7 @@ var LoadState = {
     this.load.image("smorg_gloo", smorg_gloo);
     this.load.image("smorg_groo", smorg_groo);
     this.load.image("smorg_moo", smorg_moo);
+    this.load.image("greenmaiden", greenmaiden);
 
     this.load.image("kitchen", jebsKitchen);
     this.load.image("trashcan", trash_can);
@@ -189,6 +234,14 @@ var LoadState = {
     this.load.image("mustardBottle", mustardBottle);
     this.load.image("bbqBottle", bbqBottle);
     this.load.image("ranchBottle", ranchBottle);
+
+    this.load.image("shop_bg",purple_bg)
+    this.load.image("rarebouncyball25",rarebouncyball25)
+    this.load.image("redball",redball)
+    this.load.image("blueball",blueball)
+    this.load.image("greenball",greenball)
+    this.load.image("yellowball",yellowball)
+    this.load.image("bouncyballbox",bouncyballbox)
   },
 
   create() {
@@ -209,6 +262,7 @@ var LoadState = {
 
     this.registry.set("Points", 0);
     this.registry.set("Total_Orders", 0);
+    this.registry.set("NewKitchenItem",[])
 
     this.scene.launch("MenuState");
     this.scene.launch("ShakeState");

@@ -1,67 +1,272 @@
-[
-     {
-        "name": "Morris Maulde",
-        "sprite": "guy3",
-        "start_scale": 0.05,
-        "scale": 1
-    },
-    {
-        "name": "Ranulf Gorrison",
-        "sprite": "guy4",
-        "start_scale": 0.05,
-        "scale": 1
-    },
-    {
-        "name": "Glorbdon",
-        "sprite": "glob_man2.0",
-        "sprite_sheet": {
-            "talk": "glob_talk",
-            "happy": "glob_happy",
-            "angry": "glob_angry"
+{
+    "npcs": [
+        {
+            "name": "Morris Maulde",
+            "sprite": "guy3",
+            "start_scale": 0.05,
+            "scale": 1
         },
-        "start_scale": 0.05,
-        "scale": 1
-    },
-    {
-        "name": "Grugory Hefert",
-        "sprite": "cool_gruy",
-        "start_scale": 0.05,
-        "scale": 1
-    },
-    {
-        "name": "Mortimer Galf",
-        "sprite": "mouf_galf",
-        "start_scale": 0.05,
-        "scale": 1
-    },
-    {
-        "name": "Renald Smorg",
-        "sprite": "smorg_bloo",
-        "start_scale": 0.05,
-        "scale": 1
-    },
-    {
-        "name": "March Jorton",
-        "sprite": "smorg_boo",
-        "start_scale": 0.05,
-        "scale": 1
-    },
-    {
-        "name": "Torbino Gloo",
-        "sprite": "smorg_gloo",
-        "start_scale": 0.05,
-        "scale": 1
-    },
-    {
-        "name": "Klark Watson",
-        "sprite": "smorg_groo",
-        "start_scale": 0.05,
-        "scale": 1
-    },
-    {
-        "name": "Daryl Breckerton",
-        "sprite": "smorg_moo",
-        "start_scale": 0.05,
-        "scale": 1
-    }
-]
+        {
+            "name": "Ranulf Gorrison",
+            "sprite": "guy4",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Glorbdon",
+            "sprite": "glob_man2.0",
+            "sprite_sheet": {
+                "talk": "glob_talk",
+                "happy": "glob_happy",
+                "angry": "glob_angry"
+            },
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Glorbina",
+            "sprite": "glob_man2",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Glorbert",
+            "sprite": "glob_man3",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Grugory Hefert",
+            "sprite": "cool_gruy",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Mortimer Galf",
+            "sprite": "mouf_galf",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Random",
+            "sprite": "smorg_bloo",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Random",
+            "sprite": "smorg_boo",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Random",
+            "sprite": "smorg_gloo",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Random",
+            "sprite": "smorg_groo",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Random",
+            "sprite": "smorg_moo",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Random",
+            "sprite": "guy4.1",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Random",
+            "sprite": "guy4.2",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Random",
+            "sprite": "guy4.3",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "The Green Maiden",
+            "sprite": "greenmaiden",
+            "start_scale": 0.05,
+            "scale": 1
+        }
+    ],
+    "first_names": [
+        "Renald",
+        "March",
+        "Torbino",
+        "Klark",
+        "Darryl",
+        "Anthony",
+        "Thomas",
+        "Alonzo",
+        "Shrapnel",
+        "Bentley",
+        "Orville",
+        "Constantine",
+        "Clement",
+        "Marmaduke",
+        "Derek",
+        "Marcus",
+        "Tony",
+        "Trevor",
+        "Nigel",
+        "Gus",
+        "Jay",
+        "Perry",
+        "Lonnie",
+        "Emmett",
+        "Jerry",
+        "Dennis",
+        "Maurice",
+        "Ross",
+        "Virgil",
+        "Marvin",
+        "Max",
+        "Roscoe",
+        "Melvin",
+        "Aaron",
+        "Manuel",
+        "Jasper",
+        "Wilbur",
+        "Jose",
+        "Morris",
+        "Sylvester",
+        "Rudolph",
+        "Claud",
+        "Clinton",
+        "Franklin",
+        "Johnnie",
+        "Elbert",
+        "Willard",
+        "Orville",
+        "Ollie",
+        "Curtis",
+        "Matthew",
+        "Hubert",
+        "Cornelius",
+        "Silas",
+        "Mark",
+        "Mike",
+        "Vernon",
+        "Irvin",
+        "Fredrick",
+        "Phillip",
+        "Nicholas",
+        "Clayton",
+        "Jeff",
+        "Nathaniel",
+        "Reuben",
+        "Adam",
+        "Levi",
+        "Noah",
+        "Anton",
+        "Marshall",
+        "Simon"
+    ],
+    "last_names": [
+        "Smorg",
+        "Jorton",
+        "Gloo",
+        "Watson",
+        "Breckerton",
+        "Goodenough",
+        "Maxwell",
+        "Kettle",
+        "Pott",
+        "Whipple",
+        "Bankhurst",
+        "Langdale",
+        "Thornhill",
+        "Haverford",
+        "Fitzwilliam",
+        "Cranston",
+        "Davidson",
+        "Liu",
+        "Wong",
+        "Blackburn",
+        "McKay",
+        "Middleton",
+        "Frazier",
+        "Reid",
+        "Braswell",
+        "Steele",
+        "Donovan",
+        "Barrett",
+        "Nance",
+        "Washington",
+        "Rogers",
+        "McMahon",
+        "Miles",
+        "Kramer",
+        "Jennings",
+        "Bowles",
+        "Brown",
+        "Bolton",
+        "Craven",
+        "Hendrix",
+        "Nichols",
+        "Saunders",
+        "Lehman",
+        "Sherrill",
+        "Cash",
+        "Pittman",
+        "Sullivan",
+        "Whitehead",
+        "Mack",
+        "Rice",
+        "Ayers",
+        "Cherry",
+        "Richmond",
+        "York",
+        "Wiley",
+        "Harrington",
+        "Reed",
+        "Nash",
+        "Wilkerson",
+        "Kent",
+        "Finch",
+        "Starr",
+        "Holland",
+        "Glover",
+        "Clements",
+        "Schultz",
+        "Hawley",
+        "Skinner",
+        "Hamrick",
+        "Winters",
+        "Dolan",
+        "Turner",
+        "Beatty",
+        "Douglas",
+        "Byrne",
+        "Hendricks",
+        "Mayer",
+        "Cochran",
+        "Reilly",
+        "Jensen",
+        "Yates",
+        "Haynes",
+        "Harmon",
+        "Matthews",
+        "Dawson",
+        "Barefoot",
+        "Kaplan",
+        "Gross",
+        "Richmond",
+        "Pope",
+        "Pickett",
+        "Schwartz"
+    ]
+}
