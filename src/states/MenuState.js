@@ -3,7 +3,7 @@
 
 const globUpdateHandler = (game) => {
   const currentAmount = parseFloat(game.globText.text);
-  const newAmount = game.registry.get("Points");
+  const newAmount = game.registry.get("Globs");
   const difference = (newAmount - currentAmount).toFixed(2);
   game.globText.setText(newAmount.toString());
   if (difference > 0) {
@@ -17,12 +17,32 @@ const globUpdateHandler = (game) => {
   game.addedText.alpha = 1;
   game.tweens.add({
     targets: game.addedText,
-    y: game.addedText.y + 100,
-    alpha: 0,
+    y: game.addedText.y + 50,
     ease: "Linear",
     duration: 500,
     repeat: 0,
     yoyo: false,
+    onComplete: function () {
+      game.time.addEvent({
+        delay: 500,
+        callback:
+          function () {
+            game.tweens.add({
+              targets: game.addedText,
+              alpha: 0,
+              ease: "Linear",
+              duration: 1000,
+              repeat: 0,
+              yoyo: false,
+              onComplete: function () {
+
+              }
+            });
+          },
+        callbackScope: game,
+        loop: false,
+      });
+    }
   });
 };
 
@@ -56,7 +76,7 @@ const healthHandler = (game) => {
 };
 
 var MenuState = {
-  preload() {},
+  preload() { },
 
   create() {
     const gearBtn = this.add
@@ -206,7 +226,7 @@ var MenuState = {
           ) {
             return;
           }
-          if ( object === orderBtn && this.scene.isActive("SettingsState")){
+          if (object === orderBtn && this.scene.isActive("SettingsState")) {
             return;
           }
           this.tweens.add({
@@ -277,7 +297,7 @@ var MenuState = {
         this.scene.pause("GameState").run("SettingsState");
         this.scene.bringToTop("SettingsState");
         this.scene.bringToTop();
-      } else if (this.scene.isActive("ShopState") && this.scene.isPaused("ShopState") === false){
+      } else if (this.scene.isActive("ShopState") && this.scene.isPaused("ShopState") === false) {
         this.lastScene = "ShopState";
         this.scene.pause("ShopState").run("SettingsState");
         this.scene.bringToTop("SettingsState");
@@ -310,8 +330,8 @@ var MenuState = {
         this.scene.pause("GameState").run("OrderState");
         this.scene.bringToTop("OrderState");
         this.scene.bringToTop();
-      } else if (this.scene.isActive("ShopState")){
-         this.lastScene = "ShopState";
+      } else if (this.scene.isActive("ShopState")) {
+        this.lastScene = "ShopState";
         this.scene.pause("ShopState").run("OrderState");
         this.scene.bringToTop("OrderState");
         this.scene.bringToTop();
@@ -336,7 +356,7 @@ var MenuState = {
         this.scene.pause("GameState").run("KitchenState");
         this.scene.bringToTop("KitchenState");
         this.scene.bringToTop();
-      } else if (this.scene.isActive("ShopState")){
+      } else if (this.scene.isActive("ShopState")) {
         click_sfx.play();
         this.tweens.add({
           targets: kitchenBtn,
@@ -404,7 +424,7 @@ var MenuState = {
         this.scene.pause("KitchenState").run("ShopState");
         this.scene.bringToTop("ShopState");
         this.scene.bringToTop();
-      } else if(this.scene.isActive("GameState")) {
+      } else if (this.scene.isActive("GameState")) {
         click_sfx.play();
         this.tweens.add({
           targets: shopBtn,
@@ -429,8 +449,8 @@ var MenuState = {
       healthHandler(this);
     }
     if (
-      this.registry.get("Points") !== undefined &&
-      this.globText.text !== this.registry.get("Points").toString()
+      this.registry.get("Globs") !== undefined &&
+      this.globText.text !== this.registry.get("Globs").toString()
     ) {
       globUpdateHandler(this);
     }

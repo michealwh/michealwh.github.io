@@ -5,7 +5,7 @@ var SettingsState = {
 
   create() {
     const order_background = this.add.image(0, 0, "order_background").setOrigin(0, 0).setInteractive()
-    this.add.text(500, 300, "Paused", {
+    this.add.text(500, 300, "[Paused]", {
       fontFamily: "font1",
       fontSize: "50px",
       fill: "black",
@@ -16,7 +16,7 @@ var SettingsState = {
       fill: "black",
     }).setOrigin(.5, .5)
 
-    this.day_text = this.add.text(500, 430, "Day: 0", {
+    this.day_text = this.add.text(500, 425, "Day: 0", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -24,7 +24,16 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(.5, 0)
 
-    this.order_text = this.add.text(500, 480, "Total Orders: 0", {
+        this.points_text = this.add.text(500, 425+55, "Total Globs: 0", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black", //  #F2EBB7  #B7FB8AFF
+      align: 'center'
+    }).setOrigin(.5, 0)
+    //this.points_text.setStroke("black",3) // #294118FF
+
+
+    this.order_text = this.add.text(500, 480+55, "Total Orders: 0", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -32,47 +41,58 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(.5, 0)
 
-     this.points_text = this.add.text(500, 530, "Total Correct: 0", {
+     this.globs_text = this.add.text(500, 530+55, "Total Correct: 0", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
       wordWrap: { width: 300 },
       align: 'center'
-    }).setOrigin(.5, 0)
+    }).setOrigin(0.5, 0)
 
-    this.pres_text = this.add.text(500, 580, "Presentation: 0/100", {
+    this.pres_text = this.add.text(320, 640, "Presentation: 0/100", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
       wordWrap: { width: 300 },
       align: 'center'
-    }).setOrigin(.5, 0)
+    }).setOrigin(0.5, 0)
 
-    this.punc_text = this.add.text(500, 630, "Punctuality: 0/100", {
+    this.punc_text = this.add.text(680, 640, "Punctuality: 0/100", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
       wordWrap: { width: 300 },
       align: 'center'
-    }).setOrigin(.5, 0)
+    }).setOrigin(0.5, 0)
 
-    this.prec_text = this.add.text(500, 680, "Precision: 0/100", {
+    this.prec_text = this.add.text(320, 720, "Precision: 0/100", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
       wordWrap: { width: 300 },
       align: 'center'
-    }).setOrigin(.5, 0)
+    }).setOrigin(0.5, 0)
+
+    this.ples_text = this.add.text(680, 720, "Pleasantry: 0/100", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black",
+      wordWrap: { width: 300 },
+      align: 'center'
+    }).setOrigin(0.5, 0)
   },
   update() {
     if (this.registry.get("Day")) {
       this.day_text.text = "Day: " + this.registry.get("Day")
     }
+    if (this.registry.get("TotalGlobs")) {
+      this.points_text.text = "Total Globs: "+ this.registry.get("TotalGlobs")
+    }
     if (this.registry.get("Total_Orders")) {
       this.order_text.text = "Total Orders: " + this.registry.get("Total_Orders")
     }
     if (this.registry.get("Total_Correct")) {
-      this.points_text.text = "Total Correct: " + this.registry.get("Total_Correct")
+      this.globs_text.text = "Total Correct: " + this.registry.get("Total_Correct")
     }
     if (this.registry.get("Average_Presentation")) {
       this.pres_text.text = "Presentation: " + this.registry.get("Average_Presentation") + "/100"
@@ -82,6 +102,9 @@ var SettingsState = {
     }
     if (this.registry.get("Average_Precision")) {
       this.prec_text.text = "Precision: " + this.registry.get("Average_Precision") + "/100"
+    }
+     if (this.registry.get("Average_Pleasantry")) {
+      this.ples_text.text = "Pleasantry: " + this.registry.get("Average_Pleasantry") + "/100"
     }
   }
 };

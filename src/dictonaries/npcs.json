@@ -100,6 +100,30 @@
             "sprite": "greenmaiden",
             "start_scale": 0.05,
             "scale": 1
+        },
+        {
+            "name": "Felippe Diaz ",
+            "sprite": "felip",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Gorp Toppler",
+            "sprite": "shorts_guy1",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Reggie Larson",
+            "sprite": "shorts_guy2",
+            "start_scale": 0.05,
+            "scale": 1
+        },
+        {
+            "name": "Marvin Blackburn",
+            "sprite": "shorts_guy3",
+            "start_scale": 0.05,
+            "scale": 1
         }
     ],
     "first_names": [

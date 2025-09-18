@@ -11,7 +11,7 @@ glasses. Our chairs, being his patents, embraced and caressed us rather
 than submitted to be sat upon, and there was that luxurious
 after-dinner atmosphere, when thought runs gracefully free of the
 trammels of precision. And he put it to us in this way—marking the
-points with a lean forefinger—as we sat and lazily admired his
+globs with a lean forefinger—as we sat and lazily admired his
 earnestness over this new paradox (as we thought it) and his fecundity.
 
 “You must follow me carefully. I shall have to controvert one or two

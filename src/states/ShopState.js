@@ -1,5 +1,76 @@
 import shop_dictionary from "../dictonaries/shop.json";
 
+function itemReveal(game,item){
+    game.promptOpen = true;
+    game.registry.set("SwitchNotAllowed", true);
+    const boxView = game.add
+      .image(500, 500, item + "_box")
+      .setOrigin(0.5, 0.5)
+      .setDepth(6);
+    boxView.scale = 0;
+
+    game.tweens.add({
+      targets: [boxView],
+      scale: 1.5,
+      ease: "Power1",
+      duration: 500,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+          boxView.rotation = -1 * (Math.PI / 180);
+          game.tweens.add({
+            targets: boxView,
+            rotation: 1 * (Math.PI / 180),
+            ease: "Linear",
+            duration: 100,
+            repeat: 3,
+            yoyo: true,
+            onComplete: function () {
+              game.box_sfx.play();
+              const itemView = game.add
+                .image(500, 500, item)
+                .setOrigin(0.5, 0.5);
+              itemView.setDepth(8);
+              itemView.scale = 0;
+              game.tweens.add({
+                targets: itemView,
+                scale: .5,
+                ease: "Linear",
+                duration: 100,
+                repeat: 0,
+                yoyo: false,
+                onComplete: function(){
+                  game.time.addEvent({
+                        delay: 2000,
+                        callback: () => {
+                          game.tweens.add({
+                            targets: [itemView, boxView],
+                            scale: 0,
+                            rotation: 360,
+                            ease: "Linear",
+                            duration: 500,
+                            repeat: 0,
+                            yoyo: false,
+                            onComplete: function () {
+                              itemView.destroy();
+                              boxView.destroy();
+                              game.registry.set("SwitchNotAllowed", false);
+                              game.promptOpen = false;
+                            },
+                          });
+                        },
+                        callbackScope: game,
+                        loop: false,
+                      });
+                }
+              });
+            },
+          });
+        
+      },
+    });
+}
+
 const purchaseActions = {
   bouncyball: function (game) {
     game.registry.set("SwitchNotAllowed", true);
@@ -15,7 +86,8 @@ const purchaseActions = {
 
     const boxView = game.add
       .image(500, 500, "bouncyballbox")
-      .setOrigin(0.5, 0.5);
+      .setOrigin(0.5, 0.5)
+      .setDepth(6);
     boxView.scale = 0;
 
     game.tweens.add({
@@ -36,6 +108,7 @@ const purchaseActions = {
             repeat: 3,
             yoyo: true,
             onComplete: function () {
+              game.box_sfx.play();
               boxView.rotation = 0;
               let chosenball =
                 balltypes[Math.floor(Math.random() * balltypes.length)];
@@ -54,12 +127,12 @@ const purchaseActions = {
               reveal_background.setDepth(7);
               reveal_background.scale = 0;
               ball.setTintFill("#0a0a0aff");
+             
               game.tweens.add({
                 targets: [ball],
                 scale: 1,
-                rotation: 360,
                 ease: "Power1",
-                duration: 1000,
+                duration: 50,
                 repeat: 0,
                 yoyo: false,
                 onComplete: function () {
@@ -70,7 +143,7 @@ const purchaseActions = {
                     rotation: 5 * (Math.PI / 180),
                     ease: "Linear",
                     duration: 100,
-                    repeat: 6,
+                    repeat: 3,
                     yoyo: true,
                     onComplete: function () {
                       ball.clearTint();
@@ -84,46 +157,58 @@ const purchaseActions = {
                         yoyo: false,
                         onComplete: function () {},
                       });
-                      game.tweens.add({
-                        targets: ball,
-                        scale: 1.5,
-                        rotation: 0,
+
+                      let targetScale = 1.5;
+
+                      game.tweens.addCounter({
+                        from: 3,
+                        to: 1.2,
+                        duration: 1600,
                         ease: "Linear",
-                        duration: 100,
-                        repeat: 0,
-                        yoyo: true,
-                        onComplete: function () {
-                          game.time.addEvent({
-                            delay: 1500,
-                            callback: () => {
-                              game.tweens.add({
-                                targets: [reveal_background, ball, boxView],
-                                scale: 0,
-                                rotation: 360,
-                                ease: "Linear",
-                                duration: 500,
-                                repeat: 0,
-                                yoyo: false,
-                                onComplete: function () {
-                                  ball.destroy();
-                                  reveal_background.destroy();
-                                  boxView.destroy();
-                                  game.registry.set("SwitchNotAllowed", false);
-                                  game.promptOpen = false;
-                                  let itemList = game.registry.get("NewKitchenItem")
-                                  itemList.push(chosenball)
-                                  console.log(itemList)
-                                  game.registry.set(
-                                    "NewKitchenItem",
-                                    itemList
-                                  );
-                                },
-                              });
+                        onUpdate: (tween, targets, key, current, previous) => {
+                          targetScale = current;
+                        },
+                      });
+
+                      let repeatCount = 6;
+                      function ballRepeatHandler(value) {
+                        game.tweens.add({
+                          targets: [ball],
+                          scale: 1.5,
+                          ease: "Bounce",
+                          duration: 800,
+                          repeat: 0,
+                          yoyo: false,
+                          onComplete: function () {},
+                        });
+                      }
+                      ballRepeatHandler(targetScale);
+                      game.time.addEvent({
+                        delay: 2000,
+                        callback: () => {
+                          game.tweens.add({
+                            targets: [reveal_background, ball, boxView],
+                            scale: 0,
+                            rotation: 360,
+                            ease: "Linear",
+                            duration: 500,
+                            repeat: 0,
+                            yoyo: false,
+                            onComplete: function () {
+                              ball.destroy();
+                              reveal_background.destroy();
+                              boxView.destroy();
+                              game.registry.set("SwitchNotAllowed", false);
+                              game.promptOpen = false;
+                              let itemList =
+                                game.registry.get("NewKitchenItem");
+                              itemList.push(chosenball);
+                              game.registry.set("NewKitchenItem", itemList);
                             },
-                            callbackScope: game,
-                            loop: false,
                           });
                         },
+                        callbackScope: game,
+                        loop: false,
                       });
                     },
                   });
@@ -135,6 +220,58 @@ const purchaseActions = {
         shakeBox();
       },
     });
+  },
+  chair1: function (game) {
+    itemReveal(game,"chair1"); 
+    let furnitureList = game.registry.get("Furniture_Shop_Event");
+    console.log(furnitureList);
+    if (furnitureList === undefined) {
+      furnitureList = [];
+    }
+    furnitureList.push("chair");
+    game.registry.set("Furniture_Shop_Event", furnitureList);
+    let pleasantryScore = game.registry.get("Average_Pleasantry");
+    pleasantryScore += 5;
+    game.registry.set("Average_Pleasantry", pleasantryScore);
+  },
+  table1: function (game) {
+    itemReveal(game,"table1"); 
+    let furnitureList = game.registry.get("Furniture_Shop_Event");
+    console.log(furnitureList);
+    if (furnitureList === undefined) {
+      furnitureList = [];
+    }
+    furnitureList.push("table");
+    game.registry.set("Furniture_Shop_Event", furnitureList);
+    let pleasantryScore = game.registry.get("Average_Pleasantry");
+    pleasantryScore += 10;
+    game.registry.set("Average_Pleasantry", pleasantryScore);
+  },
+  slorgplush: function (game) {
+    itemReveal(game,"slorgplush"); 
+    let furnitureList = game.registry.get("Furniture_Shop_Event");
+    console.log(furnitureList);
+    if (furnitureList === undefined) {
+      furnitureList = [];
+    }
+    furnitureList.push("slorgplush");
+    game.registry.set("Furniture_Shop_Event", furnitureList);
+    let pleasantryScore = game.registry.get("Average_Pleasantry");
+    pleasantryScore += 20;
+    game.registry.set("Average_Pleasantry", pleasantryScore);
+  },
+  slorgbanner: function (game) {
+    itemReveal(game,"slorgbanner"); 
+    let furnitureList = game.registry.get("Furniture_Shop_Event");
+    console.log(furnitureList);
+    if (furnitureList === undefined) {
+      furnitureList = [];
+    }
+    furnitureList.push("slorgbanner");
+    game.registry.set("Furniture_Shop_Event", furnitureList);
+    let pleasantryScore = game.registry.get("Average_Pleasantry");
+    pleasantryScore += 40;
+    game.registry.set("Average_Pleasantry", pleasantryScore);
   },
 };
 
@@ -233,10 +370,22 @@ const confirmButtonHandler = (game, object) => {
       onComplete: function () {
         object.scale = 0.2;
         debounce = false;
-        let current_points = game.registry.get("Points");
-        let new_points = current_points - game.activeItemInfo.cost;
-        game.registry.set("Points", new_points.toFixed(2));
+        let current_globs = game.registry.get("Globs");
+        let new_globs = current_globs - game.activeItemInfo.cost;
+        game.registry.set("Globs", new_globs.toFixed(2));
+        if (!game.activeItemInfo.repeatable) {
+          console.log("should be stopping this");
+          game.activeButton.tint = "22222288";
+          game.activeButton.input.enabled = false;
+        } else if (game.activeItemInfo.repeatable > 0) {
+          game[game.activeItemInfo.key + "Left"] -= 1;
+          if (game[game.activeItemInfo.key + "Left"] <= 0) {
+            game.activeButton.tint = "22222288";
+            game.activeButton.input.enabled = false;
+          }
+        }
         showPrompt(game, false);
+
         purchaseActions[game.activeItemInfo.key](game);
       },
     });
@@ -281,6 +430,7 @@ const purchaseButtonhandler = (game, object, item) => {
       return;
     }
     game.activeItemInfo = shopItemInfo;
+    game.activeButton = object;
     game.click_sfx.play();
     game.infoFrame.scale = 0;
     game.infoText.scale = 0;
@@ -295,17 +445,17 @@ const purchaseButtonhandler = (game, object, item) => {
       onComplete: function () {
         object.scale = 0.2;
         debounce = false;
-        let currentPoints = game.registry.get("Points");
-        if (currentPoints >=shopItemInfo.cost) {
+        let currentGlobs = game.registry.get("Globs");
+        if (currentGlobs >= shopItemInfo.cost) {
           game.promptText.text = "Purchase: " + shopItemInfo.title;
           game.promptCostText.text = "$" + shopItemInfo.cost;
           showPrompt(game, true, true);
         } else {
           let dialog_options = [
-            "You're... BROKE!",
+            "Your poverty is insufferable.",
             "Come back when you have the funds.",
             "It's not enough.",
-            "It's literally $" + shopItemInfo.cost,
+            "You don't have $" + shopItemInfo.cost + ".",
           ];
           game.promptText.text =
             dialog_options[Math.floor(Math.random() * dialog_options.length)];
@@ -325,11 +475,24 @@ const purchaseButtonhandler = (game, object, item) => {
       },
     });
   });
+  let mouseEnter = false;
   object.on("pointerover", (pointer, gameObject) => {
     if (game.promptOpen === false) {
-      game.infoFrame.x = object.x + 50;
+      mouseEnter = true;
+      if (object.x + object.width / 4 + game.infoFrame.width > 1000) {
+        game.infoFrame.x = object.x - 52;
+        game.infoText.x = object.x - 68;
+        game.infoFrame.flipX = true;
+        game.infoFrame.setOrigin(1, 1);
+        game.infoText.setOrigin(1, 1);
+      } else {
+        game.infoFrame.setOrigin(0, 1);
+        game.infoText.setOrigin(0, 1);
+        game.infoFrame.flipX = false;
+        game.infoFrame.x = object.x + 50;
+        game.infoText.x = object.x + 70;
+      }
       game.infoFrame.y = object.y - 5;
-      game.infoText.x = object.x + 70;
       game.infoText.y = object.y - 75;
       game.infoText.text =
         "$" + shopItemInfo.cost + " " + shopItemInfo.description;
@@ -340,11 +503,17 @@ const purchaseButtonhandler = (game, object, item) => {
         duration: 100,
         repeat: 0,
         yoyo: false,
-        onComplete: function () {},
+        onComplete: function () {
+          if (mouseEnter == false) {
+            game.infoFrame.scale = 0;
+            game.infoText.scale = 0;
+          }
+        },
       });
     }
   });
   object.on("pointerout", (pointer, gameObject) => {
+    mouseEnter = false;
     if (game.promptOpen === false) {
       console.log("pointer out");
       game.infoFrame.scale = 0;
@@ -364,7 +533,13 @@ var ShopState = {
 
     this.promptOpen = false;
     this.activeItemInfo = {};
+    this.chair1Left = shop_dictionary.purchasables.chair.repeatable;
+    this.table1Left = shop_dictionary.purchasables.table.repeatable;
+    this.slorgplushLeft = shop_dictionary.purchasables.slorgplush.repeatable;
     this.click_sfx = this.sound.add("food_click");
+    this.bouncy_sfx = this.sound.add("bouncy_open");
+    this.box_sfx = this.sound.add("box_sfx");
+    this.box_sfx.volume = 0.8;
 
     this.add.image(0, 0, "shop_bg").setOrigin(0, 0);
 
@@ -378,24 +553,76 @@ var ShopState = {
       })
       .setOrigin(0.5, 0.5)
       .setDepth(4);
+
+    // bouncy ball
     this.shopItem = this.add
-      .image(100, 420, "bouncyballbox")
+      .image(300, 420, "bouncyballbox")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
     this.shopItem.scale = 0.8;
     this.shopButton = this.add
-      .image(100, 550, "purchase_button")
+      .image(300, 550, "purchase_button")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
     purchaseButtonhandler(this, this.shopButton, "bouncyball");
-    this.shopButton2 = this.add
-      .image(500, -700, "purchase_button2")
+
+    // chairs
+    this.shopItem = this.add
+      .image(500, 420, "chair1_box")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
-    this.shopButton2.scale = 0.2;
+    this.shopItem.scale = 0.8;
+    this.shopButton = this.add
+      .image(500, 550, "purchase_button2")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    purchaseButtonhandler(this, this.shopButton, "chair");
+
+    // tables
+    this.shopItem = this.add
+      .image(700, 420, "table1_box")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    this.shopItem.scale = 0.8;
+    this.shopButton = this.add
+      .image(700, 550, "purchase_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    purchaseButtonhandler(this, this.shopButton, "table");
+
+    // slorg banner
+    this.shopItem = this.add
+      .image(350, 420 + 300, "slorgbanner_box")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    this.shopItem.scale = 0.8;
+    this.shopButton = this.add
+      .image(350, 550 + 300, "purchase_button2")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    purchaseButtonhandler(this, this.shopButton, "slorgbanner");
+
+    // slorg banner
+    this.shopItem = this.add
+      .image(650, 420 + 300, "slorgplush_box")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    this.shopItem.scale = 0.8;
+    this.shopButton = this.add
+      .image(650, 550 + 300, "purchase_button2")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    purchaseButtonhandler(this, this.shopButton, "slorgplush");
 
     this.infoFrame = this.add
       .image(100, 100, "info_frame")
@@ -407,7 +634,7 @@ var ShopState = {
         fontFamily: "font1",
         fontSize: "20px",
         fill: "#09376bff",
-        wordWrap: { width: 280 },
+        wordWrap: { width: 260 },
         align: "center",
       })
       .setOrigin(0, 1)
