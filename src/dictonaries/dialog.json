@@ -1,43 +1,54 @@
 {
-    "greetings" : [
-        "hi.",
-        "hello.",
-        "hey.",
-        "howdy.",
-        "good day.",
-        "",
-        "it sure is hot out!",
-        "what's up.",
-        "sup.",
-        "it's chilly out there."
+  "greetings": [
+    "hi.",
+    "hello.",
+    "hey.",
+    "howdy.",
+    "good day.",
+    "",
+    "it sure is hot out!",
+    "what's up.",
+    "sup.",
+    "it's chilly out there."
+  ],
+  "ordering": ["i'll have", "give me", "can i get"],
+  "success": [
+    "thanks.",
+    "bye.",
+    "smells good.",
+    "delicious.",
+    "this is my medicine.",
+    "this is beyond delicious."
+  ],
+  "slow": [
+    "finally.",
+    "someone ought to tech you a lesson.",
+    "my infant son could have made this faster.",
+    "almost fell asleep there.",
+    "i wish you were faster."
+  ],
+  "fail": {
+    "general": [
+      "this isn't right.",
+      "this isn't what i asked for at all.",
+      "nuh uh.",
+      "what's wrong with you?",
+      "give me my money back.",
+      "see you never."
     ],
-    "ordering" : [
-        "i'll have",
-        "give me",
-        "can i get"
+    "presentation": [
+        "this doesn't look organized.",
+        "this doesn't look right.",
+        "sloppy.",
+        "far too chaotic for my liking.",
+        "i do not eat something this disheveled."
     ],
-    "success": [
-        "thanks.",
-        "bye.",
-        "smells good.",
-        "delicious.",
-        "this is my medicine.",
-        "this is beyond delicious."
-    ],
-    "slow": [
-        "finally.",
-        "someone ought to tech you a lesson.",
-        "my infant son could have made this faster.",
-        "almost fell asleep there.",
+    "punctuality": [
+        "finally",
+        "this is cold.",
+        "i've waited too long.",
+        "i almost fell asleep.",
         "i wish you were faster."
-    ],
-    "fail": [
-        "this isn't right.",
-        "this isn't what i asked for at all.",
-        "nuh uh.",
-        "what's wrong with you?",
-        "give me my money back.",
-        "see you never."
     ]
-
+  }
 }

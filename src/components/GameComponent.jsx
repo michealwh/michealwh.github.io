@@ -10,6 +10,8 @@ import OrderState from '../states/OrderState.js';
 import SettingsState from '../states/SettingsState.js'
 import ShakeState from '../states/ShakeState.js'
 import ShopState from '../states/ShopState.js';
+import DataState from '../states/DataState.js';
+import GalleryState from '../states/GalleryState.js';
 
 
 
@@ -28,6 +30,8 @@ const GameComponent = ({config}) => {
         game.scene.add('BootState',BootState,false);
         game.scene.add("OrderState",OrderState,false);
         game.scene.add("SettingsState",SettingsState,false);
+        game.scene.add("DataState",DataState,false);
+        game.scene.add("GalleryState",GalleryState,false);
         game.scene.start('BootState');
     
     }

@@ -1,3 +1,9 @@
+// MODULES
+import secureLocalStorage from "react-secure-storage";
+
+// DICTONARY
+import shop_dictonary from "../dictonaries/shop.json";
+
 // GENERAL ASSETS
 
 import skyBg from "../assets/game/jebsSky.png";
@@ -36,7 +42,7 @@ import gorath from "../assets/game/special/gorath.png";
 // SPRITESHEET ASSETS
 
 import glob_man_sheet from "../assets/game/spritesheets/glob_man_sprite_sheet.png";
-import penguinclap from "../assets/game/spritesheets/penguinclap.png";
+import penguinclap from "../assets/game/spritesheets/penguinclap2.png";
 
 // KITCHEN ASSETS
 
@@ -65,19 +71,36 @@ import ranchBottle from "../assets/game/food/ranchBottle.png";
 import purple_bg from "../assets/game/purple_bg.png";
 import rarebouncyball25 from "../assets/game/shop/rarebouncyball2.5.png";
 import bouncyballbox from "../assets/game/shop/bouncyballbox.png";
-import chair1_box from "../assets/game/shop/chair1_box.png"
-import table1_box from "../assets/game/shop/table1_box.png"
-import slorgbanner_box from "../assets/game/shop/slorgbanner_box.png"
-import slorgplush_box from "../assets/game/shop/slorgplush_box.png"
+import chair1_box from "../assets/game/shop/chair1_box.png";
+import table1_box from "../assets/game/shop/table1_box.png";
+import slorgbanner_box from "../assets/game/shop/slorgbanner_box.png";
+import slorgplush_box from "../assets/game/shop/slorgplush_box.png";
+import magicdirt_box from "../assets/game/shop/magicdirt_box.png";
+import stevenswish_box from "../assets/game/shop/stevenswish_box.png";
+import burgerpolish_box from "../assets/game/shop/burgerpolish_box.png";
+import pragmaticparty_box from "../assets/game/shop/pragmaticparty_box.png";
+import thewhisk_box from "../assets/game/shop/thewhisk_box.png";
+import aqualificprism_box from "../assets/game/shop/aqualificprism_box.png";
+
+
 
 import blueball from "../assets/game/shop/bluebouncyball.png";
 import redball from "../assets/game/shop/redbouncyball.png";
 import greenball from "../assets/game/shop/greenbouncyball.png";
 import yellowball from "../assets/game/shop/yellowbouncyball.png";
-import chair1 from "../assets/game/shop/chair_1.png"
-import table1 from "../assets/game/shop/table_1.png"
-import slorgbanner from "../assets/game/shop/slorgsflag2.png"
-import slorgplush from "../assets/game/shop/slorg_plush.png"
+import chair1 from "../assets/game/shop/chair_1.png";
+import table1 from "../assets/game/shop/table_1.png";
+import slorgbanner from "../assets/game/shop/slorgsflag2.png";
+import slorgplush from "../assets/game/shop/slorg_plush.png";
+import magicdirt from "../assets/game/shop/magicdirt.png";
+import stevenswish from "../assets/game/shop/stevenswish.png";
+import burgerpolish from "../assets/game/shop/burgerpolish.png";
+import pragmaticparty from "../assets/game/shop/pragmaticparty.png";
+import thewhisk from "../assets/game/shop/thewhisk.png";
+import aqualificprism from "../assets/game/shop/aqualificprism.png";
+
+
+
 
 // UI ASSETS
 import chef_icon from "../assets/ui/chef_icon.png";
@@ -98,6 +121,7 @@ import info_frame from "../assets/ui/info_frame.png";
 import yes_button from "../assets/ui/yes_button.png";
 import no_button from "../assets/ui/no_button.png";
 import yellow_hue from "../assets/ui/yellow_hue.png";
+import tab_frame from "../assets/ui/tab_frame.png";
 
 // SOUND ASSETS
 import door_open from "../assets/sounds/door_opening.mp3";
@@ -114,7 +138,7 @@ import eat_sfx1 from "../assets/sounds/eat_sfx1.mp3";
 import presentation_sfx1 from "../assets/sounds/presentation_sfx1.mp3";
 import game_over_sfx from "../assets/sounds/game_over_sfx.mp3";
 import bouncy_open from "../assets/sounds/slorg_bouncy_open.mp3";
-import box_sfx from "../assets/sounds/box_sfx.mp3"
+import box_sfx from "../assets/sounds/box_sfx.mp3";
 
 import success_sfx1 from "../assets/sounds/success_sfx1.mp3";
 
@@ -180,8 +204,8 @@ var LoadState = {
     this.load.audio("voice_line3", voice_line3);
 
     this.load.audio("bouncy_open", bouncy_open);
-    this.load.audio("box_sfx",box_sfx);
-    this.load.audio("game_over_sfx",game_over_sfx);
+    this.load.audio("box_sfx", box_sfx);
+    this.load.audio("game_over_sfx", game_over_sfx);
 
     //this.load.audio("cluttered_ambience2", cluttered_ambience2);
     this.load.spritesheet("glob_man_sheet", glob_man_sheet, {
@@ -207,6 +231,7 @@ var LoadState = {
     this.load.image("yes_button", yes_button);
     this.load.image("no_button", no_button);
     this.load.image("yellow_hue", yellow_hue);
+    this.load.image("tab_frame",tab_frame);
 
     this.load.image("sky", skyBg);
     this.load.image("room", roomBg);
@@ -264,16 +289,29 @@ var LoadState = {
     this.load.image("blueball", blueball);
     this.load.image("greenball", greenball);
     this.load.image("yellowball", yellowball);
-    this.load.image("bouncyballbox", bouncyballbox);
-    this.load.image("chair1",chair1);
-    this.load.image("table1",table1);
-    this.load.image("slorgbanner",slorgbanner);
-    this.load.image("slorgplush",slorgplush)
+    this.load.image("bouncyball_box", bouncyballbox);
+    this.load.image("chair1", chair1);
+    this.load.image("table1", table1);
+    this.load.image("slorgbanner", slorgbanner);
+    this.load.image("slorgplush", slorgplush);
+    this.load.image("magicdirt",magicdirt);
+    this.load.image("stevenswish",stevenswish)
+    this.load.image("burgerpolish",burgerpolish)
+    this.load.image("pragmaticparty",pragmaticparty)
+    this.load.image("thewhisk",thewhisk)
+    this.load.image("aqualificprism",aqualificprism)
 
-    this.load.image("chair1_box",chair1_box);
-    this.load.image("table1_box",table1_box);
-    this.load.image("slorgbanner_box",slorgbanner_box);
-    this.load.image("slorgplush_box",slorgplush_box);
+    this.load.image("chair1_box", chair1_box);
+    this.load.image("table1_box", table1_box);
+    this.load.image("slorgbanner_box", slorgbanner_box);
+    this.load.image("slorgplush_box", slorgplush_box);
+    this.load.image("magicdirt_box",magicdirt_box);
+    this.load.image("stevenswish_box",stevenswish_box);
+    this.load.image("burgerpolish_box",burgerpolish_box);
+    this.load.image("pragmaticparty_box",pragmaticparty_box);
+    this.load.image("thewhisk_box",thewhisk_box);
+    this.load.image("aqualificprism_box",aqualificprism_box);
+
 
     this.load.spritesheet("penguin_sheet", penguinclap, {
       frameWidth: 64,
@@ -282,14 +320,6 @@ var LoadState = {
   },
 
   create() {
-    function startGame() {
-      this.registry.set("Globs", 0);
-      this.registry.set("Total_Orders", 0);
-
-      this.scene.launch("MenuState");
-      this.scene.launch("GameState");
-    }
-
     // this.time.addEvent({
     //   delay: 3000,
     //   callback: startGame,
@@ -297,16 +327,120 @@ var LoadState = {
     //   loop: false,
     // });
 
-    this.registry.set("TotalGlobs", 0);
-    this.registry.set("Globs", 0);
-    this.registry.set("Total_Orders", 0);
-    this.registry.set("NewKitchenItem", []);
-    this.registry.set("Average_Pleasantry",0);
+    const defaultGlobs = 0;
+    const defaultHealth = 5;
+    const defaultIngredientMax = 2;
+    const defaultCustomers = [0, 1];
+    const defaultDailyCustomerMax = 2;
 
+    const Total_Globs = parseFloat(secureLocalStorage.getItem("Total_Globs"));
+    const Globs = parseFloat(secureLocalStorage.getItem("Globs"));
+    const Total_Orders = parseInt(secureLocalStorage.getItem("Total_Orders"));
+    const Total_Correct = parseInt(secureLocalStorage.getItem("Total_Correct"));
+    const Average_Pleasantry = parseInt(secureLocalStorage.getItem("Average_Pleasantry"));
+    const Average_Precision = parseInt(secureLocalStorage.getItem("Average_Precision"));
+    const Average_Presentation = parseInt(secureLocalStorage.getItem("Average_Presentation"));
+    const Average_Punctuality = parseInt(secureLocalStorage.getItem("Average_Punctuality"));
+    const DayCount = parseInt(secureLocalStorage.getItem("Day"));
+    const Health = parseInt(secureLocalStorage.getItem("Health"));
+    const Unlocked_Customers = secureLocalStorage.getItem("Unlocked_Customers");
+    const Items = secureLocalStorage.getItem("Items");
+    const IngredientMax = parseInt(secureLocalStorage.getItem("IngredientMax"));
+    const DailyCustomerMax = parseInt(secureLocalStorage.getItem("DailyCustomerMax"));
+    const DailyCustomerCount = parseInt(secureLocalStorage.getItem("DailyCustomerCount"));
+    let furnitureList = [];
+    let ingredientList = [];
+
+    if (true){ //(Health === null || Health === undefined || Health <= 0) {
+      // new save
+      this.registry.set("Total_Globs", 0);
+      this.registry.set("Globs", defaultGlobs);
+      this.registry.set("Total_Orders", 0);
+      this.registry.set("Total_Correct", 0);
+      this.registry.set("Average_Pleasantry", 0);
+      this.registry.set("Average_Precision", 0);
+      this.registry.set("Average_Presentation", 0);
+      this.registry.set("Average_Punctuality", 0);
+      this.registry.set("Day", 1);
+
+      this.registry.set("IngredientMax", defaultIngredientMax);
+      this.registry.set("Unlocked_Customers", defaultCustomers);
+      this.registry.set("DailyCustomerMax", defaultDailyCustomerMax);
+      this.registry.set("Health", defaultHealth);
+      this.registry.set("Items", []);
+      this.registry.set("Modifiers",[])
+
+      // modifier values
+
+      this.registry.set("Pleasantry_Mod",0);
+      this.registry.set("Precision_Mod",0);
+      this.registry.set("Presentation_Mod",0);
+      this.registry.set("Punctuality_Mod",0);
+      this.registry.set("Tip_Mod",0);
+
+      secureLocalStorage.setItem("Health", defaultHealth);
+      secureLocalStorage.setItem("Total_Globs", 0);
+      secureLocalStorage.setItem("Total_Orders", 0);
+      secureLocalStorage.setItem("Total_Correct", 0);
+      secureLocalStorage.setItem("Globs", defaultGlobs);
+      secureLocalStorage.setItem("IngredientMax", defaultIngredientMax);
+      secureLocalStorage.setItem(
+        "Unlocked_Customers",
+        JSON.stringify(defaultCustomers)
+      );
+      secureLocalStorage.setItem("DailyCustomerMax", defaultDailyCustomerMax);
+      secureLocalStorage.setItem("DailyCustomerCount", 0);
+    } else {
+      // load save
+      this.registry.set("Total_Globs", Total_Globs || 0);
+      this.registry.set("Globs", Globs || defaultGlobs);
+      this.registry.set("Total_Orders", Total_Orders || 0);
+      this.registry.set("Total_Correct", Total_Correct || 0);
+      this.registry.set("Average_Pleasantry", Average_Pleasantry || 0);
+      this.registry.set("Average_Precision", Average_Precision || 0);
+      this.registry.set("Average_Presentation", Average_Presentation || 0);
+      this.registry.set("Average_Punctuality", Average_Punctuality || 0);
+      this.registry.set("Day", DayCount || 1);
+
+      this.registry.set("IngredientMax", IngredientMax || defaultIngredientMax);
+      this.registry.set(
+        "Unlocked_Customers",
+        Unlocked_Customers ? JSON.parse(Unlocked_Customers) : defaultCustomers
+      );
+      this.registry.set(
+        "DailyCustomerMax",
+        DailyCustomerMax || defaultDailyCustomerMax
+      );
+      this.registry.set("DailyCustomerCount", DailyCustomerCount || 0);
+
+      this.registry.set("Health", Health || defaultHealth);
+      this.registry.set("Items", Items ? JSON.parse(Items) : []);
+
+      let ItemList = JSON.parse(Items);
+      if (ItemList){
+        for (let i = 0; i < ItemList.length; i++) {
+        const itemInfo = shop_dictonary.purchasables[ItemList[i]];
+        if (itemInfo) {
+          if (itemInfo.type === "furniture") {
+            furnitureList.push(ItemList[i]);
+          } else if (itemInfo.type === "ingredient") {
+            ingredientList.push(ItemList[i]);
+          }
+        } else if (ItemList[i].includes("ball")) {
+          ingredientList.push(ItemList[i]);
+        }
+      }
+      }
+    }
+
+    this.registry.set("FurnitureShopEvent", furnitureList);
+    this.registry.set("NewKitchenItemEvent", ingredientList);
+    this.scene.launch("DataState");
     this.scene.launch("MenuState");
     this.scene.launch("ShakeState");
     //this.scene.launch("ShopState");
     this.scene.launch("GameState");
+    //this.scene.launch("GalleryState");
   },
 };
 

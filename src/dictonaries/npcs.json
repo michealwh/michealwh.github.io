@@ -4,13 +4,18 @@
             "name": "Morris Maulde",
             "sprite": "guy3",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "He smolders.",
+            "standards": {
+                "presentation": 30
+            }
         },
         {
             "name": "Ranulf Gorrison",
             "sprite": "guy4",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Descends from a family of Flumish origins."
         },
         {
             "name": "Glorbdon",
@@ -21,19 +26,22 @@
                 "angry": "glob_angry"
             },
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Of wealth."
         },
         {
             "name": "Glorbina",
             "sprite": "glob_man2",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Of wealth."
         },
         {
             "name": "Glorbert",
             "sprite": "glob_man3",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Of wealth."
         },
         {
             "name": "Grugory Hefert",
@@ -48,34 +56,39 @@
             "scale": 1
         },
         {
-            "name": "Random",
+            "name": "Marmaduke Gloo",
             "sprite": "smorg_bloo",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "One of the Gloo brothers."
         },
         {
-            "name": "Random",
+            "name": "Alonzo Gloo",
             "sprite": "smorg_boo",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "One of the Gloo brothers."
         },
         {
-            "name": "Random",
+            "name": "Ollie Gloo",
             "sprite": "smorg_gloo",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "One of the Gloo brothers."
         },
         {
-            "name": "Random",
+            "name": "Bentley Gloo",
             "sprite": "smorg_groo",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "One of the Gloo brothers."
         },
         {
-            "name": "Random",
+            "name": "Torbino Gloo",
             "sprite": "smorg_moo",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "One of the Gloo brothers."
         },
         {
             "name": "Random",
@@ -102,7 +115,7 @@
             "scale": 1
         },
         {
-            "name": "Felippe Diaz ",
+            "name": "Felippe Diaz",
             "sprite": "felip",
             "start_scale": 0.05,
             "scale": 1
@@ -111,7 +124,8 @@
             "name": "Gorp Toppler",
             "sprite": "shorts_guy1",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Gorp is a wizard on the harmonica."
         },
         {
             "name": "Reggie Larson",

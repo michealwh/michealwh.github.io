@@ -1,8 +1,19 @@
 import dialog_dictionary from "../dictonaries/dialog.json";
 import ingredients_dictionary from "../dictonaries/ingredients.json";
 import npc_dictionary from "../dictonaries/npcs.json";
+import OrderSubmittedHandler from "../modules/OrderSubmittedHandler";
 
 const dialogYMove = 500;
+
+const shuffleArray = (array) => {
+  let currentIndex = array.length;
+  while (currentIndex != 0) {
+    let randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+}
 
 const dialogHandler = (passage, game) => {
   const textStyle = {
@@ -62,26 +73,8 @@ const customerHandler = (customer, game) => {
       game.text.destroy();
     }
     let frame = game.dialog_frame;
-    if (frame === undefined) {
-      game.dialog_frame = game.add
-        .image(0, 500, "dialog_frame")
-        .setOrigin(0, 0);
-      frame = game.dialog_frame;
-      frame.depth = 4;
-    }
     frame.y = 500;
     let title = game.dialog_title;
-    if (title === undefined) {
-      game.dialog_title = game.add
-        .text(200, 750 + dialogYMove, "", {
-          fontFamily: "font1",
-          fontSize: "50px",
-          fill: "black",
-        })
-        .setOrigin(0, 0);
-      title = game.dialog_title;
-      title.depth = 4;
-    }
     if (customer.name === "Random") {
       const first_index = Math.floor(
         Math.random() * npc_dictionary.first_names.length
@@ -151,7 +144,7 @@ const customerHandler = (customer, game) => {
         }
         game.registry.set("Order_Text", order_list);
         game.registry.set("Order", game.order);
-        console.log(order_list);
+        //console.log(order_list);
         let text =
           dialog_dictionary.greetings[g_index] +
           " " +
@@ -195,7 +188,12 @@ const customerHandler = (customer, game) => {
   });
 };
 
-const showDayFrame = (game, show) => {
+
+const showDayFrame = (game, show, islong) => {
+  let targetUpdateTextY = 500;
+  if (islong) {
+    targetUpdateTextY = 550;
+  }
   if (show == true) {
     game.tweens.add({
       targets: [game.dayFrame],
@@ -217,7 +215,7 @@ const showDayFrame = (game, show) => {
     });
     game.tweens.add({
       targets: [game.dayUpdateText],
-      y: 500,
+      y: targetUpdateTextY,
       ease: "Power1",
       duration: 500,
       repeat: 0,
@@ -233,13 +231,12 @@ const showDayFrame = (game, show) => {
     });
 
     if (game.dayUpdateSprite !== null) {
-      console.log("DAY SPRITE EXISTS");
       game.dayUpdateSprite = game.add
-        .sprite(250, -950, "penguin_sheet")
+        .sprite(250, -950, "penguin_sheet2")
         .setOrigin(0.5, 0)
         .setDepth(10);
       game.dayUpdateSprite2 = game.add
-        .sprite(750, -950, "penguin_sheet")
+        .sprite(750, -950, "penguin_sheet2")
         .setOrigin(0.5, 0)
         .setDepth(10);
       game.tweens.add({
@@ -296,10 +293,10 @@ const showDayFrame = (game, show) => {
   }
 };
 
-const newCustomer = (game) => {
+const newCustomer = (game, just_launched) => {
   if (game.dailyCustomerCount >= game.dailyCustomerMax) {
     console.log("day is over");
-    dayEndHandler(game);
+    dayEndHandler(game, just_launched);
     return;
   }
   function shakeDoor() {
@@ -314,37 +311,46 @@ const newCustomer = (game) => {
       yoyo: true,
       onComplete: function () {
         game.door_hinge.rotation = 0;
-        let availableCustomers;
-        if (game.currentUnlockedCustomers.length>1){
-          availableCustomers = game.currentUnlockedCustomers.filter(
-          (item) => item !== game.current_customer_index
-        );
-      }else {
-          availableCustomers = game.currentUnlockedCustomers;
-        }
-        game.current_customer_index = Math.floor(
-          Math.random() * availableCustomers.length
-        );
-        game.current_customer_index =
-          availableCustomers[game.current_customer_index];
+        
+        game.current_customer_index = game.todays_customers[game.dailyCustomerCount];
+
         const customer = npc_dictionary.npcs[game.current_customer_index];
         customerHandler(customer, game);
-        const doorsfx = game.sound.add("door_open");
-        doorsfx.setVolume(1);
-        doorsfx.play();
+
+        game.door_open_sfx.play();
       },
     });
   }
-  const doorsfx = game.sound.add("door_rattling");
-  doorsfx.setVolume(0.2);
-  doorsfx.play();
+  game.door_rattle_sfx.play();
   shakeDoor();
 };
 
 const dayStartHandler = (game) => {
-  game.currentDay += 1;
+  game.currentDay = parseInt(game.currentDay) + 1;
   game.registry.set("Day", game.currentDay);
   game.dailyCustomerCount = 0;
+  game.todays_customers = [];
+  const unlockedMaxRatio = Math.floor((game.dailyCustomerMax/game.currentUnlockedCustomers.length)+.5);
+    for (let i = 0; i < unlockedMaxRatio; i++) {
+      game.todays_customers = game.todays_customers.concat(game.currentUnlockedCustomers);
+          //console.log("adding todays customers", game.todays_customers);
+
+    }
+    shuffleArray(game.todays_customers);
+    //console.log("shuffled todays customers", game.todays_customers);
+
+    game.todays_customers = game.todays_customers.slice(0,game.dailyCustomerMax);
+  if (game.newUnlockedCustomer !== null){
+    console.log("there is a new customer today",game.newUnlockedCustomer)
+    if (!game.todays_customers.includes(game.newUnlockedCustomer)){
+      game.todays_customers[0] = game.newUnlockedCustomer;
+      console.log("customer doesnt exist so we're adding it in")
+    }
+    game.newUnlockedCustomer = null;
+  }
+  console.log("todays customers", game.todays_customers);
+
+  game.registry.set("DailyCustomerCount", game.dailyCustomerCount);
   showDayFrame(game, false);
   game.time.addEvent({
     delay: 200,
@@ -356,15 +362,23 @@ const dayStartHandler = (game) => {
   });
 };
 
-const dayEndHandler = (game) => {
+const dayEndHandler = (game, just_launched) => {
   game.dailyCustomerCount = 0;
 
+  if (just_launched) {
+    game.dayText.text = "Day " + game.currentDay + " Complete!";
+    game.dayUpdateText.text = "";
+    game.dayUpdateSprite = null;
+    showDayFrame(game, true);
+    return;
+  }
   const moreCustomersSuccess = (game.currentDay + 1) % 4;
   if (moreCustomersSuccess == 0) {
     const moreCustomers = Math.floor(Math.random() * 2) + 1;
     game.dailyCustomerMax += moreCustomers;
+    game.registry.set("DailyCustomerMax", game.dailyCustomerMax);
   }
-  const unlockedCustomerSuccess = (game.currentDay + 1) % 2;
+  const unlockedCustomerSuccess = (game.currentDay) % 2;
 
   if (game.currentDay + 1 === 2) {
     game.ingredientMax += 1; // 3
@@ -378,22 +392,29 @@ const dayEndHandler = (game) => {
     game.ingredientMax += 2; // 8
   } else if (game.currentDay + 1 == 64) {
     game.ingredientMax += 4; // 12
-  } 
+  }
+  game.registry.set("IngredientMax", parseInt(game.ingredientMax));
 
   game.dayText.text = "Day " + game.currentDay + " Complete!";
   game.dayUpdateText.text = "";
   game.dayUpdateSprite = null;
-  console.log("unlocked customer", unlockedCustomerSuccess);
+  //console.log("unlocked customer", unlockedCustomerSuccess);
   if (unlockedCustomerSuccess == 1 && game.currentLockedCustomers.length > 0) {
     let newCustomerIndex = Math.floor(
       Math.random() * game.currentLockedCustomers.length
     );
+    //console.log("unlocked customers and locked customers before",game.currentUnlockedCustomers,game.currentLockedCustomers);
+    
+    game.currentUnlockedCustomers.push(game.currentLockedCustomers[newCustomerIndex]);
     game.currentLockedCustomers = game.currentLockedCustomers.filter(
-      (item) => item !== game.currentUnlockedCustomers[newCustomerIndex]
+      (item) => item !== game.currentLockedCustomers[newCustomerIndex]
     );
-    game.currentUnlockedCustomers.push(newCustomerIndex);
+   // console.log("unlocked customers and locked customers after",game.currentUnlockedCustomers,game.currentLockedCustomers);
+
+    game.newUnlockedCustomer = game.currentUnlockedCustomers[game.currentUnlockedCustomers.length-1];
+    game.registry.set("Unlocked_Customers", game.currentUnlockedCustomers);
     if (game.currentLockedCustomers.length <= 0) {
-      game.dayUpdateText.text = "You have now unlocked all new customer!";
+      game.dayUpdateText.text = "You have now unlocked all customers!";
       game.dayUpdateSprite = "penguin_sheet";
     } else {
       game.dayUpdateText.text = "You have unlocked a new customer!";
@@ -428,12 +449,11 @@ const dayButtonHandler = (game, button) => {
 const orderCompleteHandler = (game) => {
   game.registry.set("SwitchNotAllowed", true);
   game.dailyCustomerCount += 1;
+  game.registry.set("DailyCustomerCount", game.dailyCustomerCount);
   const recieved_order = game.registry.get("Burger");
   const expected_order = game.registry.get("Order");
 
   game.scene.bringToTop("ShakeState");
-
-  console.log("dialog should be hidden");
 
   game.dialog_frame.y += dialogYMove;
   game.dialog_title.y += dialogYMove;
@@ -442,7 +462,6 @@ const orderCompleteHandler = (game) => {
   game.time.addEvent({
     delay: 2500,
     callback: () => {
-      console.log("showing ui");
       game.text.text = "...";
 
       // this was added because the hands are initially shown in the shakestate and cannot be placed behind the dialogframe so they
@@ -461,7 +480,6 @@ const orderCompleteHandler = (game) => {
             repeat: 0,
             yoyo: false,
             onComplete: function () {
-              console.log("hands are hidden");
               handsToHide.destroy();
             },
           });
@@ -477,9 +495,9 @@ const orderCompleteHandler = (game) => {
         duration: 500,
         repeat: 0,
         yoyo: false,
-        onComplete: function () {
-          console.log("ui shown");
-        },
+        // onComplete: function () {
+        //   console.log("ui shown");
+        // },
       });
       game.tweens.add({
         targets: game.dialog_title,
@@ -507,126 +525,8 @@ const orderCompleteHandler = (game) => {
     delay: 5500,
     callback: () => {
       console.log("doing review");
-      let moneyAddition = 0;
-      let ingredients_missed = [];
-      for (let i = 0; i < expected_order.length; i++) {
-        let index = recieved_order.indexOf(expected_order[i]);
-        if (expected_order[i].includes("ball")) {
-          index = recieved_order.findIndex((element) =>
-            element.includes("ball")
-          );
-          if (recieved_order[index] === "rarebouncyball25") {
-            moneyAddition += 5.33;
-          }
-          console.log(index);
-        }
-        if (index !== -1) {
-          recieved_order.splice(index, 1);
-        } else {
-          ingredients_missed.push(expected_order[i]);
-        }
-      }
-
-      const orderAccuracy =
-        (Math.max(
-          0,
-          expected_order.length -
-            (recieved_order.length + ingredients_missed.length)
-        ) /
-          expected_order.length) *
-        100;
-
-      console.log("ingredients missed", ingredients_missed);
-
-      const current_orders = game.registry.get("Total_Orders");
-      game.registry.set("Total_Orders", current_orders + 1);
-
-      const currentPrecisionStat = game.registry.get("Average_Precision");
-      let precisionToSet = Math.floor(orderAccuracy);
-      if (currentPrecisionStat > 0) {
-        precisionToSet = Math.floor(
-          (currentPrecisionStat + precisionToSet) / 2
-        );
-      }
-      game.registry.set("Average_Precision", precisionToSet);
-
-      const presentationStat = game.registry.get("Current_Presentation");
-      const punctualityStat = Math.floor(
-        100 -
-          Math.min(
-            100,
-            game.registry.get("Order_Time_Finished") / expected_order.length
-          )
-      );
-      const pleasantryStat = game.registry.get("Average_Pleasantry");
-
-      const current_globs = game.registry.get("Globs");
-      const current_total_globs = game.registry.get("TotalGlobs");
-      if (recieved_order.length <= 0 && ingredients_missed.length === 0) {
-        const index = Math.floor(
-          Math.random() * dialog_dictionary.success.length
-        );
-        const good_response = dialog_dictionary.success[index];
-        let glob_change =
-          Math.floor(
-            ((presentationStat + orderAccuracy + punctualityStat) / 4.6) * 10
-          ) / 100;
-        if (presentationStat < 10) {
-          glob_change = glob_change * (presentationStat / 100);
-        }
-        if (punctualityStat < 50) {
-          glob_change = glob_change * (punctualityStat / 100);
-        }
-        let new_total_globs = parseFloat(current_globs) + glob_change;
-        let new_total_points = parseFloat(current_total_globs) + glob_change;
-        if (
-          npc_dictionary.npcs[game.current_customer_index].name.includes(
-            "Glorb"
-          )
-        ) {
-          // if its a glorb npc give them double points
-          new_total_globs = parseFloat(current_globs) + glob_change * 2;
-        }
-        new_total_globs =  parseFloat(new_total_globs)+ parseFloat((pleasantryStat/100) * 20);
-        if (npc_dictionary.npcs[game.current_customer_index].sprite_sheet) {
-          // if its the glorb then make it smile
-          game.npc.play("glob_happy");
-        }
-        new_total_globs += moneyAddition;
-        game.registry.set("Globs", new_total_globs.toFixed(2));
-        game.registry.set("TotalGlobs", new_total_points.toFixed(2));
-        const current_correct = game.registry.get("Total_Correct") || 0;
-        game.registry.set("Total_Correct", current_correct + 1);
-        game.success_sfx1.play();
-        dialogHandler(good_response, game);
-      } else {
-        //failed burger
-        const index = Math.floor(Math.random() * dialog_dictionary.fail.length);
-        const bad_response = dialog_dictionary.fail[index];
-        if (bad_response.includes("money")) {
-          let new_total_globs = current_globs - 9.99; // if response has money they lose money then
-          if (
-            npc_dictionary.npcs[game.current_customer_index].name.includes(
-              "Glorb"
-            ) // if glorb then they lose more money
-          ) {
-            new_total_globs = current_globs - 19.99;
-          }
-          new_total_globs += moneyAddition;
-
-          game.registry.set("Globs", new_total_globs.toFixed(2));
-        }
-        const sound_num = Math.floor(Math.random() * 3) + 1;
-        game["spooky_sfx" + sound_num].play();
-        dialogHandler(bad_response, game);
-        const current_health = game.registry.get("Health");
-        game.registry.set("Health", current_health - 1);
-        game.registry.set("ChangedHealth", true);
-        if (npc_dictionary.npcs[game.current_customer_index].sprite_sheet) {
-          game.npc.play("glob_angry");
-        }
-      }
-
+      
+      OrderSubmittedHandler(game,dialogHandler)
       game.time.addEvent({
         delay: 3000,
         callback: function () {
@@ -666,8 +566,29 @@ const orderCompleteHandler = (game) => {
                   "\nRemaining Globs: " +
                   game.registry.get("Globs") +
                   "\nTotal Earnings: " +
-                  game.registry.get("TotalGlobs");
-                showDayFrame(game, true);
+                  game.registry.get("Total_Globs") +
+                  "\nPresentation: " +
+                  game.registry.get("Average_Presentation") +
+                  "/100" +
+                  "  Punctuality: " +
+                  game.registry.get("Average_Punctuality") +
+                  "/100" +
+                  "\nPrecision: " +
+                  game.registry.get("Average_Precision") +
+                  "/100" +
+                  "  Pleasantry: " +
+                  game.registry.get("Average_Pleasantry") +
+                  "/100" +
+                  "\nDo you wish to restart?";
+                game.tweens.add({
+                  targets: game.restartButton,
+                  y: 680,
+                  ease: "Power1",
+                  duration: 500,
+                  repeat: 0,
+                  yoyo: false,
+                });
+                showDayFrame(game, true, true);
                 game.scene.pause("MenuState");
                 return;
               }
@@ -684,34 +605,55 @@ const orderCompleteHandler = (game) => {
   });
 };
 
+// restart the game handler after game over
+const restartGameHandler = (game, button) => {
+  button.on("pointerdown", (pointer, gameObject) => {
+    game.click_sfx.play();
+    game.registry.reset();
+    //location.reload();
+    game.scene.stop("MenuState");
+    game.scene.stop("GameState");
+    game.scene.stop("ShakeState");
+    game.scene.stop("KitchenState");
+    game.scene.stop("SettingsState");
+    game.scene.stop("OrderState");
+    game.scene.stop("ShopState");
+    game.scene.stop("DataState");
+    game.scene.stop("LoadState");
+
+    game.scene.start("BootState");
+  });
+};
+
 // furniture handler
-const furnitureHandler = (game,furnitureList) =>{
-  for (const i in furnitureList){
-    const object  = furnitureList[i];
-    if (object === "chair" && game.availableChairs.length > 0) {
-      let targetIndex = Math.floor(Math.random()*game.availableChairs.length);
-      let chair = game.availableChairs[targetIndex]
-      chair.visible=true;
+const furnitureHandler = (game, furnitureList) => {
+  for (const i in furnitureList) {
+    const object = furnitureList[i];
+    if (object === "chair1" && game.availableChairs.length > 0) {
+      let targetIndex = Math.floor(Math.random() * game.availableChairs.length);
+      let chair = game.availableChairs[targetIndex];
+      chair.visible = true;
       game.addedChairs.push(chair);
-      game.availableChairs.splice(targetIndex,1);
-    } else if (object === "table" && game.availableTables.length > 0){
-      let targetIndex = Math.floor(Math.random()*game.availableTables.length)
-      let table = game.availableTables[targetIndex]
-      table.visible=true;
+      game.availableChairs.splice(targetIndex, 1);
+    } else if (object === "table1" && game.availableTables.length > 0) {
+      let targetIndex = Math.floor(Math.random() * game.availableTables.length);
+      let table = game.availableTables[targetIndex];
+      table.visible = true;
       game.addedTables.push(table);
-      game.availableTables.splice(targetIndex,1);
-    } else if (object === "slorgplush" && game.availablePlushes.length > 0){
-      let targetIndex = Math.floor(Math.random()*game.availablePlushes.length)
-      let plush = game.availablePlushes[targetIndex]
-      plush.visible=true;
+      game.availableTables.splice(targetIndex, 1);
+    } else if (object === "slorgplush" && game.availablePlushes.length > 0) {
+      let targetIndex = Math.floor(
+        Math.random() * game.availablePlushes.length
+      );
+      let plush = game.availablePlushes[targetIndex];
+      plush.visible = true;
       game.addedPlushes.push(plush);
-      game.availablePlushes.splice(targetIndex,1);
-    } else if (object === "slorgbanner" ){
-      game.slorgbanner.visible=true;
+      game.availablePlushes.splice(targetIndex, 1);
+    } else if (object === "slorgbanner") {
+      game.slorgbanner.visible = true;
     }
   }
-
-}
+};
 
 var GameState = {
   preload() {},
@@ -722,8 +664,7 @@ var GameState = {
     // this.bgMusic.volume = 0.1;
     // this.bgMusic.play()
 
-    this.talk_sfx = this.sound.add("voice_line1");
-    this.talk_sfx.setVolume(0.2);
+    this.talk_sfx = this.sound.add("voice_line1").setVolume(0.2);
     this.happy_sfx = this.sound.add("voice_line2");
     this.angry_sfx = this.sound.add("voice_line3");
     this.eat_sfx = this.sound.add("eat_sfx1");
@@ -733,15 +674,16 @@ var GameState = {
     this.success_sfx1 = this.sound.add("success_sfx1");
     this.click_sfx = this.sound.add("submit_click");
     this.game_over_sfx = this.sound.add("game_over_sfx");
-    
+    this.door_open_sfx = this.sound.add("door_open").setVolume(1);
+    this.door_rattle_sfx = this.sound.add("door_rattling").setVolume(0.2);
 
     // animation creation
     this.anims.create({
       key: "clap",
       frames: this.anims.generateFrameNumbers("penguin_sheet", {
-        frames: [0, 5],
+        frames: [0, 1, 2, 3, 4, 5],
       }),
-      frameRate: 8,
+      frameRate: 14,
       repeat: -1,
     });
     this.anims.create({
@@ -777,8 +719,25 @@ var GameState = {
     this.add.image(0, 0, "room").setOrigin(0, 0);
     this.add.image(0, 0, "windows").setOrigin(0, 0);
     this.add.image(0, 0, "doorFrame").setOrigin(0, 0);
-    this.door_hinge = this.add.image(500, 500, "doorHinge").setOrigin(0.5, 0.5).setDepth(2);
+    this.door_hinge = this.add
+      .image(500, 500, "doorHinge")
+      .setOrigin(0.5, 0.5)
+      .setDepth(2);
     this.add.image(0, 0, "counter").setOrigin(0, 0).setDepth(3);
+
+    // dialogFrame creation
+    this.dialog_frame = this.add
+      .image(0, 500, "dialog_frame")
+      .setOrigin(0, 0)
+      .setDepth(4);
+    this.dialog_title = this.add
+      .text(200, 750 + dialogYMove, "", {
+        fontFamily: "font1",
+        fontSize: "50px",
+        fill: "black",
+      })
+      .setOrigin(0, 0)
+      .setDepth(4);
 
     // dayFrame creation
     this.dayFrame = this.add
@@ -801,7 +760,7 @@ var GameState = {
         fontFamily: "font1",
         fontSize: "30px",
         fill: "#FF0090",
-        wordWrap: { width: 400 },
+        wordWrap: { width: 600 },
         align: "center",
       })
       .setOrigin(0.5, 0.5)
@@ -813,66 +772,113 @@ var GameState = {
       .setInteractive();
     dayButtonHandler(this, this.dayButton);
     this.dayButton.scale = 0.2;
-    // furniture creation
-    const chair1 = this.add.image(10,457,"chair1").setOrigin(0,0).setDepth(2);
-    chair1.scale=.5;
-    chair1.visible=false;
-    const chair2 = this.add.image(220,458,"chair1").setOrigin(0,0).setDepth(2);
-    chair2.scale=.5;
-    chair2.visible=false;
-    chair2.flipX=true;
-    const chair3 = this.add.image(1000-220,465,"chair1").setOrigin(1,0).setDepth(0);
-    chair3.scale=.5;
-    chair3.visible=false;
-    const chair4 = this.add.image(1003,467,"chair1").setOrigin(1,0).setDepth(2);
-    chair4.scale=.5;
-    chair4.visible=false;
-    chair4.flipX=true;
-    this.availableChairs = [chair1,chair2,chair3,chair4]
-    this.addedChairs = [];
-    const table1 = this.add.image(90,511,"table1").setOrigin(0,0).setDepth(2);
-    table1.scale=.4;
-    table1.visible=false;
-    const table2 = this.add.image(935,510,"table1").setOrigin(1,0).setDepth(2);
-    table2.scale=.4;
-    table2.visible=false;
-    this.availableTables = [table1,table2]
-    this.addedTables=[];
-    const slorgbanner = this.add.image(490,150,"slorgbanner").setOrigin(.5,.5).setDepth(1);
-    slorgbanner.scale=.8
-    slorgbanner.visible=false;
-    this.slorgbanner = slorgbanner
-    const slorgplush = this.add.image(1062,526,"slorgplush").setOrigin(1,0).setDepth(2);
-    slorgplush.scale=.45
-    slorgplush.visible=false;
-    this.availablePlushes = [slorgplush];
-    this.addedPlushes=[];
 
+    this.restartButton = this.add
+      .image(500, -500, "yes_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(8)
+      .setInteractive();
+    this.restartButton.scale = 0.2;
+    restartGameHandler(this, this.restartButton);
+
+    // furniture creation
+    const chair1 = this.add
+      .image(10, 457, "chair1")
+      .setOrigin(0, 0)
+      .setDepth(2);
+    chair1.scale = 0.5;
+    chair1.visible = false;
+    const chair2 = this.add
+      .image(220, 458, "chair1")
+      .setOrigin(0, 0)
+      .setDepth(2);
+    chair2.scale = 0.5;
+    chair2.visible = false;
+    chair2.flipX = true;
+    const chair3 = this.add
+      .image(1000 - 220, 465, "chair1")
+      .setOrigin(1, 0)
+      .setDepth(0);
+    chair3.scale = 0.5;
+    chair3.visible = false;
+    const chair4 = this.add
+      .image(1003, 467, "chair1")
+      .setOrigin(1, 0)
+      .setDepth(2);
+    chair4.scale = 0.5;
+    chair4.visible = false;
+    chair4.flipX = true;
+    this.availableChairs = [chair1, chair2, chair3, chair4];
+    this.addedChairs = [];
+    const table1 = this.add
+      .image(90, 511, "table1")
+      .setOrigin(0, 0)
+      .setDepth(2);
+    table1.scale = 0.4;
+    table1.visible = false;
+    const table2 = this.add
+      .image(935, 510, "table1")
+      .setOrigin(1, 0)
+      .setDepth(2);
+    table2.scale = 0.4;
+    table2.visible = false;
+    this.availableTables = [table1, table2];
+    this.addedTables = [];
+    const slorgbanner = this.add
+      .image(490, 150, "slorgbanner")
+      .setOrigin(0.5, 0.5)
+      .setDepth(1);
+    slorgbanner.scale = 0.8;
+    slorgbanner.visible = false;
+    this.slorgbanner = slorgbanner;
+    const slorgplush = this.add
+      .image(1062, 526, "slorgplush")
+      .setOrigin(1, 0)
+      .setDepth(2);
+    slorgplush.scale = 0.45;
+    slorgplush.visible = false;
+    this.availablePlushes = [slorgplush];
+    this.addedPlushes = [];
 
     // variable setup
-    this.dailyCustomerMax = 2;
+    this.dailyCustomerMax = this.registry.get("DailyCustomerMax") || 2;
     this.dayUpdateSprite = null;
     this.dayUpdateSprite2 = null;
-    this.ingredientMax = 2;
-    this.currentDay = 1;
-    this.dailyCustomerCount = 0;
+    this.ingredientMax = parseInt(this.registry.get("IngredientMax")) || 2;
+    this.currentDay = parseInt(this.registry.get("Day")) || 0;
+    this.currentWeek = parseInt(this.registry.get("Week") || 0)
+    this.dailyCustomerCount = this.registry.get("DailyCustomerCount") || 0;
+    this.newUnlockedCustomer = null;
     this.currentAllowedIngredients = {
       topBun: true,
       bottomBun: true,
       beefpatty: true,
     };
-    this.currentUnlockedCustomers = [0,1];
+    this.currentUnlockedCustomers = this.registry.get("Unlocked_Customers") || [
+      0, 1,
+    ];
     this.currentLockedCustomers = [];
     for (let i = 0; i < npc_dictionary.npcs.length; i++) {
       if (!this.currentUnlockedCustomers.includes(i)) {
         this.currentLockedCustomers.push(i);
       }
     }
-    this.registry.set("Day", this.currentDay);
-    this.registry.set("Health", 5);
+    this.todays_customers = [];
+
+    const unlockedMaxRatio = Math.floor((this.dailyCustomerMax/this.currentUnlockedCustomers.length)+.5);
+    //console.log("unlocked max ratio", unlockedMaxRatio);
+    for (let i = 0; i < unlockedMaxRatio; i++) {
+      this.todays_customers = this.todays_customers.concat(this.currentUnlockedCustomers);
+    }
+    shuffleArray(this.todays_customers);
+    this.todays_customers = this.todays_customers.slice(0,this.dailyCustomerMax);
+    this.current_customer_index = 0;
+
+    //this.registry.set("Day", this.currentDay);
+    //this.registry.set("Health", 5);
     this.registry.set("SwitchNotAllowed", true);
 
-    newCustomer(this);
+    newCustomer(this, true);
   },
 
   update() {
@@ -880,9 +886,9 @@ var GameState = {
       this.registry.set("Order_Complete", false);
       orderCompleteHandler(this);
     }
-    if(this.registry.get("Furniture_Shop_Event") !== undefined){
-      furnitureHandler(this,this.registry.get("Furniture_Shop_Event"));
-      this.registry.set("Furniture_Shop_Event",undefined);
+    if (this.registry.get("FurnitureShopEvent") !== undefined) {
+      furnitureHandler(this, this.registry.get("FurnitureShopEvent"));
+      this.registry.set("FurnitureShopEvent", undefined);
     }
   },
 };

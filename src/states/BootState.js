@@ -44,6 +44,7 @@ var BootState = {
 
   create() {
     resizeApp();
+
     this.scene.start("LoadState")
 
   },

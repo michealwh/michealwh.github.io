@@ -1,279 +1,6 @@
 import shop_dictionary from "../dictonaries/shop.json";
 
-function itemReveal(game,item){
-    game.promptOpen = true;
-    game.registry.set("SwitchNotAllowed", true);
-    const boxView = game.add
-      .image(500, 500, item + "_box")
-      .setOrigin(0.5, 0.5)
-      .setDepth(6);
-    boxView.scale = 0;
-
-    game.tweens.add({
-      targets: [boxView],
-      scale: 1.5,
-      ease: "Power1",
-      duration: 500,
-      repeat: 0,
-      yoyo: false,
-      onComplete: function () {
-          boxView.rotation = -1 * (Math.PI / 180);
-          game.tweens.add({
-            targets: boxView,
-            rotation: 1 * (Math.PI / 180),
-            ease: "Linear",
-            duration: 100,
-            repeat: 3,
-            yoyo: true,
-            onComplete: function () {
-              game.box_sfx.play();
-              const itemView = game.add
-                .image(500, 500, item)
-                .setOrigin(0.5, 0.5);
-              itemView.setDepth(8);
-              itemView.scale = 0;
-              game.tweens.add({
-                targets: itemView,
-                scale: .5,
-                ease: "Linear",
-                duration: 100,
-                repeat: 0,
-                yoyo: false,
-                onComplete: function(){
-                  game.time.addEvent({
-                        delay: 2000,
-                        callback: () => {
-                          game.tweens.add({
-                            targets: [itemView, boxView],
-                            scale: 0,
-                            rotation: 360,
-                            ease: "Linear",
-                            duration: 500,
-                            repeat: 0,
-                            yoyo: false,
-                            onComplete: function () {
-                              itemView.destroy();
-                              boxView.destroy();
-                              game.registry.set("SwitchNotAllowed", false);
-                              game.promptOpen = false;
-                            },
-                          });
-                        },
-                        callbackScope: game,
-                        loop: false,
-                      });
-                }
-              });
-            },
-          });
-        
-      },
-    });
-}
-
-const purchaseActions = {
-  bouncyball: function (game) {
-    game.registry.set("SwitchNotAllowed", true);
-    game.promptOpen = true;
-
-    let balltypes = [
-      "blueball",
-      "redball",
-      "yellowball",
-      "greenball",
-      "rarebouncyball25",
-    ];
-
-    const boxView = game.add
-      .image(500, 500, "bouncyballbox")
-      .setOrigin(0.5, 0.5)
-      .setDepth(6);
-    boxView.scale = 0;
-
-    game.tweens.add({
-      targets: [boxView],
-      scale: 1.5,
-      ease: "Power1",
-      duration: 500,
-      repeat: 0,
-      yoyo: false,
-      onComplete: function () {
-        function shakeBox() {
-          boxView.rotation = -1 * (Math.PI / 180);
-          game.tweens.add({
-            targets: boxView,
-            rotation: 1 * (Math.PI / 180),
-            ease: "Linear",
-            duration: 100,
-            repeat: 3,
-            yoyo: true,
-            onComplete: function () {
-              game.box_sfx.play();
-              boxView.rotation = 0;
-              let chosenball =
-                balltypes[Math.floor(Math.random() * balltypes.length)];
-              if (chosenball === "rarebouncyball25") {
-                chosenball =
-                  balltypes[Math.floor(Math.random() * balltypes.length)];
-              }
-              const ball = game.add
-                .image(500, 500, chosenball)
-                .setOrigin(0.5, 0.5);
-              ball.setDepth(8);
-              ball.scale = 0;
-              const reveal_background = game.add
-                .image(500, 500, "yellow_hue")
-                .setOrigin(0.5, 0.5);
-              reveal_background.setDepth(7);
-              reveal_background.scale = 0;
-              ball.setTintFill("#0a0a0aff");
-             
-              game.tweens.add({
-                targets: [ball],
-                scale: 1,
-                ease: "Power1",
-                duration: 50,
-                repeat: 0,
-                yoyo: false,
-                onComplete: function () {
-                  ball.rotation = -5 * (Math.PI / 180);
-                  game.tweens.add({
-                    targets: ball,
-                    scale: 1.2,
-                    rotation: 5 * (Math.PI / 180),
-                    ease: "Linear",
-                    duration: 100,
-                    repeat: 3,
-                    yoyo: true,
-                    onComplete: function () {
-                      ball.clearTint();
-                      game.tweens.add({
-                        targets: reveal_background,
-                        scale: 1.5,
-                        rotation: 360,
-                        ease: "Linear",
-                        duration: 200,
-                        repeat: 0,
-                        yoyo: false,
-                        onComplete: function () {},
-                      });
-
-                      let targetScale = 1.5;
-
-                      game.tweens.addCounter({
-                        from: 3,
-                        to: 1.2,
-                        duration: 1600,
-                        ease: "Linear",
-                        onUpdate: (tween, targets, key, current, previous) => {
-                          targetScale = current;
-                        },
-                      });
-
-                      let repeatCount = 6;
-                      function ballRepeatHandler(value) {
-                        game.tweens.add({
-                          targets: [ball],
-                          scale: 1.5,
-                          ease: "Bounce",
-                          duration: 800,
-                          repeat: 0,
-                          yoyo: false,
-                          onComplete: function () {},
-                        });
-                      }
-                      ballRepeatHandler(targetScale);
-                      game.time.addEvent({
-                        delay: 2000,
-                        callback: () => {
-                          game.tweens.add({
-                            targets: [reveal_background, ball, boxView],
-                            scale: 0,
-                            rotation: 360,
-                            ease: "Linear",
-                            duration: 500,
-                            repeat: 0,
-                            yoyo: false,
-                            onComplete: function () {
-                              ball.destroy();
-                              reveal_background.destroy();
-                              boxView.destroy();
-                              game.registry.set("SwitchNotAllowed", false);
-                              game.promptOpen = false;
-                              let itemList =
-                                game.registry.get("NewKitchenItem");
-                              itemList.push(chosenball);
-                              game.registry.set("NewKitchenItem", itemList);
-                            },
-                          });
-                        },
-                        callbackScope: game,
-                        loop: false,
-                      });
-                    },
-                  });
-                },
-              });
-            },
-          });
-        }
-        shakeBox();
-      },
-    });
-  },
-  chair1: function (game) {
-    itemReveal(game,"chair1"); 
-    let furnitureList = game.registry.get("Furniture_Shop_Event");
-    console.log(furnitureList);
-    if (furnitureList === undefined) {
-      furnitureList = [];
-    }
-    furnitureList.push("chair");
-    game.registry.set("Furniture_Shop_Event", furnitureList);
-    let pleasantryScore = game.registry.get("Average_Pleasantry");
-    pleasantryScore += 5;
-    game.registry.set("Average_Pleasantry", pleasantryScore);
-  },
-  table1: function (game) {
-    itemReveal(game,"table1"); 
-    let furnitureList = game.registry.get("Furniture_Shop_Event");
-    console.log(furnitureList);
-    if (furnitureList === undefined) {
-      furnitureList = [];
-    }
-    furnitureList.push("table");
-    game.registry.set("Furniture_Shop_Event", furnitureList);
-    let pleasantryScore = game.registry.get("Average_Pleasantry");
-    pleasantryScore += 10;
-    game.registry.set("Average_Pleasantry", pleasantryScore);
-  },
-  slorgplush: function (game) {
-    itemReveal(game,"slorgplush"); 
-    let furnitureList = game.registry.get("Furniture_Shop_Event");
-    console.log(furnitureList);
-    if (furnitureList === undefined) {
-      furnitureList = [];
-    }
-    furnitureList.push("slorgplush");
-    game.registry.set("Furniture_Shop_Event", furnitureList);
-    let pleasantryScore = game.registry.get("Average_Pleasantry");
-    pleasantryScore += 20;
-    game.registry.set("Average_Pleasantry", pleasantryScore);
-  },
-  slorgbanner: function (game) {
-    itemReveal(game,"slorgbanner"); 
-    let furnitureList = game.registry.get("Furniture_Shop_Event");
-    console.log(furnitureList);
-    if (furnitureList === undefined) {
-      furnitureList = [];
-    }
-    furnitureList.push("slorgbanner");
-    game.registry.set("Furniture_Shop_Event", furnitureList);
-    let pleasantryScore = game.registry.get("Average_Pleasantry");
-    pleasantryScore += 40;
-    game.registry.set("Average_Pleasantry", pleasantryScore);
-  },
-};
+import purchaseActions from "../modules/PurchaseActions";
 
 const showPrompt = (game, show, showBtns) => {
   if (show == true) {
@@ -374,18 +101,32 @@ const confirmButtonHandler = (game, object) => {
         let new_globs = current_globs - game.activeItemInfo.cost;
         game.registry.set("Globs", new_globs.toFixed(2));
         if (!game.activeItemInfo.repeatable) {
-          console.log("should be stopping this");
           game.activeButton.tint = "22222288";
           game.activeButton.input.enabled = false;
+          let newKeys = game.allItemKeys.filter(
+            (item) => item !== game.activeItemInfo.key
+          );
+          game.allItemKeys = newKeys;
         } else if (game.activeItemInfo.repeatable > 0) {
           game[game.activeItemInfo.key + "Left"] -= 1;
           if (game[game.activeItemInfo.key + "Left"] <= 0) {
             game.activeButton.tint = "22222288";
             game.activeButton.input.enabled = false;
+            let newKeys = game.allItemKeys.filter(
+              (item) => item !== game.activeItemInfo.key
+            );
+            game.allItemKeys = newKeys;
           }
         }
         showPrompt(game, false);
-
+        if (
+          !game.activeItemInfo.key.includes("ball") &&
+          game.activeItemInfo.type != "ingredient"
+        ) {
+          let currentItemList = game.registry.get("Items");
+          currentItemList.push(game.activeItemInfo.key);
+          game.registry.set("Items", currentItemList);
+        }
         purchaseActions[game.activeItemInfo.key](game);
       },
     });
@@ -419,16 +160,45 @@ const cancelButtonHandler = (game, object) => {
   });
 };
 
-const purchaseButtonhandler = (game, object, item) => {
+const shuffleItems = (game) => {
+  const shuffleArray = (array) => {
+    let currentIndex = array.length;
+    while (currentIndex != 0) {
+      let randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+  };
+  let shuffledItems = game.allItemKeys;
+  shuffleArray(shuffledItems);
+  game.dailyItems = [shuffledItems[0], shuffledItems[1], shuffledItems[2]];
+
+  game.shopItem1.setTexture(game.dailyItems[0] + "_box");
+  game.shopItem2.setTexture(game.dailyItems[1] + "_box");
+  game.shopItem3.setTexture(game.dailyItems[2] + "_box");
+  game.shopButton1.clearTint();
+  game.shopButton1.enabled = true;
+  game.shopButton2.clearTint();
+  game.shopButton2.enabled = true;
+
+  game.shopButton3.clearTint();
+  game.shopButton3.enabled = true;
+};
+
+const purchaseButtonhandler = (game, object, itemIndex) => {
   object.scale = 0.2;
   let debounce = false;
-  let shopItemInfo = shop_dictionary.purchasables[item];
   object.on("pointerdown", (pointer, gameObject) => {
     if (debounce === false && game.promptOpen === false) {
       debounce = true;
     } else {
       return;
     }
+    let shopItemInfo = shop_dictionary.purchasables[game.dailyItems[itemIndex]];
+
     game.activeItemInfo = shopItemInfo;
     game.activeButton = object;
     game.click_sfx.play();
@@ -477,6 +247,7 @@ const purchaseButtonhandler = (game, object, item) => {
   });
   let mouseEnter = false;
   object.on("pointerover", (pointer, gameObject) => {
+    let shopItemInfo = shop_dictionary.purchasables[game.dailyItems[itemIndex]];
     if (game.promptOpen === false) {
       mouseEnter = true;
       if (object.x + object.width / 4 + game.infoFrame.width > 1000) {
@@ -515,7 +286,6 @@ const purchaseButtonhandler = (game, object, item) => {
   object.on("pointerout", (pointer, gameObject) => {
     mouseEnter = false;
     if (game.promptOpen === false) {
-      console.log("pointer out");
       game.infoFrame.scale = 0;
       game.infoText.scale = 0;
     }
@@ -532,10 +302,18 @@ var ShopState = {
     // this.bgMusic.play()
 
     this.promptOpen = false;
+    this.day = 1;
     this.activeItemInfo = {};
-    this.chair1Left = shop_dictionary.purchasables.chair.repeatable;
-    this.table1Left = shop_dictionary.purchasables.table.repeatable;
-    this.slorgplushLeft = shop_dictionary.purchasables.slorgplush.repeatable;
+    this.dailyItems = ["bouncyball", "chair1", "table1"];
+    this.allItemKeys = [];
+
+    for (const item in shop_dictionary.purchasables) {
+      this.allItemKeys.push(item);
+      const itemRepeatable = shop_dictionary.purchasables[item].repeatable;
+      if (typeof itemRepeatable === "number") {
+        this[item + "Left"] = itemRepeatable;
+      }
+    }
     this.click_sfx = this.sound.add("food_click");
     this.bouncy_sfx = this.sound.add("bouncy_open");
     this.box_sfx = this.sound.add("box_sfx");
@@ -544,7 +322,7 @@ var ShopState = {
     this.add.image(0, 0, "shop_bg").setOrigin(0, 0);
 
     this.titleText = this.add
-      .text(500, 250, "shop", {
+      .text(500, 250, "today's items", {
         fontFamily: "unifrakturcook",
         fontSize: "120px",
         fill: "#14ff27ff",
@@ -555,74 +333,72 @@ var ShopState = {
       .setDepth(4);
 
     // bouncy ball
-    this.shopItem = this.add
-      .image(300, 420, "bouncyballbox")
+    this.shopItem1 = this.add
+      .image(300, 420, "bouncyball_box")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
-    this.shopItem.scale = 0.8;
-    this.shopButton = this.add
+    this.shopItem1.scale = 0.8;
+    this.shopButton1 = this.add
       .image(300, 550, "purchase_button")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
-    purchaseButtonhandler(this, this.shopButton, "bouncyball");
+    purchaseButtonhandler(this, this.shopButton1, 0);
 
     // chairs
-    this.shopItem = this.add
+    this.shopItem2 = this.add
       .image(500, 420, "chair1_box")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
-    this.shopItem.scale = 0.8;
-    this.shopButton = this.add
+    this.shopItem2.scale = 0.8;
+    this.shopButton2 = this.add
       .image(500, 550, "purchase_button2")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
-    purchaseButtonhandler(this, this.shopButton, "chair");
+    purchaseButtonhandler(this, this.shopButton2, 1);
 
     // tables
-    this.shopItem = this.add
+    this.shopItem3 = this.add
       .image(700, 420, "table1_box")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
-    this.shopItem.scale = 0.8;
-    this.shopButton = this.add
+    this.shopItem3.scale = 0.8;
+    this.shopButton3 = this.add
       .image(700, 550, "purchase_button")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
-    purchaseButtonhandler(this, this.shopButton, "table");
+    purchaseButtonhandler(this, this.shopButton3, 2);
 
-    // slorg banner
-    this.shopItem = this.add
-      .image(350, 420 + 300, "slorgbanner_box")
-      .setOrigin(0.5, 0.5)
-      .setDepth(4)
-      .setInteractive();
-    this.shopItem.scale = 0.8;
-    this.shopButton = this.add
-      .image(350, 550 + 300, "purchase_button2")
-      .setOrigin(0.5, 0.5)
-      .setDepth(4)
-      .setInteractive();
-    purchaseButtonhandler(this, this.shopButton, "slorgbanner");
-
-    // slorg banner
-    this.shopItem = this.add
-      .image(650, 420 + 300, "slorgplush_box")
-      .setOrigin(0.5, 0.5)
-      .setDepth(4)
-      .setInteractive();
-    this.shopItem.scale = 0.8;
-    this.shopButton = this.add
-      .image(650, 550 + 300, "purchase_button2")
-      .setOrigin(0.5, 0.5)
-      .setDepth(4)
-      .setInteractive();
-    purchaseButtonhandler(this, this.shopButton, "slorgplush");
+    const AlreadyOwnedItems = localStorage.getItem("Items");
+    if (AlreadyOwnedItems) {
+      console.log("found owned items");
+      let itemList = JSON.parse(AlreadyOwnedItems);
+      itemList.forEach((item) => {
+        let itemInfo = shop_dictionary.purchasables[item];
+        if (itemInfo === undefined) {
+          return;
+        }
+        if (!itemInfo.repeatable) {
+          this[item + "Button"].tint = "22222288";
+          this[item + "Button"].input.enabled = false;
+          let newKeys = this.allItemKeys.filter((item) => item !== item);
+          this.allItemKeys = newKeys;
+        } else if (itemInfo.repeatable > 0) {
+          this[item + "Left"] -= 1;
+          if (this[item + "Left"] <= 0) {
+            this[item + "Button"].tint = "22222288";
+            this[item + "Button"].input.enabled = false;
+            let newKeys = this.allItemKeys.filter((item) => item !== item);
+            this.allItemKeys = newKeys;
+          }
+        }
+      });
+    }
 
     this.infoFrame = this.add
       .image(100, 100, "info_frame")
@@ -678,7 +454,13 @@ var ShopState = {
       .setDepth(8);
     cancelButtonHandler(this, this.cancelBtn);
   },
-  update() {},
+  update() {
+    if (this.registry.get("Day") !== this.day) {
+      console.log("day changed in shop");
+      this.day = this.registry.get("Day");
+      shuffleItems(this);
+    }
+  },
 };
 
 export default ShopState;

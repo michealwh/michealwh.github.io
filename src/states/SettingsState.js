@@ -49,7 +49,7 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(0.5, 0)
 
-    this.pres_text = this.add.text(320, 640, "Presentation: 0/100", {
+    this.pres_text = this.add.text(320, 640, "Presentation: 0%", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -57,7 +57,7 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(0.5, 0)
 
-    this.punc_text = this.add.text(680, 640, "Punctuality: 0/100", {
+    this.punc_text = this.add.text(680, 640, "Punctuality: 0%", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -65,7 +65,7 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(0.5, 0)
 
-    this.prec_text = this.add.text(320, 720, "Precision: 0/100", {
+    this.prec_text = this.add.text(320, 720, "Precision: 0%", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -73,7 +73,7 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(0.5, 0)
 
-    this.ples_text = this.add.text(680, 720, "Pleasantry: 0/100", {
+    this.ples_text = this.add.text(680, 720, "Pleasantry: 0%", {
       fontFamily: "font1",
       fontSize: "30px",
       fill: "black",
@@ -85,8 +85,8 @@ var SettingsState = {
     if (this.registry.get("Day")) {
       this.day_text.text = "Day: " + this.registry.get("Day")
     }
-    if (this.registry.get("TotalGlobs")) {
-      this.points_text.text = "Total Globs: "+ this.registry.get("TotalGlobs")
+    if (this.registry.get("Total_Globs")) {
+      this.points_text.text = "Total Globs: "+ this.registry.get("Total_Globs")
     }
     if (this.registry.get("Total_Orders")) {
       this.order_text.text = "Total Orders: " + this.registry.get("Total_Orders")
@@ -95,16 +95,16 @@ var SettingsState = {
       this.globs_text.text = "Total Correct: " + this.registry.get("Total_Correct")
     }
     if (this.registry.get("Average_Presentation")) {
-      this.pres_text.text = "Presentation: " + this.registry.get("Average_Presentation") + "/100"
+      this.pres_text.text = "Presentation: " + this.registry.get("Average_Presentation") + "%"
     }
     if (this.registry.get("Average_Punctuality")) {
-      this.punc_text.text = "Punctuality: " + this.registry.get("Average_Punctuality") + "/100"
+      this.punc_text.text = "Punctuality: " + this.registry.get("Average_Punctuality") + "%"
     }
     if (this.registry.get("Average_Precision")) {
-      this.prec_text.text = "Precision: " + this.registry.get("Average_Precision") + "/100"
+      this.prec_text.text = "Precision: " + this.registry.get("Average_Precision") + "%"
     }
      if (this.registry.get("Average_Pleasantry")) {
-      this.ples_text.text = "Pleasantry: " + this.registry.get("Average_Pleasantry") + "/100"
+      this.ples_text.text = "Pleasantry: " + this.registry.get("Average_Pleasantry") + "%"
     }
   }
 };

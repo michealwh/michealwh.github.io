@@ -9,12 +9,10 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
   let objectCurrentVelocityY = 0;
 
   game.active_ingredients.push(object);
-  console.log("after addition", game.active_ingredients);
 
   object.setBounce(0.2, 0.2);
   if (object.texture.key.includes("ball")){
     const bounce = Math.random() * (1.2-.5) + .5;
-    console.log(bounce)
     object.setBounce(bounce);
   }
   object.setCollideWorldBounds(true);
@@ -95,12 +93,12 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
 
       return;
     }
-    console.log("dragend", dropped);
+    //console.log("dragend", dropped);
 
     object.body.setAllowGravity(true);
     let velocityY = objectCurrentVelocityY;
     let velocityX = objectCurrentVelocityX;
-    console.log("after dragend: velocityX", velocityX, "velocityY", velocityY);
+    //console.log("after dragend: velocityX", velocityX, "velocityY", velocityY);
     object.setVelocity(velocityX, velocityY);
   });
 };
@@ -218,24 +216,16 @@ const submitButtonhandler = (object, game) => {
             loop: false,
           });
         }
-        console.log(distOff / Burger_Ingredients.length);
-        console.log(Math.min(50, distOff / Burger_Ingredients.length));
+        //console.log(distOff / Burger_Ingredients.length);
+        //console.log(Math.min(50, distOff / Burger_Ingredients.length));
         const presentationStat = Math.min(
           100,
           (50 - Math.min(50, distOff / Burger_Ingredients.length - 1)) * 2 + 5
         ); // 5 is perfect 10 is good 50 is cut off for bad
         console.log("Presentation stat", presentationStat);
 
-        const currentPresentationStat = game.registry.get(
-          "Average_Presentation"
-        );
         let presentationToSet = Math.floor(presentationStat);
         game.registry.set("Current_Presentation", presentationToSet);
-        if (currentPresentationStat > 0) {
-          presentationToSet = Math.floor(
-            (currentPresentationStat + presentationStat) / 2
-          );
-        }
         game.click_sfx.play();
 
         game.tweens.add({
@@ -248,7 +238,7 @@ const submitButtonhandler = (object, game) => {
           yoyo: true,
           onComplete: function () {
             const submitOrder = () => {
-              game.registry.set("Average_Presentation", presentationToSet);
+              //game.registry.set("Average_Presentation", presentationToSet);
               game.top_ingredient = game.servingplate;
               game.used_ingredients = [];
               game.registry.set("Burger", Burger_Ingredients);
@@ -420,16 +410,14 @@ var KitchenState = {
   update() {
 
 
-    if(this.registry.get("NewKitchenItem").length>0 && this.adding_items==false){
+    if(this.registry.get("NewKitchenItemEvent").length>0 && this.adding_items==false){
       this.adding_items = true
-      console.log("NEW KITCHEN ITESM ADDED")
-      const itemList = this.registry.get("NewKitchenItem")
+      const itemList = this.registry.get("NewKitchenItemEvent")
       
-      console.log("NEW KITCHEN ITESM ADDED",itemList)
       for (let i = 0; i < itemList.length; i++){
-        newKitchenItem(this,itemList[i]);
+        newKitchenItem(this,itemList[i],"specialitem");
       }
-      this.registry.set("NewKitchenItem",[]);
+      this.registry.set("NewKitchenItemEvent",[]);
       this.adding_items = false
     }
 
@@ -473,7 +461,6 @@ var KitchenState = {
           }
           this.trash_sfx.play();
           this.active_ingredients.splice(i, 1);
-          console.log("there was an overlap");
           const game = this;
           this.tweens.add({
             targets: object,
@@ -486,7 +473,6 @@ var KitchenState = {
             repeat: 0,
             yoyo: false,
             onComplete: function () {
-              console.log("after removal", game.active_ingredients);
               object.destroy();
             },
           });
@@ -512,7 +498,6 @@ var KitchenState = {
               let xPos = this.servingplate.x - this.used_ingredients[i].x;
               let yPos = this.servingplate.y - this.used_ingredients[i].y;
               const ingredient_object = { xPos, yPos, ingredient_string };
-              console.log(ingredient_object);
               Burger_Information.push(ingredient_object);
               Burger_Ingredients.push(ingredient_string);
             }
@@ -522,7 +507,6 @@ var KitchenState = {
 
             const index = this.active_ingredients.indexOf(object);
             this.active_ingredients.splice(index, 1);
-            console.log("setting objects size");
             object.body.setSize(
               this.top_ingredient.width / 4,
               object.height / 2,
@@ -556,7 +540,6 @@ var KitchenState = {
         const objectTrashed = (object, trashcan) => {
           console.log("USED INGREDIENTS GETTING TRASHED");
           if (this.top_ingredient == this.servingplate) {
-            console.log("returning for sum reason");
             return;
           }
           this.top_ingredient = this.servingplate;

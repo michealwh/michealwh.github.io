@@ -25,24 +25,21 @@ const globUpdateHandler = (game) => {
     onComplete: function () {
       game.time.addEvent({
         delay: 500,
-        callback:
-          function () {
-            game.tweens.add({
-              targets: game.addedText,
-              alpha: 0,
-              ease: "Linear",
-              duration: 1000,
-              repeat: 0,
-              yoyo: false,
-              onComplete: function () {
-
-              }
-            });
-          },
+        callback: function () {
+          game.tweens.add({
+            targets: game.addedText,
+            alpha: 0,
+            ease: "Linear",
+            duration: 1000,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {},
+          });
+        },
         callbackScope: game,
         loop: false,
       });
-    }
+    },
   });
 };
 
@@ -51,32 +48,38 @@ const healthHandler = (game) => {
 
   if (new_health < game.health) {
     // health was taken away
-    game.health -= 1;
-    const targetHealthPart = game.healthItems[0];
-    targetHealthPart.rotation = -5 * (Math.PI / 180);
-    game.tweens.add({
-      targets: targetHealthPart,
-      rotation: 5 * (Math.PI / 180),
-      ease: "Linear",
-      duration: 100,
-      repeat: 1,
-      yoyo: true,
-      onComplete: function () {
-        targetHealthPart.body.setAllowGravity(true);
-        let direction = Math.round(Math.random());
-        if (direction !== 1) {
-          direction = -1;
-        }
-        targetHealthPart.setVelocity(direction * Math.random() * 15, -15);
+    const difference = game.health - new_health;
+    console.log("Health decreased by " + difference);
+    for (let i = 0; i < difference; i++) {
+      if (game.healthItems.length > 0) {
+        game.health -= 1;
+        const targetHealthPart = game.healthItems[i];
+        targetHealthPart.rotation = -5 * (Math.PI / 180);
+        game.tweens.add({
+          targets: targetHealthPart,
+          rotation: 5 * (Math.PI / 180),
+          ease: "Linear",
+          duration: 100,
+          repeat: 1,
+          yoyo: true,
+          onComplete: function () {
+            targetHealthPart.body.setAllowGravity(true);
+            let direction = Math.round(Math.random());
+            if (direction !== 1) {
+              direction = -1;
+            }
+            targetHealthPart.setVelocity(direction * Math.random() * 15, -15);
 
-        game.healthItems.splice(0, 1);
-      },
-    });
+            game.healthItems.splice(0, 1);
+          },
+        });
+      }
+    }
   }
 };
 
 var MenuState = {
-  preload() { },
+  preload() {},
 
   create() {
     const gearBtn = this.add
@@ -86,7 +89,8 @@ var MenuState = {
     const orderBtn = this.add
       .image(135, 45, "notebook_icon")
       .setOrigin(0.5, 0.5)
-      .setInteractive();
+      //.setInteractive();
+      orderBtn.visible=false
     const kitchenBtn = this.add
       .image(235, 45, "chef_icon")
       .setOrigin(0.5, 0.5)
@@ -96,16 +100,21 @@ var MenuState = {
       .setOrigin(0.5, 0.5)
       .setInteractive();
 
+    const galleryBtn = this.add
+      .image(135, 45, "notebook_icon")
+      .setOrigin(0.5, 0.5)
+      .setInteractive() //.setTint(0x076b22);
+
     const shopBtn = this.add
-      .image(440, 45, "shop_icon")
+      .image(435, 45, "shop_icon")
       .setOrigin(0.5, 0.5)
       .setInteractive();
-
 
     gearBtn.scale = 0.6;
     orderBtn.scale = 0.6;
     kitchenBtn.scale = 0.6;
     counterBtn.scale = 0.6;
+    galleryBtn.scale = 0.6;
     shopBtn.scale = 0.6;
 
     const globIcon = this.add
@@ -115,11 +124,16 @@ var MenuState = {
     globIcon.scale = 0.2;
     this.globIcon = globIcon;
 
-    const globText = this.add.text(915, 60, "0", {
-      fontFamily: "font1",
-      fontSize: "50px",
-      fill: "rgba(157, 255, 122, 1)",
-    });
+    const globText = this.add.text(
+      915,
+      60,
+      this.registry.get("Globs").toString() || 0,
+      {
+        fontFamily: "font1",
+        fontSize: "50px",
+        fill: "rgba(157, 255, 122, 1)",
+      }
+    );
     globText.setOrigin(1, 1);
     globText.depth = 1;
     globText.setStyle({
@@ -214,10 +228,12 @@ var MenuState = {
         }
         if (
           (this.scene.isActive("SettingsState") === false &&
-            this.scene.isActive("OrderState") === false &&
-            (object === kitchenBtn || object === counterBtn || object === shopBtn)) ||
+            this.scene.isActive("OrderState") === false && this.scene.isActive("GalleryState") === false &&
+            (object === kitchenBtn ||
+              object === counterBtn ||
+              object === shopBtn)) ||
           object === orderBtn ||
-          object === gearBtn
+          object === gearBtn || object === galleryBtn
         ) {
           if (
             (object === kitchenBtn && this.scene.isActive("KitchenState")) ||
@@ -226,7 +242,7 @@ var MenuState = {
           ) {
             return;
           }
-          if (object === orderBtn && this.scene.isActive("SettingsState")) {
+          if ((object === orderBtn || object === galleryBtn) && this.scene.isActive("SettingsState")) {
             return;
           }
           this.tweens.add({
@@ -255,10 +271,12 @@ var MenuState = {
     };
 
     hoverEffectHandler(gearBtn);
-    hoverEffectHandler(orderBtn);
     hoverEffectHandler(kitchenBtn);
     hoverEffectHandler(counterBtn);
+    hoverEffectHandler(galleryBtn);
     hoverEffectHandler(shopBtn);
+
+    healthHandler(this);
 
     gearBtn.on("pointerdown", (pointer, gameObject) => {
       if (this.scene.isActive("SettingsState") === false) {
@@ -267,12 +285,11 @@ var MenuState = {
         }
         click_sfx.play();
         this.time_paused_start = this.time.now;
-        console.log("setting start of paused time", this.time_paused_start);
+        //console.log("setting start of paused time", this.time_paused_start);
       } else {
         click_sfx.play();
-        console.log("stopping paused time");
         this.time_paused += this.time.now - this.time_paused_start;
-        console.log(this.time_paused, this.time_paused_start, this.time.now);
+        //console.log(this.time_paused, this.time_paused_start, this.time.now);
       }
 
       if (this.scene.isActive("OrderState")) {
@@ -280,6 +297,12 @@ var MenuState = {
         this.scene.bringToTop(this.lastScene);
         this.scene.bringToTop("SettingsState");
         this.scene.bringToTop();
+      } else if (this.scene.isActive("GalleryState")){
+        this.scene.pause("GalleryState").run("SettingsState");
+        this.scene.bringToTop(this.lastScene);
+        this.scene.bringToTop("SettingsState");
+        this.scene.bringToTop();
+      
       } else if (this.scene.isActive("SettingsState")) {
         this.scene.pause("SettingsState").run(this.lastScene);
         this.scene.bringToTop(this.lastScene);
@@ -297,7 +320,10 @@ var MenuState = {
         this.scene.pause("GameState").run("SettingsState");
         this.scene.bringToTop("SettingsState");
         this.scene.bringToTop();
-      } else if (this.scene.isActive("ShopState") && this.scene.isPaused("ShopState") === false) {
+      } else if (
+        this.scene.isActive("ShopState") &&
+        this.scene.isPaused("ShopState") === false
+      ) {
         this.lastScene = "ShopState";
         this.scene.pause("ShopState").run("SettingsState");
         this.scene.bringToTop("SettingsState");
@@ -305,38 +331,43 @@ var MenuState = {
       }
     });
 
-    orderBtn.on("pointerdown", (pointer, gameObject) => {
-      if (
-        this.registry.get("SwitchNotAllowed") === true ||
-        this.scene.isActive("SettingsState")
-      ) {
-        return;
-      }
-      click_sfx.play();
-      if (
-        this.scene.isActive("OrderState") &&
-        this.scene.isPaused("OrderState") === false
-      ) {
-        this.scene.pause("OrderState").run(this.lastScene);
-        this.scene.bringToTop(this.lastScene);
-        this.scene.bringToTop();
-      } else if (this.scene.isActive("KitchenState")) {
-        this.lastScene = "KitchenState";
-        this.scene.pause("KitchenState").run("OrderState");
-        this.scene.bringToTop("OrderState");
-        this.scene.bringToTop();
-      } else if (this.scene.isActive("GameState")) {
-        this.lastScene = "GameState";
-        this.scene.pause("GameState").run("OrderState");
-        this.scene.bringToTop("OrderState");
-        this.scene.bringToTop();
-      } else if (this.scene.isActive("ShopState")) {
-        this.lastScene = "ShopState";
-        this.scene.pause("ShopState").run("OrderState");
-        this.scene.bringToTop("OrderState");
-        this.scene.bringToTop();
-      }
-    });
+    // orderBtn.on("pointerdown", (pointer, gameObject) => {
+    //   if (
+    //     this.registry.get("SwitchNotAllowed") === true ||
+    //     this.scene.isActive("SettingsState")
+    //   ) {
+    //     return;
+    //   }
+    //   click_sfx.play();
+    //   if (
+    //     this.scene.isActive("OrderState") &&
+    //     this.scene.isPaused("OrderState") === false
+    //   ) {
+    //     this.scene.pause("OrderState").run(this.lastScene);
+    //     this.scene.bringToTop(this.lastScene);
+    //     this.scene.bringToTop();
+    //   } else if (this.scene.isActive("GalleryState")){
+    //     this.scene.pause("GalleryState").run("OrderState");
+    //     this.scene.bringToTop(this.lastScene);
+    //     this.scene.bringToTop("OrderState");
+    //     this.scene.bringToTop();
+    //   } else if (this.scene.isActive("KitchenState")) {
+    //     this.lastScene = "KitchenState";
+    //     this.scene.pause("KitchenState").run("OrderState");
+    //     this.scene.bringToTop("OrderState");
+    //     this.scene.bringToTop();
+    //   } else if (this.scene.isActive("GameState")) {
+    //     this.lastScene = "GameState";
+    //     this.scene.pause("GameState").run("OrderState");
+    //     this.scene.bringToTop("OrderState");
+    //     this.scene.bringToTop();
+    //   } else if (this.scene.isActive("ShopState")) {
+    //     this.lastScene = "ShopState";
+    //     this.scene.pause("ShopState").run("OrderState");
+    //     this.scene.bringToTop("OrderState");
+    //     this.scene.bringToTop();
+    //   }
+    // });
 
     kitchenBtn.on("pointerdown", (pointer, gameObject) => {
       if (this.registry.get("SwitchNotAllowed") === true) {
@@ -406,6 +437,45 @@ var MenuState = {
         this.scene.bringToTop();
       }
     });
+
+    galleryBtn.on("pointerdown", (pointer, gameObject) => {
+      if (
+        this.registry.get("SwitchNotAllowed") === true ||
+        this.scene.isActive("SettingsState")
+      ) {
+        return;
+      }
+      click_sfx.play();
+      if (
+        this.scene.isActive("GalleryState") &&
+        this.scene.isPaused("GalleryState") === false
+      ) {
+        this.scene.pause("GalleryState").run(this.lastScene);
+        this.scene.bringToTop(this.lastScene);
+        this.scene.bringToTop();
+      } else if (this.scene.isActive("OrderState")){
+        this.scene.pause("OrderState").run("GalleryState");
+        this.scene.bringToTop(this.lastScene);
+        this.scene.bringToTop("GalleryState");
+        this.scene.bringToTop()
+       } else if (this.scene.isActive("KitchenState")) {
+        this.lastScene = "KitchenState";
+        this.scene.pause("KitchenState").run("GalleryState");
+        this.scene.bringToTop("GalleryState");
+        this.scene.bringToTop();
+      } else if (this.scene.isActive("GameState")) {
+        this.lastScene = "GameState";
+        this.scene.pause("GameState").run("GalleryState");
+        this.scene.bringToTop("GalleryState");
+        this.scene.bringToTop();
+      } else if (this.scene.isActive("ShopState")) {
+        this.lastScene = "ShopState";
+        this.scene.pause("ShopState").run("GalleryState");
+        this.scene.bringToTop("GalleryState");
+        this.scene.bringToTop();
+      }
+    });
+
     shopBtn.on("pointerdown", (pointer, gameObject) => {
       if (this.registry.get("SwitchNotAllowed") === true) {
         return;
@@ -440,20 +510,17 @@ var MenuState = {
         this.scene.bringToTop();
       }
     });
+    const game = this;
+    this.registry.events.on("changedata", function (parent, key, data) {
+      if (key === "Globs") {
+        globUpdateHandler(game);
+      } else if (key === "Health") {
+        healthHandler(game);
+      }
+    });
   },
 
   update() {
-    if (this.registry.get("ChangedHealth") === true) {
-      console.log("GOT CHANGED HEALTH ON MENU");
-      this.registry.set("ChangedHealth", false);
-      healthHandler(this);
-    }
-    if (
-      this.registry.get("Globs") !== undefined &&
-      this.globText.text !== this.registry.get("Globs").toString()
-    ) {
-      globUpdateHandler(this);
-    }
     if (this.registry.get("Order_Began") === true) {
       this.registry.set("Order_Began", false);
       this.time_order_began = this.time.now;
@@ -465,27 +532,27 @@ var MenuState = {
         1000;
 
       const ingredientCount = this.registry.get("Order").length;
-      console.log(
-        "Time per each ingredient:" + time_finished / ingredientCount
-      );
+      // console.log(
+      //   "Time per each ingredient:" + time_finished / ingredientCount
+      // );
       const punctualityStat = Math.floor(
         100 - Math.min(100, time_finished / ingredientCount)
       );
       this.registry.set("Order_Time_Finished", time_finished);
       this.time_paused = 0;
-      const currentPunctualityStat = this.registry.get("Average_Punctuality");
+      //const currentPunctualityStat = this.registry.get("Average_Punctuality");
       let punctualityToSet = Math.floor(punctualityStat);
       this.registry.set("Current_Punctuality", punctualityToSet);
-      if (currentPunctualityStat > 0) {
-        punctualityToSet = Math.floor(
-          (currentPunctualityStat + punctualityStat) / 2
-        );
-      }
-      this.registry.set("Average_Punctuality", punctualityToSet);
-      console.log(
-        "Order Time Finished",
-        this.registry.get("Order_Time_Finished")
-      );
+      // if (currentPunctualityStat > 0) {
+      //   punctualityToSet = Math.floor(
+      //     (currentPunctualityStat + punctualityStat) / 2
+      //   );
+      // }
+      // this.registry.set("Average_Punctuality", punctualityToSet);
+      // console.log(
+      //   "Order Time Finished",
+      //   this.registry.get("Order_Time_Finished")
+      // );
     }
   },
 };
