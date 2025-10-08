@@ -56,7 +56,7 @@
     "bouncyball": {
       "key": "bouncyball",
       "title": "Super Bouncy Ball Mystery Pack",
-      "description": "bouncy ball mystery pack",
+      "description": "made with real bounce!",
       "type": "ingredient",
       "cost": 5.99,
       "repeatable": true
@@ -65,7 +65,7 @@
     "chair1": {
       "key": "chair1",
       "title": "Dining Chair",
-      "description": "increases pleasantry by +5",
+      "description": "increases pleasantry by +5%",
       "type": "furniture",
       "cost": 44.99,
       "repeatable": 4
@@ -73,7 +73,7 @@
     "table1": {
       "key": "table1",
       "title": "Dining Table",
-      "description": "increases pleasantry by +10",
+      "description": "increases pleasantry by +10%",
       "type": "furniture",
       "cost": 74.99,
       "repeatable": 2
@@ -81,7 +81,7 @@
     "slorgbanner": {
       "key": "slorgbanner",
       "title": "Slorg's Eatery Flag",
-      "description": "increases pleasantry by +40",
+      "description": "increases pleasantry by +40%",
       "type": "furniture",
       "cost": 399.99,
       "repeatable": false
@@ -89,7 +89,7 @@
     "slorgplush": {
       "key": "slorgplush",
       "title": "Slorg's Plush",
-      "description": "increases pleasantry by +20",
+      "description": "increases pleasantry by +20%",
       "type": "furniture",
       "cost": 119.99,
       "repeatable": 1

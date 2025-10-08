@@ -252,7 +252,7 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
       mouseEnter = true;
       if (object.x + object.width / 4 + game.infoFrame.width > 1000) {
         game.infoFrame.x = object.x - 52;
-        game.infoText.x = object.x - 68;
+        game.infoText.x = object.x - 135;
         game.infoFrame.flipX = true;
         game.infoFrame.setOrigin(1, 1);
         game.infoText.setOrigin(1, 1);
@@ -261,14 +261,22 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
         game.infoText.setOrigin(0, 1);
         game.infoFrame.flipX = false;
         game.infoFrame.x = object.x + 50;
-        game.infoText.x = object.x + 70;
+        game.infoText.x = object.x + 120;
       }
       game.infoFrame.y = object.y - 5;
-      game.infoText.y = object.y - 75;
+      game.infoText.y = object.y - 100;
       game.infoText.text =
-        "$" + shopItemInfo.cost + " " + shopItemInfo.description;
+        "C: $" + shopItemInfo.cost + "\nD: " + shopItemInfo.description;
       game.tweens.add({
-        targets: [game.infoFrame, game.infoText],
+        targets: [game.infoFrame],
+        scale: 1.5,
+        ease: "Power1",
+        duration: 100,
+        repeat: 0,
+        yoyo: false,
+      })
+      game.tweens.add({
+        targets: [game.infoText],
         scale: 1,
         ease: "Power1",
         duration: 100,
@@ -322,7 +330,7 @@ var ShopState = {
     this.add.image(0, 0, "shop_bg").setOrigin(0, 0);
 
     this.titleText = this.add
-      .text(500, 250, "today's items", {
+      .text(500, 250, "slorg shop", {
         fontFamily: "unifrakturcook",
         fontSize: "120px",
         fill: "#14ff27ff",
@@ -332,15 +340,27 @@ var ShopState = {
       .setOrigin(0.5, 0.5)
       .setDepth(4);
 
+      this.infoContentText = this.add
+      .text(720, 200, "new stock every day", {
+        fontFamily: "font1",
+        fontSize: "30px",
+        fill: "#ff50df",
+        wordWrap: { width: 600 },
+        align: "center",
+      })
+      .setOrigin(0.5, 0.5)
+      .setDepth(4);
+      this.infoContentText.rotation = 15 * (Math.PI/180);
+
     // bouncy ball
     this.shopItem1 = this.add
-      .image(300, 420, "bouncyball_box")
+      .image(280, 500, "bouncyball_box")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
     this.shopItem1.scale = 0.8;
     this.shopButton1 = this.add
-      .image(300, 550, "purchase_button")
+      .image(280, 640, "purchase_button")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
@@ -348,13 +368,13 @@ var ShopState = {
 
     // chairs
     this.shopItem2 = this.add
-      .image(500, 420, "chair1_box")
+      .image(500, 500, "chair1_box")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
     this.shopItem2.scale = 0.8;
     this.shopButton2 = this.add
-      .image(500, 550, "purchase_button2")
+      .image(500, 640, "purchase_button2")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
@@ -362,13 +382,13 @@ var ShopState = {
 
     // tables
     this.shopItem3 = this.add
-      .image(700, 420, "table1_box")
+      .image(720, 500, "table1_box")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
     this.shopItem3.scale = 0.8;
     this.shopButton3 = this.add
-      .image(700, 550, "purchase_button")
+      .image(720, 640, "purchase_button")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
@@ -410,12 +430,12 @@ var ShopState = {
         fontFamily: "font1",
         fontSize: "20px",
         fill: "#09376bff",
-        wordWrap: { width: 260 },
-        align: "center",
+        wordWrap: { width: 280 },
       })
       .setOrigin(0, 1)
       .setDepth(6);
     this.infoText.scale = 0;
+    Phaser.Display.Align.In.Center(this.infoText,this.infoFrame);
     this.shopPrompt = this.add
       .image(500, -500, "notice_background2")
       .setOrigin(0.5, 0.5)

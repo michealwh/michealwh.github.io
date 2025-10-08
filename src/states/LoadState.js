@@ -1,5 +1,5 @@
 // MODULES
-//import secureLocalStorage from "react-secure-storage";
+import secureLocalStorage from "react-secure-storage";
 
 // DICTONARY
 import shop_dictonary from "../dictonaries/shop.json";
@@ -333,21 +333,21 @@ var LoadState = {
     const defaultCustomers = [0, 1];
     const defaultDailyCustomerMax = 2;
 
-    // const Total_Globs = parseFloat(secureLocalStorage.getItem("Total_Globs"));
-    // const Globs = parseFloat(secureLocalStorage.getItem("Globs"));
-    // const Total_Orders = parseInt(secureLocalStorage.getItem("Total_Orders"));
-    // const Total_Correct = parseInt(secureLocalStorage.getItem("Total_Correct"));
-    // const Average_Pleasantry = parseInt(secureLocalStorage.getItem("Average_Pleasantry"));
-    // const Average_Precision = parseInt(secureLocalStorage.getItem("Average_Precision"));
-    // const Average_Presentation = parseInt(secureLocalStorage.getItem("Average_Presentation"));
-    // const Average_Punctuality = parseInt(secureLocalStorage.getItem("Average_Punctuality"));
-    // const DayCount = parseInt(secureLocalStorage.getItem("Day"));
-    // const Health = parseInt(secureLocalStorage.getItem("Health"));
-    // const Unlocked_Customers = secureLocalStorage.getItem("Unlocked_Customers");
-    // const Items = secureLocalStorage.getItem("Items");
-    // const IngredientMax = parseInt(secureLocalStorage.getItem("IngredientMax"));
-    // const DailyCustomerMax = parseInt(secureLocalStorage.getItem("DailyCustomerMax"));
-    // const DailyCustomerCount = parseInt(secureLocalStorage.getItem("DailyCustomerCount"));
+    const Total_Globs = parseFloat(secureLocalStorage.getItem("Total_Globs"));
+    const Globs = parseFloat(secureLocalStorage.getItem("Globs"));
+    const Total_Orders = parseInt(secureLocalStorage.getItem("Total_Orders"));
+    const Total_Correct = parseInt(secureLocalStorage.getItem("Total_Correct"));
+    const Average_Pleasantry = parseInt(secureLocalStorage.getItem("Average_Pleasantry"));
+    const Average_Precision = parseInt(secureLocalStorage.getItem("Average_Precision"));
+    const Average_Presentation = parseInt(secureLocalStorage.getItem("Average_Presentation"));
+    const Average_Punctuality = parseInt(secureLocalStorage.getItem("Average_Punctuality"));
+    const DayCount = parseInt(secureLocalStorage.getItem("Day"));
+    const Health = parseInt(secureLocalStorage.getItem("Health"));
+    const Unlocked_Customers = secureLocalStorage.getItem("Unlocked_Customers");
+    const Items = secureLocalStorage.getItem("Items");
+    const IngredientMax = parseInt(secureLocalStorage.getItem("IngredientMax"));
+    const DailyCustomerMax = parseInt(secureLocalStorage.getItem("DailyCustomerMax"));
+    const DailyCustomerCount = parseInt(secureLocalStorage.getItem("DailyCustomerCount"));
     let furnitureList = [];
     let ingredientList = [];
 
@@ -362,6 +362,7 @@ var LoadState = {
       this.registry.set("Average_Presentation", 0);
       this.registry.set("Average_Punctuality", 0);
       this.registry.set("Day", 1);
+      this.registry.set("DayOver",false);
 
       this.registry.set("IngredientMax", defaultIngredientMax);
       this.registry.set("Unlocked_Customers", defaultCustomers);
@@ -378,18 +379,18 @@ var LoadState = {
       this.registry.set("Punctuality_Mod",0);
       this.registry.set("Tip_Mod",0);
 
-      // secureLocalStorage.setItem("Health", defaultHealth);
-      // secureLocalStorage.setItem("Total_Globs", 0);
-      // secureLocalStorage.setItem("Total_Orders", 0);
-      // secureLocalStorage.setItem("Total_Correct", 0);
-      // secureLocalStorage.setItem("Globs", defaultGlobs);
-      // secureLocalStorage.setItem("IngredientMax", defaultIngredientMax);
-      // secureLocalStorage.setItem(
-      //   "Unlocked_Customers",
-      //   JSON.stringify(defaultCustomers)
-      // );
-      // secureLocalStorage.setItem("DailyCustomerMax", defaultDailyCustomerMax);
-      // secureLocalStorage.setItem("DailyCustomerCount", 0);
+      secureLocalStorage.setItem("Health", defaultHealth);
+      secureLocalStorage.setItem("Total_Globs", 0);
+      secureLocalStorage.setItem("Total_Orders", 0);
+      secureLocalStorage.setItem("Total_Correct", 0);
+      secureLocalStorage.setItem("Globs", defaultGlobs);
+      secureLocalStorage.setItem("IngredientMax", defaultIngredientMax);
+      secureLocalStorage.setItem(
+        "Unlocked_Customers",
+        JSON.stringify(defaultCustomers)
+      );
+      secureLocalStorage.setItem("DailyCustomerMax", defaultDailyCustomerMax);
+      secureLocalStorage.setItem("DailyCustomerCount", 0);
     } else {
       // load save
       this.registry.set("Total_Globs", Total_Globs || 0);

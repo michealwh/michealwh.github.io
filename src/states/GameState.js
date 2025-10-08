@@ -326,6 +326,7 @@ const newCustomer = (game, just_launched) => {
 };
 
 const dayStartHandler = (game) => {
+  game.registry.set("DayOver",false);
   game.currentDay = parseInt(game.currentDay) + 1;
   game.registry.set("Day", game.currentDay);
   game.dailyCustomerCount = 0;
@@ -363,6 +364,7 @@ const dayStartHandler = (game) => {
 };
 
 const dayEndHandler = (game, just_launched) => {
+  game.registry.set("DayOver",true);
   game.dailyCustomerCount = 0;
 
   if (just_launched) {
@@ -378,7 +380,7 @@ const dayEndHandler = (game, just_launched) => {
     game.dailyCustomerMax += moreCustomers;
     game.registry.set("DailyCustomerMax", game.dailyCustomerMax);
   }
-  const unlockedCustomerSuccess = (game.currentDay) % 2;
+  const unlockedCustomerSuccess = (game.currentDay+1) % 2;
 
   if (game.currentDay + 1 === 2) {
     game.ingredientMax += 1; // 3
@@ -620,6 +622,7 @@ const restartGameHandler = (game, button) => {
     game.scene.stop("ShopState");
     game.scene.stop("DataState");
     game.scene.stop("LoadState");
+    game.scene.stop("GalleryState");
 
     game.scene.start("BootState");
   });

@@ -46,12 +46,12 @@ const inputHandler = (game, tab, title, key) => {
   tab.on("pointerdown", (pointer, gameObject) => {
     if (game.currentTab !== tab) {
       if (game.currentTab !== null) {
+        game.click_sfx.play();
+
         game.currentTab.setDepth(1);
         game.currentTitle.setDepth(2);
         game.currentTab.setTint(0x2dfa67, 0x076b22);
-        if (game.currentTab === game.orderTab) {
-          showOrderTab(game, false)
-        } else if (game.currentTab === game.npcTab) {
+        if (game.currentTab === game.npcTab) {
           showNPCTab(game, false);
         } else if (game.currentTab === game.modifierTab) {
           showModifierTab(game, false);
@@ -65,9 +65,7 @@ const inputHandler = (game, tab, title, key) => {
       game.currentTitle.setDepth(3);
       game.currentTab.setTint(0x0200ff, 0x076b22, 0x076b22, 0x076b22);
 
-      if (game.currentTab === game.orderTab) {
-        showOrderTab(game, true)
-      } else if (game.currentTab === game.npcTab) {
+      if (game.currentTab === game.npcTab) {
         showNPCTab(game, true);
       } else if (game.currentTab === game.modifierTab) {
         showModifierTab(game, true);
@@ -76,15 +74,6 @@ const inputHandler = (game, tab, title, key) => {
       }
     }
   });
-};
-
-const showOrderTab = (game, shouldShow) => {
-  if (shouldShow) {
-    game.infoTitle.text = "Orders";
-    game.orderText.visible=true;
-  } else {
-    game.orderText.visible=false;
-  }
 };
 
 const showNPCTab = (game, shouldShow) => {
@@ -128,8 +117,7 @@ const hideInfo = (game) => {
     game.npcInfoFrameAssets[i].visible = false;
   }
   game.modInfoImage.visible = false;
-  game.orderText.visible=false;
-}
+};
 
 const setupNPCTab = (game) => {
   game.npcTabItems = [];
@@ -139,6 +127,8 @@ const setupNPCTab = (game) => {
 
   function showNPCInfo(show, target) {
     if (show) {
+              game.click_sfx.play();
+
       let npc_info = npc_dictionary.npcs[target];
       game.npcInfoTitle.text = npc_info.name;
       game.npcInfoImage.x = -50;
@@ -376,6 +366,8 @@ const ModUpdater = (game) => {
 
     function showModInfo(show, target) {
       if (show) {
+                game.click_sfx.play();
+
         let mod_info = shop_dictionary.purchasables[target];
         game.npcInfoTitle.text = mod_info.title;
         game.modInfoImage.setTexture(mod_info.key);
@@ -403,7 +395,7 @@ const ModUpdater = (game) => {
 };
 
 var GalleryState = {
-  preload() { },
+  preload() {},
 
   create() {
     this.currentTab = null;
@@ -416,6 +408,8 @@ var GalleryState = {
     this.lastModifiers = this.registry.get("Modifiers").slice();
 
     this.modifierAssets = [];
+
+    this.click_sfx = this.sound.add("food_click");
 
     this.background = this.add
       .image(500, 500, "order_background")
@@ -442,28 +436,8 @@ var GalleryState = {
       })
       .setDepth(4);
 
-    this.orderTab = this.add
-      .image(40, 215, "tab_frame")
-      .setOrigin(0, 0)
-      .setDepth(1)
-      .setTint(0x2dfa67, 0x076b22)
-      .setInteractive();
-    console.log("ordertab", this.orderTab)
-    this.orderTab.scale = 0.5;
-    this.orderTitle = this.add
-      .text(50, 302, "orders", {
-        fontFamily: "font1",
-        fontSize: "22px",
-        fill: "black",
-        wordWrap: { width: 300 },
-        align: "center",
-      })
-      .setOrigin(0, 0)
-      .setDepth(2);
-    this.orderTitle.angle = -90;
-
     this.npcTab = this.add
-      .image(40, 315, "tab_frame")
+      .image(40, 215, "tab_frame")
       .setOrigin(0, 0)
       .setDepth(1)
       .setTint(0x2dfa67, 0x076b22)
@@ -471,7 +445,7 @@ var GalleryState = {
 
     this.npcTab.scale = 0.5;
     this.npcTitle = this.add
-      .text(50, 418, "customers", {
+      .text(50, 322, "customers", {
         fontFamily: "font1",
         fontSize: "22px",
         fill: "black",
@@ -483,14 +457,14 @@ var GalleryState = {
     this.npcTitle.angle = -90;
 
     this.modifierTab = this.add
-      .image(40, 415, "tab_frame")
+      .image(40, 315, "tab_frame")
       .setOrigin(0, 0)
       .setDepth(1)
       .setTint(0x2dfa67, 0x076b22)
       .setInteractive();
     this.modifierTab.scale = 0.5;
     this.modifierTitle = this.add
-      .text(50, 518, "modifiers", {
+      .text(50, 418, "modifiers", {
         fontFamily: "font1",
         fontSize: "22px",
         fill: "black",
@@ -502,14 +476,14 @@ var GalleryState = {
     this.modifierTitle.angle = -90;
 
     this.noteTab = this.add
-      .image(40, 515, "tab_frame")
+      .image(40, 415, "tab_frame")
       .setOrigin(0, 0)
       .setDepth(1)
       .setTint(0x2dfa67, 0x076b22)
       .setInteractive();
     this.noteTab.scale = 0.5;
     this.noteTitle = this.add
-      .text(50, 598, "notes", {
+      .text(50, 500, "notes", {
         fontFamily: "font1",
         fontSize: "22px",
         fill: "black",
@@ -526,28 +500,21 @@ var GalleryState = {
       .setDepth(7);
 
     this.modInfoImage.rotation = Phaser.Math.DegToRad(15);
-    this.modInfoImage.scale = .8
+    this.modInfoImage.scale = 0.8;
     this.modInfoImage.visible = false;
-
-    this.orderText = this.add
-      .text(500, 500, "order", {
-        fontFamily: "font1",
-        fontSize: "30px",
-        fill: "black",
-        wordWrap: { width: 300 },
-        align: "center",
-      })
-      .setOrigin(0.5, 0.5)
-      .setDepth(4);
-    this.orderText.visible = false
 
     setupNPCTab(this);
     ModUpdater(this);
-
-    inputHandler(this, this.orderTab, this.orderTitle);
     inputHandler(this, this.npcTab, this.npcTitle);
     inputHandler(this, this.modifierTab, this.modifierTitle);
     inputHandler(this, this.noteTab, this.noteTitle);
+
+    this.currentTab = this.npcTab;
+    this.currentTitle = this.npcTitle;
+    this.currentTab.setDepth(2);
+    this.currentTitle.setDepth(3);
+    this.currentTab.setTint(0x0200ff, 0x076b22, 0x076b22, 0x076b22);
+    showNPCTab(this, true);
   },
 
   update() {
@@ -564,12 +531,6 @@ var GalleryState = {
       this.lastModifiers = this.registry.get("Modifiers").slice();
       console.log("just set last mod");
       ModUpdater(this);
-    }
-    if (this.registry.get("Order_Text") && (this.orderText.text !== ("the bottom bun and the top bun and the beefpatty and" +
-      this.registry.get("Order_Text")))) {
-      this.orderText.text =
-        "the bottom bun and the top bun and the beefpatty and" +
-        this.registry.get("Order_Text");
     }
   },
 };

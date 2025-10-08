@@ -89,8 +89,7 @@ var MenuState = {
     const orderBtn = this.add
       .image(135, 45, "notebook_icon")
       .setOrigin(0.5, 0.5)
-      //.setInteractive();
-      orderBtn.visible=false
+      .setInteractive();
     const kitchenBtn = this.add
       .image(235, 45, "chef_icon")
       .setOrigin(0.5, 0.5)
@@ -101,12 +100,12 @@ var MenuState = {
       .setInteractive();
 
     const galleryBtn = this.add
-      .image(135, 45, "notebook_icon")
+      .image(530, 45, "notebook_icon")
       .setOrigin(0.5, 0.5)
-      .setInteractive() //.setTint(0x076b22);
+      .setInteractive().setTint(0x076b22);
 
     const shopBtn = this.add
-      .image(435, 45, "shop_icon")
+      .image(440, 45, "shop_icon")
       .setOrigin(0.5, 0.5)
       .setInteractive();
 
@@ -271,6 +270,7 @@ var MenuState = {
     };
 
     hoverEffectHandler(gearBtn);
+    hoverEffectHandler(orderBtn);
     hoverEffectHandler(kitchenBtn);
     hoverEffectHandler(counterBtn);
     hoverEffectHandler(galleryBtn);
@@ -331,43 +331,43 @@ var MenuState = {
       }
     });
 
-    // orderBtn.on("pointerdown", (pointer, gameObject) => {
-    //   if (
-    //     this.registry.get("SwitchNotAllowed") === true ||
-    //     this.scene.isActive("SettingsState")
-    //   ) {
-    //     return;
-    //   }
-    //   click_sfx.play();
-    //   if (
-    //     this.scene.isActive("OrderState") &&
-    //     this.scene.isPaused("OrderState") === false
-    //   ) {
-    //     this.scene.pause("OrderState").run(this.lastScene);
-    //     this.scene.bringToTop(this.lastScene);
-    //     this.scene.bringToTop();
-    //   } else if (this.scene.isActive("GalleryState")){
-    //     this.scene.pause("GalleryState").run("OrderState");
-    //     this.scene.bringToTop(this.lastScene);
-    //     this.scene.bringToTop("OrderState");
-    //     this.scene.bringToTop();
-    //   } else if (this.scene.isActive("KitchenState")) {
-    //     this.lastScene = "KitchenState";
-    //     this.scene.pause("KitchenState").run("OrderState");
-    //     this.scene.bringToTop("OrderState");
-    //     this.scene.bringToTop();
-    //   } else if (this.scene.isActive("GameState")) {
-    //     this.lastScene = "GameState";
-    //     this.scene.pause("GameState").run("OrderState");
-    //     this.scene.bringToTop("OrderState");
-    //     this.scene.bringToTop();
-    //   } else if (this.scene.isActive("ShopState")) {
-    //     this.lastScene = "ShopState";
-    //     this.scene.pause("ShopState").run("OrderState");
-    //     this.scene.bringToTop("OrderState");
-    //     this.scene.bringToTop();
-    //   }
-    // });
+    orderBtn.on("pointerdown", (pointer, gameObject) => {
+      if (
+        this.registry.get("SwitchNotAllowed") === true ||
+        this.scene.isActive("SettingsState")
+      ) {
+        return;
+      }
+      click_sfx.play();
+      if (
+        this.scene.isActive("OrderState") &&
+        this.scene.isPaused("OrderState") === false
+      ) {
+        this.scene.pause("OrderState").run(this.lastScene);
+        this.scene.bringToTop(this.lastScene);
+        this.scene.bringToTop();
+      } else if (this.scene.isActive("GalleryState")){
+        this.scene.pause("GalleryState").run("OrderState");
+        this.scene.bringToTop(this.lastScene);
+        this.scene.bringToTop("OrderState");
+        this.scene.bringToTop();
+      } else if (this.scene.isActive("KitchenState")) {
+        this.lastScene = "KitchenState";
+        this.scene.pause("KitchenState").run("OrderState");
+        this.scene.bringToTop("OrderState");
+        this.scene.bringToTop();
+      } else if (this.scene.isActive("GameState")) {
+        this.lastScene = "GameState";
+        this.scene.pause("GameState").run("OrderState");
+        this.scene.bringToTop("OrderState");
+        this.scene.bringToTop();
+      } else if (this.scene.isActive("ShopState")) {
+        this.lastScene = "ShopState";
+        this.scene.pause("ShopState").run("OrderState");
+        this.scene.bringToTop("OrderState");
+        this.scene.bringToTop();
+      }
+    });
 
     kitchenBtn.on("pointerdown", (pointer, gameObject) => {
       if (this.registry.get("SwitchNotAllowed") === true) {

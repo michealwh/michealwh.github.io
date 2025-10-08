@@ -189,7 +189,7 @@ const foodButtonHandler = (object, game) => {
 const submitButtonhandler = (object, game) => {
   object.scale = 0.2;
   object.on("pointerdown", (pointer, gameObject) => {
-    if (game.used_ingredients.length >= 1) {
+    if (game.used_ingredients.length >= 1 && game.registry.get("DayOver") == false) {
       if (game.scene.isActive("KitchenState") && game.submitDebounce !== true) {
         game.submitDebounce = true;
 
