@@ -1,5 +1,6 @@
 import npc_dictionary from "../dictonaries/npcs.json";
 import shop_dictionary from "../dictonaries/shop.json";
+import note_dictionary from "../dictonaries/notes";
 const inputHandler = (game, tab, title, key) => {
   const tabX = tab.x;
   const titleX = title.x;
@@ -109,6 +110,14 @@ const showModifierTab = (game, shouldShow) => {
 const showNoteTab = (game, shouldShow) => {
   if (shouldShow) {
     game.infoTitle.text = "Notes";
+
+     for (let i = 0; i < game.noteAssets.length; i++) {
+      game.noteAssets[i].visible = true;
+    }
+  } else {
+    for (let i = 0; i < game.noteAssets.length; i++) {
+      game.noteAssets[i].visible = false;
+    }
   }
 };
 
@@ -117,6 +126,9 @@ const hideInfo = (game) => {
     game.npcInfoFrameAssets[i].visible = false;
   }
   game.modInfoImage.visible = false;
+  game.note_background.visible = false;
+  game.noteInfoText.visible = false;
+  game.noteAuthorText.visible=false;
 };
 
 const setupNPCTab = (game) => {
@@ -127,7 +139,7 @@ const setupNPCTab = (game) => {
 
   function showNPCInfo(show, target) {
     if (show) {
-              game.click_sfx.play();
+      game.click_sfx.play();
 
       let npc_info = npc_dictionary.npcs[target];
       game.npcInfoTitle.text = npc_info.name;
@@ -366,7 +378,7 @@ const ModUpdater = (game) => {
 
     function showModInfo(show, target) {
       if (show) {
-                game.click_sfx.play();
+        game.click_sfx.play();
 
         let mod_info = shop_dictionary.purchasables[target];
         game.npcInfoTitle.text = mod_info.title;
@@ -394,6 +406,122 @@ const ModUpdater = (game) => {
   });
 };
 
+const setupNoteTab = (game) => {
+  game.note_background = game.add
+    .image(0, 0, "order_background")
+    .setOrigin(0, 0)
+    .setDepth(6).setInteractive();
+  game.noteAuthorText = game.add
+    .text(500, 330, "notes", {
+      fontFamily: "font1",
+      fontSize: "20px",
+      fill: "black",
+      wordWrap: { width: 500 },
+      align: "center",
+    }).setOrigin(.5,.5)
+    .setDepth(7);
+  game.noteInfoText = game.add
+    .text(500, 510, "notes", {
+      fontFamily: "font1",
+      lineSpacing: 20,
+      fontSize: "35px",
+      fill: "black",
+      wordWrap: { width: 500 },
+      align: "center",
+    }).setOrigin(.5,0.5)
+    .setDepth(7);
+  game.note_background.visible = false;
+  game.noteAuthorText.visible=false;
+  game.noteInfoText.visible = false;
+  
+  game.note_background.on("pointerdown", (pointer, gameObject) => {
+    hideInfo(game);
+  });
+};
+
+const NoteAsset = (game, image, title, x, y) => {
+  let noteAsset = game.add
+    .image(x, y, image)
+    .setOrigin(0.5, 0.5)
+    .setInteractive()
+    .setDepth(5);
+  noteAsset.scale = 0.15;
+  let noteTitleText = game.add
+    .text(x, y + 65, title, {
+      fontFamily: "font1",
+      fontSize: "15px",
+      fill: "black",
+      wordWrap: { width: 150 },
+      align: "center",
+    })
+    .setOrigin(0.5, 0.5)
+    .setDepth(5);
+
+  noteAsset.visible=false
+  noteTitleText.visible=false
+
+  return [noteAsset, noteTitleText];
+};
+
+const NoteUpdater = (game) => {
+  for (let i = 0; i < game.noteAssets.length; i++) {
+    game.noteAssets[i].destroy();
+  }
+  const newNotes = game.registry.get("Notes");
+  const maxInRow = 5;
+  let currentRowCount = 0;
+  let currentRowY = 350;
+
+  Object.keys(note_dictionary).forEach((item) => {
+    let npc_notes = note_dictionary[item].notes;
+    let current_npc_notes = newNotes[item];
+    if (current_npc_notes) {
+      for (let i = 0; i < npc_notes.length; i++) {
+        if (current_npc_notes.includes(i)) {
+          if (currentRowCount >= maxInRow) {
+            currentRowY += 140;
+            currentRowCount = 0;
+          }
+          currentRowCount += 1;
+          let noteInfo = note_dictionary[item].notes[i];
+          let noteAssets = NoteAsset(
+            game,
+            "order_background",
+            noteInfo.title,
+            currentRowCount * 150 + 55,
+            currentRowY
+          );
+
+          game.noteAssets.push(noteAssets[0]);
+          game.noteAssets.push(noteAssets[1]);
+
+          function showNoteInfo(show, npc, note_info) {
+            if (show) {
+              game.click_sfx.play();
+              game.npcInfoTitle.text = note_info.title;
+              //game.modInfoImage.setTexture(mod_info.key);
+              game.noteAuthorText.text = "By: " + npc
+              let infotext = "";
+              if (note_info.description) {
+                infotext += note_info.description;
+              }
+              game.noteInfoText.text = infotext;
+              game.npcInfoTitle.visible = true;
+              game.noteInfoText.visible = true;
+              game.noteAuthorText.visible=true;
+              game.note_background.visible = true;
+            }
+          }
+
+          noteAssets[0].on("pointerdown", (pointer, gameObject) => {
+            showNoteInfo(true, item, noteInfo);
+          });
+        }
+      }
+    }
+  });
+};
+
 var GalleryState = {
   preload() {},
 
@@ -408,6 +536,7 @@ var GalleryState = {
     this.lastModifiers = this.registry.get("Modifiers").slice();
 
     this.modifierAssets = [];
+    this.noteAssets = [];
 
     this.click_sfx = this.sound.add("food_click");
 
@@ -504,6 +633,7 @@ var GalleryState = {
     this.modInfoImage.visible = false;
 
     setupNPCTab(this);
+    setupNoteTab(this);
     ModUpdater(this);
     inputHandler(this, this.npcTab, this.npcTitle);
     inputHandler(this, this.modifierTab, this.modifierTitle);
@@ -515,6 +645,8 @@ var GalleryState = {
     this.currentTitle.setDepth(3);
     this.currentTab.setTint(0x0200ff, 0x076b22, 0x076b22, 0x076b22);
     showNPCTab(this, true);
+
+    NoteUpdater(this);
   },
 
   update() {
@@ -531,6 +663,10 @@ var GalleryState = {
       this.lastModifiers = this.registry.get("Modifiers").slice();
       console.log("just set last mod");
       ModUpdater(this);
+    }
+    if(this.registry.get("NewNoteEvent") === true){
+      this.registry.set("NewNoteEvent",false)
+      NoteUpdater(this)
     }
   },
 };

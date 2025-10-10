@@ -122,6 +122,7 @@ import yes_button from "../assets/ui/yes_button.png";
 import no_button from "../assets/ui/no_button.png";
 import yellow_hue from "../assets/ui/yellow_hue.png";
 import tab_frame from "../assets/ui/tab_frame.png";
+import no2_button from "../assets/ui/no2_button.png"
 
 // SOUND ASSETS
 import door_open from "../assets/sounds/door_opening.mp3";
@@ -232,6 +233,7 @@ var LoadState = {
     this.load.image("no_button", no_button);
     this.load.image("yellow_hue", yellow_hue);
     this.load.image("tab_frame",tab_frame);
+    this.load.image("no2_button",no2_button);
 
     this.load.image("sky", skyBg);
     this.load.image("room", roomBg);
@@ -369,6 +371,7 @@ var LoadState = {
       this.registry.set("DailyCustomerMax", defaultDailyCustomerMax);
       this.registry.set("Health", defaultHealth);
       this.registry.set("Items", []);
+      this.registry.set("Notes",{})
       this.registry.set("Modifiers",[])
 
       // modifier values

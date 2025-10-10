@@ -11,9 +11,11 @@ const shuffleArray = (array) => {
     let randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
     [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
-}
+};
 
 const dialogHandler = (passage, game) => {
   const textStyle = {
@@ -38,9 +40,175 @@ const dialogHandler = (passage, game) => {
     repeat: 0,
     yoyo: true,
     onComplete: function () {
-      game.registry.set("Order_Began", true);
-      game.registry.set("SwitchNotAllowed", false);
+      if (game.selectedNote !== undefined) {
+      } else {
+        game.registry.set("Order_Began", true);
+        game.registry.set("SwitchNotAllowed", false);
+      }
     },
+  });
+};
+
+const questionHandler = (game, action, passage) => {
+  game.questionAction = action;
+  const textStyle = {
+    fontFamily: "font1",
+    fontSize: "20px",
+    fill: "black",
+    lineSpacing: 1,
+    wordWrap: { width: 600 },
+    align: "center",
+  };
+  let text = game.add.text(500, 830, passage, textStyle).setOrigin(0.5, 0.5);
+  text.depth = 4;
+  if (game.text !== undefined) {
+    game.text.destroy();
+  }
+  game.text = text;
+  game.qNoButton.input.enabled=true
+    game.qYesButton.input.enabled=true
+  game.qYesButton.y = 920;
+  game.qNoButton.y = 920;
+  game.qYesButton.setAlpha(0);
+  game.qNoButton.setAlpha(0);
+  game.qYesButton.visible = true;
+  game.qNoButton.visible = true;
+  game.tweens.add({
+    targets: [text],
+    scale: 1.1,
+    ease: "Linear",
+    duration: 200,
+    repeat: 0,
+    yoyo: true,
+    onComplete: function () {
+      game.tweens.add({
+        targets: [game.qYesButton, game.qNoButton],
+        alpha: 1,
+        ease: "Linear",
+        duration: 1000,
+        repeat: 0,
+        yoyo: false,
+        onComplete: function () {
+          game.registry.set("SwitchNotAllowed", false);
+        },
+      });
+    },
+  });
+};
+
+const showNote = (game, shouldShow) => {
+  if (shouldShow) {
+    const note_info = game.selectedNote;
+    game.selectedNote = undefined;
+    game.noteInfoTitle.text = note_info.title;
+    if (note_info.title.includes("Untitled")){
+      game.noteInfoTitle.text=""
+    }
+    //game.modInfoImage.setTexture(mod_info.key);
+    game.noteAuthorText.text = "By: " + game.npcName;
+    if (note_info.title.includes("Untitled")){
+      game.noteAuthorText.text=""
+    }
+    let infotext = "";
+    if (note_info.description) {
+      infotext += note_info.description;
+    }
+    game.noteInfoText.text = infotext;
+    game.noteInfoTitle.visible = true;
+    game.noteInfoText.visible = true;
+    game.noteAuthorText.visible = true;
+    game.note_background.visible = true;
+  } else {
+    game.noteInfoTitle.visible = false;
+    game.noteInfoText.visible = false;
+    game.noteAuthorText.visible = false;
+    game.note_background.visible = false;
+    endOfOrderReviewHandler(game);
+  }
+};
+
+const setupNoteFrame = (game) => {
+  game.note_background = game.add
+    .image(0, 0, "order_background")
+    .setOrigin(0, 0)
+    .setDepth(6)
+    .setInteractive();
+  game.noteInfoTitle = game.add
+    .text(500, 280, "Name", {
+      fontFamily: "font1",
+      fontSize: "50px",
+      fill: "black",
+    })
+    .setOrigin(0.5, 0.5)
+    .setDepth(7);
+  game.noteAuthorText = game.add
+    .text(500, 330, "notes", {
+      fontFamily: "font1",
+      fontSize: "20px",
+      fill: "black",
+      wordWrap: { width: 500 },
+      align: "center",
+    })
+    .setOrigin(0.5, 0.5)
+    .setDepth(7);
+  game.noteInfoText = game.add
+    .text(500, 510, "notes", {
+      fontFamily: "font1",
+      lineSpacing: 20,
+      fontSize: "35px",
+      fill: "black",
+      wordWrap: { width: 500 },
+      align: "center",
+    })
+    .setOrigin(0.5, 0.5)
+    .setDepth(7);
+  game.note_background.visible = false;
+  game.noteInfoTitle.visible=false;
+  game.noteAuthorText.visible = false;
+  game.noteInfoText.visible = false;
+
+  game.note_background.on("pointerdown", (pointer, gameObject) => {
+    showNote(game, false);
+  });
+};
+
+const questionButtonHandler = (game) => {
+  game.qYesButton.on("pointerdown", (pointer, gameObject) => {
+    game.qNoButton.input.enabled=false
+    game.qYesButton.input.enabled=false
+    game.tweens.add({
+      targets: game.qYesButton,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        if (game.questionAction === "note") {
+          showNote(game,true);
+        }
+      },
+    });
+  });
+  game.qNoButton.on("pointerdown", (pointer, gameObject) => {
+    game.qNoButton.input.enabled=false
+    game.qYesButton.input.enabled=false
+    game.tweens.add({
+      targets: game.qNoButton,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        if (game.questionAction === "note") {
+          game.selectedNote = undefined;
+          endOfOrderReviewHandler(game);
+        }
+      },
+    });
   });
 };
 
@@ -53,6 +221,7 @@ const customerHandler = (customer, game) => {
   const customer_scale = customer.scale;
   object.depth = 2;
   game.npc = object;
+  game.npcName = customer.name;
   object.x = 500;
   object.y = 500;
   object.scale = customer.start_scale;
@@ -188,7 +357,6 @@ const customerHandler = (customer, game) => {
   });
 };
 
-
 const showDayFrame = (game, show, islong) => {
   let targetUpdateTextY = 500;
   if (islong) {
@@ -311,8 +479,9 @@ const newCustomer = (game, just_launched) => {
       yoyo: true,
       onComplete: function () {
         game.door_hinge.rotation = 0;
-        
-        game.current_customer_index = game.todays_customers[game.dailyCustomerCount];
+
+        game.current_customer_index =
+          game.todays_customers[game.dailyCustomerCount];
 
         const customer = npc_dictionary.npcs[game.current_customer_index];
         customerHandler(customer, game);
@@ -326,26 +495,29 @@ const newCustomer = (game, just_launched) => {
 };
 
 const dayStartHandler = (game) => {
-  game.registry.set("DayOver",false);
+  game.registry.set("DayOver", false);
   game.currentDay = parseInt(game.currentDay) + 1;
   game.registry.set("Day", game.currentDay);
   game.dailyCustomerCount = 0;
   game.todays_customers = [];
-  const unlockedMaxRatio = Math.floor((game.dailyCustomerMax/game.currentUnlockedCustomers.length)+.5);
-    for (let i = 0; i < unlockedMaxRatio; i++) {
-      game.todays_customers = game.todays_customers.concat(game.currentUnlockedCustomers);
-          //console.log("adding todays customers", game.todays_customers);
+  const unlockedMaxRatio = Math.floor(
+    game.dailyCustomerMax / game.currentUnlockedCustomers.length + 0.5
+  );
+  for (let i = 0; i < unlockedMaxRatio; i++) {
+    game.todays_customers = game.todays_customers.concat(
+      game.currentUnlockedCustomers
+    );
+    //console.log("adding todays customers", game.todays_customers);
+  }
+  shuffleArray(game.todays_customers);
+  //console.log("shuffled todays customers", game.todays_customers);
 
-    }
-    shuffleArray(game.todays_customers);
-    //console.log("shuffled todays customers", game.todays_customers);
-
-    game.todays_customers = game.todays_customers.slice(0,game.dailyCustomerMax);
-  if (game.newUnlockedCustomer !== null){
-    console.log("there is a new customer today",game.newUnlockedCustomer)
-    if (!game.todays_customers.includes(game.newUnlockedCustomer)){
+  game.todays_customers = game.todays_customers.slice(0, game.dailyCustomerMax);
+  if (game.newUnlockedCustomer !== null) {
+    console.log("there is a new customer today", game.newUnlockedCustomer);
+    if (!game.todays_customers.includes(game.newUnlockedCustomer)) {
       game.todays_customers[0] = game.newUnlockedCustomer;
-      console.log("customer doesnt exist so we're adding it in")
+      console.log("customer doesnt exist so we're adding it in");
     }
     game.newUnlockedCustomer = null;
   }
@@ -364,7 +536,7 @@ const dayStartHandler = (game) => {
 };
 
 const dayEndHandler = (game, just_launched) => {
-  game.registry.set("DayOver",true);
+  game.registry.set("DayOver", true);
   game.dailyCustomerCount = 0;
 
   if (just_launched) {
@@ -380,7 +552,7 @@ const dayEndHandler = (game, just_launched) => {
     game.dailyCustomerMax += moreCustomers;
     game.registry.set("DailyCustomerMax", game.dailyCustomerMax);
   }
-  const unlockedCustomerSuccess = (game.currentDay+1) % 2;
+  const unlockedCustomerSuccess = (game.currentDay + 1) % 2;
 
   if (game.currentDay + 1 === 2) {
     game.ingredientMax += 1; // 3
@@ -406,14 +578,17 @@ const dayEndHandler = (game, just_launched) => {
       Math.random() * game.currentLockedCustomers.length
     );
     //console.log("unlocked customers and locked customers before",game.currentUnlockedCustomers,game.currentLockedCustomers);
-    
-    game.currentUnlockedCustomers.push(game.currentLockedCustomers[newCustomerIndex]);
+
+    game.currentUnlockedCustomers.push(
+      game.currentLockedCustomers[newCustomerIndex]
+    );
     game.currentLockedCustomers = game.currentLockedCustomers.filter(
       (item) => item !== game.currentLockedCustomers[newCustomerIndex]
     );
-   // console.log("unlocked customers and locked customers after",game.currentUnlockedCustomers,game.currentLockedCustomers);
+    // console.log("unlocked customers and locked customers after",game.currentUnlockedCustomers,game.currentLockedCustomers);
 
-    game.newUnlockedCustomer = game.currentUnlockedCustomers[game.currentUnlockedCustomers.length-1];
+    game.newUnlockedCustomer =
+      game.currentUnlockedCustomers[game.currentUnlockedCustomers.length - 1];
     game.registry.set("Unlocked_Customers", game.currentUnlockedCustomers);
     if (game.currentLockedCustomers.length <= 0) {
       game.dayUpdateText.text = "You have now unlocked all customers!";
@@ -445,6 +620,74 @@ const dayButtonHandler = (game, button) => {
         dayStartHandler(game);
       },
     });
+  });
+};
+
+const endOfOrderReviewHandler = (game) => {
+  game.tweens.add({
+    targets: [game.dialog_title, game.text, game.qNoButton, game.qYesButton],
+    y: 750 + dialogYMove,
+    ease: "Power1",
+    duration: 500,
+    repeat: 0,
+    yoyo: false,
+  });
+  game.tweens.add({
+    targets: [game.dialog_frame],
+    y: 500,
+    ease: "Power1",
+    duration: 500,
+    repeat: 0,
+    yoyo: false,
+  });
+  game.tweens.add({
+    targets: game.npc,
+    x: game.npc.x,
+    y: game.npc.y + 350,
+    ease: "Power1",
+    duration: 500,
+    repeat: 0,
+    yoyo: false,
+    onComplete: function () {
+      if (game.registry.get("Health") <= 0) {
+        game.game_over_sfx.play();
+        // GAME OVER
+        game.dayButton.scale = 0;
+        game.dayText.text = "Game Over";
+        game.dayUpdateText.text =
+          "Ended on Day: " +
+          game.registry.get("Day") +
+          "\nRemaining Globs: " +
+          game.registry.get("Globs") +
+          "\nTotal Earnings: " +
+          game.registry.get("Total_Globs") +
+          "\nPresentation: " +
+          game.registry.get("Average_Presentation") +
+          "/100" +
+          "  Punctuality: " +
+          game.registry.get("Average_Punctuality") +
+          "/100" +
+          "\nPrecision: " +
+          game.registry.get("Average_Precision") +
+          "/100" +
+          "  Pleasantry: " +
+          game.registry.get("Average_Pleasantry") +
+          "/100" +
+          "\nDo you wish to restart?";
+        game.tweens.add({
+          targets: game.restartButton,
+          y: 680,
+          ease: "Power1",
+          duration: 500,
+          repeat: 0,
+          yoyo: false,
+        });
+        showDayFrame(game, true, true);
+        game.scene.pause("MenuState");
+        return;
+      }
+      newCustomer(game);
+    },
   });
 };
 
@@ -527,76 +770,26 @@ const orderCompleteHandler = (game) => {
     delay: 5500,
     callback: () => {
       console.log("doing review");
-      
-      OrderSubmittedHandler(game,dialogHandler)
+      OrderSubmittedHandler(game, dialogHandler);
       game.time.addEvent({
         delay: 3000,
         callback: function () {
-          game.tweens.add({
-            targets: [game.dialog_title, game.text],
-            y: 750 + dialogYMove,
-            ease: "Power1",
-            duration: 500,
-            repeat: 0,
-            yoyo: false,
-          });
-          game.tweens.add({
-            targets: [game.dialog_frame],
-            y: 500,
-            ease: "Power1",
-            duration: 500,
-            repeat: 0,
-            yoyo: false,
-          });
-          game.tweens.add({
-            targets: game.npc,
-            x: game.npc.x,
-            y: game.npc.y + 350,
-            ease: "Power1",
-            duration: 500,
-            repeat: 0,
-            yoyo: false,
-            onComplete: function () {
-              if (game.registry.get("Health") <= 0) {
-                game.game_over_sfx.play();
-                // GAME OVER
-                game.dayButton.scale = 0;
-                game.dayText.text = "Game Over";
-                game.dayUpdateText.text =
-                  "Ended on Day: " +
-                  game.registry.get("Day") +
-                  "\nRemaining Globs: " +
-                  game.registry.get("Globs") +
-                  "\nTotal Earnings: " +
-                  game.registry.get("Total_Globs") +
-                  "\nPresentation: " +
-                  game.registry.get("Average_Presentation") +
-                  "/100" +
-                  "  Punctuality: " +
-                  game.registry.get("Average_Punctuality") +
-                  "/100" +
-                  "\nPrecision: " +
-                  game.registry.get("Average_Precision") +
-                  "/100" +
-                  "  Pleasantry: " +
-                  game.registry.get("Average_Pleasantry") +
-                  "/100" +
-                  "\nDo you wish to restart?";
-                game.tweens.add({
-                  targets: game.restartButton,
-                  y: 680,
-                  ease: "Power1",
-                  duration: 500,
-                  repeat: 0,
-                  yoyo: false,
-                });
-                showDayFrame(game, true, true);
-                game.scene.pause("MenuState");
-                return;
-              }
-              newCustomer(game);
-            },
-          });
+          if (game.selectedNote === undefined) {
+            endOfOrderReviewHandler(game);
+          } else {
+            game.time.addEvent({
+              delay: 200,
+              callback: () => {
+                questionHandler(
+                  game,
+                  "note",
+                  "The customer hands you a note. Read it?"
+                );
+              },
+              callbackScope: game,
+              loop: false,
+            });
+          }
         },
         callbackScope: game,
         loop: false,
@@ -784,6 +977,23 @@ var GameState = {
     this.restartButton.scale = 0.2;
     restartGameHandler(this, this.restartButton);
 
+    this.qYesButton = this.add
+      .image(320, 920, "yes_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(8)
+      .setInteractive();
+    this.qYesButton.scale = 0.2;
+    this.qYesButton.visible = false;
+    this.qNoButton = this.add
+      .image(680, 920, "no2_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(8)
+      .setInteractive();
+    this.qNoButton.scale = 0.2;
+    this.qNoButton.visible = false;
+
+    questionButtonHandler(this);
+
     // furniture creation
     const chair1 = this.add
       .image(10, 457, "chair1")
@@ -843,13 +1053,15 @@ var GameState = {
     this.availablePlushes = [slorgplush];
     this.addedPlushes = [];
 
+    setupNoteFrame(this);
+
     // variable setup
     this.dailyCustomerMax = this.registry.get("DailyCustomerMax") || 2;
     this.dayUpdateSprite = null;
     this.dayUpdateSprite2 = null;
     this.ingredientMax = parseInt(this.registry.get("IngredientMax")) || 2;
     this.currentDay = parseInt(this.registry.get("Day")) || 0;
-    this.currentWeek = parseInt(this.registry.get("Week") || 0)
+    this.currentWeek = parseInt(this.registry.get("Week") || 0);
     this.dailyCustomerCount = this.registry.get("DailyCustomerCount") || 0;
     this.newUnlockedCustomer = null;
     this.currentAllowedIngredients = {
@@ -868,19 +1080,25 @@ var GameState = {
     }
     this.todays_customers = [];
 
-    const unlockedMaxRatio = Math.floor((this.dailyCustomerMax/this.currentUnlockedCustomers.length)+.5);
+    const unlockedMaxRatio = Math.floor(
+      this.dailyCustomerMax / this.currentUnlockedCustomers.length + 0.5
+    );
     //console.log("unlocked max ratio", unlockedMaxRatio);
     for (let i = 0; i < unlockedMaxRatio; i++) {
-      this.todays_customers = this.todays_customers.concat(this.currentUnlockedCustomers);
+      this.todays_customers = this.todays_customers.concat(
+        this.currentUnlockedCustomers
+      );
     }
     shuffleArray(this.todays_customers);
-    this.todays_customers = this.todays_customers.slice(0,this.dailyCustomerMax);
+    this.todays_customers = this.todays_customers.slice(
+      0,
+      this.dailyCustomerMax
+    );
     this.current_customer_index = 0;
 
     //this.registry.set("Day", this.currentDay);
     //this.registry.set("Health", 5);
     this.registry.set("SwitchNotAllowed", true);
-
     newCustomer(this, true);
   },
 
