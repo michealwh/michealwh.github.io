@@ -195,13 +195,14 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     game.success_sfx1.play();
 
     // NOTE SECTION
-    const defaultStartDay = 1; // for notes
+    const defaultStartDay = 5; // for notes
     let selectedNote = null;
     if (notes_dictionary[game.npcName]) {
       let notes_info = notes_dictionary[game.npcName];
+      console.log(notes_info.startday,CurrentDay)
       if (
         (notes_info.startday && CurrentDay >= notes_info.startday) ||
-        CurrentDay >= defaultStartDay
+        (CurrentDay >= defaultStartDay && !notes_info.startday)
       ) {
         let all_collected_notes = game.registry.get("Notes");
         let npc_collected = all_collected_notes[game.npcName];
