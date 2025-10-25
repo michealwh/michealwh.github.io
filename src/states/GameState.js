@@ -477,6 +477,13 @@ const newCustomer = (game, just_launched) => {
     console.log("day is over");
     dayEndHandler(game, just_launched);
     return;
+  } else if(game.todays_customers.length <= game.dailyCustomerCount) {
+    console.log(game.dailyCustomerCount >= game.dailyCustomerMax)
+    console.log(game.secretShopperWeek)
+    console.log(game.dayOfWeek)
+    console.log("day is over but this shouldn't be happening");
+    dayEndHandler(game, just_launched);
+    return;
   }
   function shakeDoor() {
     game.door_hinge.rotation = -1 * (Math.PI / 180);
@@ -494,6 +501,7 @@ const newCustomer = (game, just_launched) => {
         game.current_customer_index =
           game.todays_customers[game.dailyCustomerCount];
 
+        console.log("customer max",game.dailyCustomerMax)
         console.log("daily customer count", game.dailyCustomerCount);
         console.log("todays customers", game.todays_customers);
         let customer = npc_dictionary.npcs[game.current_customer_index];
@@ -1377,6 +1385,7 @@ var GameState = {
     this.dayOfWeek = "Monday";
     this.currentDay = 1
     this.currentWeek = 0
+    this.secretShopperWeek = false;
     // this.secretShopperWeek = true
     this.thisWeeksInfo = weeks_info.actual_weeks[this.currentWeek]
 
