@@ -174,8 +174,7 @@ const shuffleItems = (game) => {
   };
   let shuffledItems = game.allItemKeys;
   shuffleArray(shuffledItems);
-  game.dailyItems = [shuffledItems[0], shuffledItems[1], shuffledItems[2]];
-
+  game.dailyItems = [shuffledItems[0], shuffledItems[1], shuffledItems[2],"bouncyball"];
   game.shopItem1.setTexture(game.dailyItems[0] + "_box");
   game.shopItem2.setTexture(game.dailyItems[1] + "_box");
   game.shopItem3.setTexture(game.dailyItems[2] + "_box");
@@ -311,10 +310,11 @@ var ShopState = {
     this.promptOpen = false;
     this.day = 1;
     this.activeItemInfo = {};
-    this.dailyItems = ["bouncyball", "chair1", "table1"];
+    this.dailyItems = ["magicdirt", "chair1", "table1","bouncyball"];
     this.allItemKeys = [];
 
     for (const item in shop_dictionary.purchasables) {
+      if (item === "bouncyball") continue;
       this.allItemKeys.push(item);
       const itemRepeatable = shop_dictionary.purchasables[item].repeatable;
       if (typeof itemRepeatable === "number") {
@@ -350,10 +350,9 @@ var ShopState = {
       .setOrigin(0.5, 0.5)
       .setDepth(4);
       this.infoContentText.rotation = 15 * (Math.PI/180);
-
     // bouncy ball
     this.shopItem1 = this.add
-      .image(280, 500, "bouncyball_box")
+      .image(280, 500, "magicdirt_box")
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
@@ -393,6 +392,21 @@ var ShopState = {
       .setInteractive();
     purchaseButtonhandler(this, this.shopButton3, 2);
 
+
+    // bouncy ball
+    this.shopItem4 = this.add
+      .image(500, 800, "bouncyball_box")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    this.shopItem4.scale = 0.8;
+    this.shopButton4 = this.add
+      .image(500, 940, "purchase_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    purchaseButtonhandler(this, this.shopButton4, 3);
+
     const AlreadyOwnedItems = localStorage.getItem("Items");
     if (AlreadyOwnedItems) {
       console.log("found owned items");
@@ -418,6 +432,8 @@ var ShopState = {
         }
       });
     }
+
+    shuffleItems(this);
 
     this.infoFrame = this.add
       .image(100, 100, "info_frame")

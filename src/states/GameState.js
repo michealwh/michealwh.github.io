@@ -285,6 +285,9 @@ const customerHandler = (customer, game) => {
         const o_index = Math.floor(
           Math.random() * dialog_dictionary.ordering.length
         );
+        if(game.ingredientMax<0){ // incase of items that could break this
+          game.ingredientMax=0
+        }
         const number_of_ingredients =
           Math.floor(Math.random() * game.ingredientMax) + 1;
 
