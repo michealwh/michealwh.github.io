@@ -1,9 +1,9 @@
 import dialog_dictionary from "../dictonaries/dialog.json";
 import npc_dictionary from "../dictonaries/npcs.json";
 import notes_dictionary from "../dictonaries/notes.jsx";
+import weeks from "../dictonaries/weeks.jsx";
 
 const OrderSubmittedHandler = (game, dialogHandler) => {
-  const defaultStandard = 70;
 
   const recieved_order = game.registry.get("Burger");
   const expected_order = game.registry.get("Order");
@@ -40,7 +40,10 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
   const current_globs = game.registry.get("Globs");
   const current_total_globs = game.registry.get("Total_Globs");
 
-  const npc_info = npc_dictionary.npcs[game.current_customer_index];
+  let npc_info = npc_dictionary.npcs[game.current_customer_index];
+  if (game.secretShopperCustomer) {
+    npc_info = npc_dictionary.secretshoppers[game.current_customer_index];
+  }
   let has_passed = true;
   let failure_reason = "general";
 
@@ -56,8 +59,17 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     has_passed = false;
   }
 
-  const presentationChance = Math.floor(Math.random() * defaultStandard); // for normal
-  const punctualityChance = Math.floor(Math.random() * defaultStandard);
+  let presentationChance = Math.floor(Math.random() * game.defaultPresentationStandard); // for normal
+  let punctualityChance = Math.floor(Math.random() * game.defaultPunctualityStandard);
+  let pleasantryChance = Math.floor(Math.random() * game.defaultPleasantryStandard);
+  let precisionChance = Math.floor(Math.random() * game.defaultPrecisionStandard);
+
+  if (game.secretShopperCustomer) {
+    presentationChance = game.secretshopperPresentationStandard;
+    punctualityChance = game.secretshopperPunctualityStandard;
+    pleasantryChance = game.secretshopperPleasantryStandard;
+    precisionChance = game.secretshopperPrecisionStandard;
+  }
   //console.log("pres:",presentationChance,presentationStat)
   //console.log("punc:",punctualityChance,punctualityStat)
 
@@ -101,15 +113,23 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         let chance = Math.floor(Math.random() * 5) + 1;
         if (chance == 1) {
           let totalStandards = 100;
-          if (npc_info.standards.presentation) {
+          if (npc_info.standards && npc_info.standards.presentation) {
             totalStandards += npc_info.standards.presentation;
           } else {
-            totalStandards += defaultStandard;
+            if(game.secretShopperCustomer) {
+              totalStandards += game.secretshopperPresentationStandard;
+            } else {
+              totalStandards += game.defaultPresentationStandard;
+            }
           }
-          if (npc_info.standards.punctuality) {
+          if (npc_info.standards && npc_info.standards.punctuality) {
             totalStandards += npc_info.standards.punctuality;
           } else {
-            totalStandards += defaultStandard;
+            if (game.secretShopperCustomer) {
+              totalStandards += game.secretshopperPunctualityStandard;
+            } else {
+              totalStandards += game.defaultPunctualityStandard;
+            }
           }
           let newAmount = (totalStandards / 3) * 2;
           tipMod += Math.floor(newAmount);
@@ -145,6 +165,24 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
       has_passed = false;
       failure_reason = "punctuality";
     }
+    if (npc_info.standards.precision) {
+      if (precisionStat < npc_info.standards.precision) {
+        has_passed = false;
+        failure_reason = "general";
+      } else if (precisionChance > precisionStat) {
+        has_passed = false;
+        failure_reason = "general";
+      }
+    }
+    if (npc_info.standards.pleasantry) {
+      if (pleasantryStat < npc_info.standards.pleasantry) {
+        has_passed = false;
+        failure_reason = "pleasantry";
+      }
+    } else if (pleasantryChance > pleasantryStat) {
+      has_passed = false;
+      failure_reason = "pleasantry";
+    }
   } else {
     // normal standards
     if (presentationChance > presentationStat) {
@@ -153,6 +191,12 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     } else if (punctualityChance > punctualityStat) {
       has_passed = false;
       failure_reason = "punctuality";
+    } else if (precisionChance > precisionStat) {
+      has_passed = false;
+      failure_reason = "general";
+    } else if (pleasantryChance > pleasantryStat) {
+      has_passed = false;
+      failure_reason = "pleasantry";
     }
   }
 
@@ -199,7 +243,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     let selectedNote = null;
     if (notes_dictionary[game.npcName]) {
       let notes_info = notes_dictionary[game.npcName];
-      console.log(notes_info.startday,CurrentDay)
+      console.log(notes_info.startday, CurrentDay);
       if (
         (notes_info.startday && CurrentDay >= notes_info.startday) ||
         (CurrentDay >= defaultStartDay && !notes_info.startday)
@@ -212,7 +256,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
           let noteSuccess = Math.floor(
             Math.random() * notes_dictionary[game.npcName].chance
           );
-          console.log("note success:",noteSuccess)
+          console.log("note success:", noteSuccess);
           if (noteSuccess === 0) {
             if (order === "chrono") {
               if (npc_collected === undefined) {
@@ -229,6 +273,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
                 }
               }
             } else if (order === "random") {
+              console.log("not implemented")
             }
             game.registry.set("Notes", all_collected_notes);
           }
@@ -268,10 +313,49 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     if (protectedHealth <= chanceOfNoLossLife) {
       savedThisTime = true;
     }
-
+    let healthsToBeLost = 0;
     if (!savedThisTime) {
+       healthsToBeLost += 1;
+      // const current_health = game.registry.get("Health");
+      // console.log("current health:", current_health);
+      // game.registry.set("Health", current_health - 1);
+      console.log("current health after first loss:", game.registry.get("Health"));
+    }
+
+    if (
+      game.secretShopperCustomer
+    ) {
+      // secret shopper fail
+      console.log("secret shopper failed");
+      let protectedHealth = Math.floor(Math.random() * 100) + 1;
+
+      let savedThisTime = false;
+
+      if (protectedHealth <= chanceOfNoLossLife) {
+        savedThisTime = true;
+      }
+
+      if (!savedThisTime) {
+        healthsToBeLost += 1;
+        console.log("secret shopper lost life");
+        game.time.addEvent({
+        delay: 200,
+        callback: function () {
+          // const current_health = game.registry.get("Health");
+          // console.log("current health:", current_health);
+          // game.registry.set("Health", current_health - 1);
+          // console.log("current health after secret shopper loss:", game.registry.get("Health"));
+          const sound_num = Math.floor(Math.random() * 3) + 1;
+          game["spooky_sfx" + sound_num].play();
+        }
+      });
+      }
+    }
+    if (healthsToBeLost > 0) {
       const current_health = game.registry.get("Health");
-      game.registry.set("Health", current_health - 1);
+      console.log("current health:", current_health);
+      console.log("healths to be lost:", healthsToBeLost);
+      game.registry.set("Health", current_health - healthsToBeLost);
     }
     //game.registry.set("ChangedHealth", true);
     if (npc_info.sprite_sheet) {

@@ -179,13 +179,12 @@ const shuffleItems = (game) => {
   game.shopItem1.setTexture(game.dailyItems[0] + "_box");
   game.shopItem2.setTexture(game.dailyItems[1] + "_box");
   game.shopItem3.setTexture(game.dailyItems[2] + "_box");
+  game.shopItem1.input.enabled=true;
+  game.shopItem2.input.enabled=true;
+  game.shopItem3.input.enabled=true;
   game.shopButton1.clearTint();
-  game.shopButton1.enabled = true;
   game.shopButton2.clearTint();
-  game.shopButton2.enabled = true;
-
   game.shopButton3.clearTint();
-  game.shopButton3.enabled = true;
 };
 
 const purchaseButtonhandler = (game, object, itemIndex) => {

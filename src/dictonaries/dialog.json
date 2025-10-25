@@ -49,6 +49,12 @@
         "i've waited too long.",
         "i almost fell asleep.",
         "i wish you were faster."
+    ],
+    "pleasantry": [
+        "this restaurant is a rat's nest.",
+        "i don't feel welcome here.",
+        "this place is a dump.",
+        "where is the comfort?"
     ]
   }
 }

@@ -122,6 +122,7 @@ const showNoteTab = (game, shouldShow) => {
 };
 
 const hideInfo = (game) => {
+  game.click_sfx.play();
   for (let i = 0; i < game.npcInfoFrameAssets.length; i++) {
     game.npcInfoFrameAssets[i].visible = false;
   }

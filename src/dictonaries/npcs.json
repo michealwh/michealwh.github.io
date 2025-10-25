@@ -1,4 +1,27 @@
 {
+    "secretshoppers": [
+        {
+            "name": "Gorath the Awokened",
+            "sprite": "gorath",
+            "start_scale": 0.1,
+            "scale": 1,
+            "description": "Customer of high regard."
+        },
+        {
+            "name": "Monrock the Blogger",
+            "sprite": "monrock",
+            "start_scale": 0.1,
+            "scale": 1,
+            "description": "Customer of great regard."
+        },
+        {
+            "name": "Rethnor the Ravenous",
+            "sprite": "rethnor",
+            "start_scale": 0.1,
+            "scale": 1,
+            "description": "Customer of grand regard."
+        }
+    ],
     "npcs": [
         {
             "name": "Morris Maulde",
@@ -138,7 +161,29 @@
             "sprite": "shorts_guy3",
             "start_scale": 0.05,
             "scale": 1
+        },
+        {
+             "name": "Laura Hefert",
+            "sprite": "gorl2",
+            "start_scale": 0.05,
+            "scale": 1,
+            "description": "Avid taxidermist."
+        },
+        {
+             "name": "Summer Saunders",
+            "sprite": "gorl3",
+            "start_scale": 0.05,
+            "scale": 1,
+            "description": "A rock collecting enthusiast. Her favorites are Peridotite and Obsidian."
+        },
+        {
+             "name": "Melf Proglog",
+            "sprite": "proglog",
+            "start_scale": 0.05,
+            "scale": 1,
+            "description": "Menace on the rollerskates."
         }
+
     ],
     "first_names": [
         "Renald",

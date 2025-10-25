@@ -37,7 +37,13 @@ import felip from "../assets/game/npcs/felip.png";
 import shorts_guy1 from "../assets/game/npcs/shorts_guy1.png";
 import shorts_guy2 from "../assets/game/npcs/shorts_guy2.png";
 import shorts_guy3 from "../assets/game/npcs/shorts_guy3.png";
+import gorl2 from "../assets/game/npcs/gorl2.png";
+import gorl3 from "../assets/game/npcs/gorl3.png";
+import proglog from "../assets/game/npcs/proglog.png";
+
 import gorath from "../assets/game/special/gorath.png";
+import monrock from "../assets/game/special/morock.png";
+import rethnor from "../assets/game/special/rethnor.png";
 
 // SPRITESHEET ASSETS
 
@@ -123,6 +129,7 @@ import no_button from "../assets/ui/no_button.png";
 import yellow_hue from "../assets/ui/yellow_hue.png";
 import tab_frame from "../assets/ui/tab_frame.png";
 import no2_button from "../assets/ui/no2_button.png"
+import begin_button from "../assets/ui/begin_button.png"
 
 // SOUND ASSETS
 import door_open from "../assets/sounds/door_opening.mp3";
@@ -234,6 +241,7 @@ var LoadState = {
     this.load.image("yellow_hue", yellow_hue);
     this.load.image("tab_frame",tab_frame);
     this.load.image("no2_button",no2_button);
+    this.load.image("begin_button",begin_button);
 
     this.load.image("sky", skyBg);
     this.load.image("room", roomBg);
@@ -264,7 +272,13 @@ var LoadState = {
     this.load.image("shorts_guy1", shorts_guy1);
     this.load.image("shorts_guy2", shorts_guy2);
     this.load.image("shorts_guy3", shorts_guy3);
+    this.load.image("gorl2", gorl2);
+    this.load.image("gorl3", gorl3);
+    this.load.image("proglog", proglog);
+
     this.load.image("gorath", gorath);
+    this.load.image("monrock", monrock);
+    this.load.image("rethnor", rethnor);
 
     this.load.image("kitchen", jebsKitchen);
     this.load.image("trashcan", trash_can);

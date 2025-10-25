@@ -2,6 +2,7 @@ import dialog_dictionary from "../dictonaries/dialog.json";
 import ingredients_dictionary from "../dictonaries/ingredients.json";
 import npc_dictionary from "../dictonaries/npcs.json";
 import OrderSubmittedHandler from "../modules/OrderSubmittedHandler";
+import weeks_info from "../dictonaries/weeks"
 
 const dialogYMove = 500;
 
@@ -65,8 +66,8 @@ const questionHandler = (game, action, passage) => {
     game.text.destroy();
   }
   game.text = text;
-  game.qNoButton.input.enabled=true
-    game.qYesButton.input.enabled=true
+  game.qNoButton.input.enabled = true
+  game.qYesButton.input.enabled = true
   game.qYesButton.y = 920;
   game.qNoButton.y = 920;
   game.qYesButton.setAlpha(0);
@@ -101,13 +102,13 @@ const showNote = (game, shouldShow) => {
     const note_info = game.selectedNote;
     game.selectedNote = undefined;
     game.noteInfoTitle.text = note_info.title;
-    if (note_info.title.includes("Untitled")){
-      game.noteInfoTitle.text=""
+    if (note_info.title.includes("Untitled")) {
+      game.noteInfoTitle.text = ""
     }
     //game.modInfoImage.setTexture(mod_info.key);
     game.noteAuthorText.text = "By: " + game.npcName;
-    if (note_info.title.includes("Untitled")){
-      game.noteAuthorText.text=""
+    if (note_info.title.includes("Untitled")) {
+      game.noteAuthorText.text = ""
     }
     let infotext = "";
     if (note_info.description) {
@@ -163,7 +164,7 @@ const setupNoteFrame = (game) => {
     .setOrigin(0.5, 0.5)
     .setDepth(7);
   game.note_background.visible = false;
-  game.noteInfoTitle.visible=false;
+  game.noteInfoTitle.visible = false;
   game.noteAuthorText.visible = false;
   game.noteInfoText.visible = false;
 
@@ -174,8 +175,8 @@ const setupNoteFrame = (game) => {
 
 const questionButtonHandler = (game) => {
   game.qYesButton.on("pointerdown", (pointer, gameObject) => {
-    game.qNoButton.input.enabled=false
-    game.qYesButton.input.enabled=false
+    game.qNoButton.input.enabled = false
+    game.qYesButton.input.enabled = false
     game.tweens.add({
       targets: game.qYesButton,
       scale: 0.15,
@@ -186,14 +187,14 @@ const questionButtonHandler = (game) => {
       yoyo: true,
       onComplete: function () {
         if (game.questionAction === "note") {
-          showNote(game,true);
+          showNote(game, true);
         }
       },
     });
   });
   game.qNoButton.on("pointerdown", (pointer, gameObject) => {
-    game.qNoButton.input.enabled=false
-    game.qYesButton.input.enabled=false
+    game.qNoButton.input.enabled = false
+    game.qYesButton.input.enabled = false
     game.tweens.add({
       targets: game.qNoButton,
       scale: 0.15,
@@ -213,6 +214,7 @@ const questionButtonHandler = (game) => {
 };
 
 const customerHandler = (customer, game) => {
+  console.log("new customer", customer);
   game.registry.set("SwitchNotAllowed", true);
   if (game.npc !== undefined) {
     game.npc.destroy();
@@ -265,7 +267,7 @@ const customerHandler = (customer, game) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [frame],
@@ -303,7 +305,7 @@ const customerHandler = (customer, game) => {
           game.order.unshift("bottomBun"),
           game.order.unshift("topBun");
         let bouncyStyled = false;
-        if (game.currentDay >= 3) {
+        if (game.bouncyballsAllowed) {
           let chance = Math.floor(Math.random() * 4); // 1/4 chance
           if (chance === 0) {
             bouncyStyled = true;
@@ -321,6 +323,9 @@ const customerHandler = (customer, game) => {
           " the burger with" +
           order_list +
           ".";
+        if (game.secretShopperCustomer) {
+          text = "I am customer. Give me the burger with" + order_list + "."
+        }
         if (bouncyStyled) {
           text = text.slice(0, text.length - 19);
           let bounce_dialog = [
@@ -332,7 +337,7 @@ const customerHandler = (customer, game) => {
             bounce_dialog[Math.floor(Math.random() * bounce_dialog.length)];
           text += choice;
         }
-        if (npc_dictionary.npcs[game.current_customer_index].sprite_sheet) {
+        if ((npc_dictionary.npcs[game.current_customer_index].sprite_sheet) && (!game.secretShopperCustomer)) {
           object.play("glob_talk");
           //game.talk_sfx.play();
         }
@@ -370,16 +375,16 @@ const showDayFrame = (game, show, islong) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [game.dayText],
-      y: 350,
+      y: 365,
       ease: "Power1",
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [game.dayUpdateText],
@@ -426,7 +431,7 @@ const showDayFrame = (game, show, islong) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [game.dayUpdateText],
@@ -462,7 +467,13 @@ const showDayFrame = (game, show, islong) => {
 };
 
 const newCustomer = (game, just_launched) => {
-  if (game.dailyCustomerCount >= game.dailyCustomerMax) {
+  if (game.dailyCustomerCount == (game.dailyCustomerMax) && game.secretShopperWeek == true && game.dayOfWeek === "Friday") {
+    game.secretShopperCustomer = true;
+    console.log("secret shopper is now.");
+  } else {
+    game.secretShopperCustomer = false;
+  }
+  if ((game.dailyCustomerCount >= game.dailyCustomerMax && (!game.secretShopperWeek || (game.secretShopperWeek && game.dayOfWeek !== "Friday"))) || game.dailyCustomerCount >= (game.dailyCustomerMax + 1)) {
     console.log("day is over");
     dayEndHandler(game, just_launched);
     return;
@@ -483,7 +494,15 @@ const newCustomer = (game, just_launched) => {
         game.current_customer_index =
           game.todays_customers[game.dailyCustomerCount];
 
-        const customer = npc_dictionary.npcs[game.current_customer_index];
+        console.log("daily customer count", game.dailyCustomerCount);
+        console.log("todays customers", game.todays_customers);
+        let customer = npc_dictionary.npcs[game.current_customer_index];
+        if (game.secretShopperCustomer) {
+          console.log("setting customer to secret shopper");
+          customer = npc_dictionary.secretshoppers[game.current_customer_index]
+          console.log("secret shopper customer is", customer);
+        }
+        console.log("customer index", game.current_customer_index);
         customerHandler(customer, game);
 
         game.door_open_sfx.play();
@@ -495,6 +514,7 @@ const newCustomer = (game, just_launched) => {
 };
 
 const dayStartHandler = (game) => {
+  console.log("starting new day");
   game.registry.set("DayOver", false);
   game.currentDay = parseInt(game.currentDay) + 1;
   game.registry.set("Day", game.currentDay);
@@ -503,6 +523,18 @@ const dayStartHandler = (game) => {
   const unlockedMaxRatio = Math.floor(
     game.dailyCustomerMax / game.currentUnlockedCustomers.length + 0.5
   );
+  let dayNum = game.currentDay - (game.currentWeek * 5);
+  if (dayNum % 5 == 0) {
+    game.dayOfWeek = "Friday";
+  } else if (dayNum % 4 == 0) {
+    game.dayOfWeek = "Thursday"
+  } else if (dayNum % 3 == 0) {
+    game.dayOfWeek = "Wednesday"
+  } else if (dayNum % 2 == 0) {
+    game.dayOfWeek = "Tuesday"
+  } else {
+    game.dayOfWeek = "Monday"
+  }
   for (let i = 0; i < unlockedMaxRatio; i++) {
     game.todays_customers = game.todays_customers.concat(
       game.currentUnlockedCustomers
@@ -521,6 +553,11 @@ const dayStartHandler = (game) => {
     }
     game.newUnlockedCustomer = null;
   }
+
+  if (game.secretShopperWeek == true && game.dayOfWeek === "Friday") { // day is friday secret shopper yes
+    let randomShopper = Math.floor(Math.random() * npc_dictionary.secretshoppers.length);
+    game.todays_customers.push(randomShopper) // add secret shopper character
+  }
   console.log("todays customers", game.todays_customers);
 
   game.registry.set("DailyCustomerCount", game.dailyCustomerCount);
@@ -535,17 +572,90 @@ const dayStartHandler = (game) => {
   });
 };
 
+const weekStartHandler = (game) => {
+
+  //game.currentWeek=1
+
+  game.weekTitle.text = "Welcome to Week " + (game.currentWeek + 1)
+  game.thisWeeksInfo = weeks_info.actual_weeks[game.currentWeek]
+  if (!game.thisWeeksInfo) {
+    let weekText = ""
+    weekText+=  ("You've made it to Week " + (game.currentWeek + 1) + ".")
+    if (game.currentWeek % 2 == 0) {
+      weekText += " There will be a Secret Shopper arriving this Friday."
+      let alottedPoints = 5*Math.floor(game.currentWeek/2);
+
+      while (alottedPoints > 0) {
+        let statToIncrease = Math.floor(Math.random() * 4);
+        if (statToIncrease == 0) {
+          game.secretshopperPresentationStandard += 1;
+        } else if (statToIncrease == 1) {
+          game.secretshopperPunctualityStandard += 1;
+        } else if (statToIncrease == 2) {
+          game.secretshopperPrecisionStandard += 1;
+        } else if (statToIncrease == 3) {
+          game.secretshopperPleasantryStandard += 1;
+        }
+        alottedPoints -= 1;
+      }
+      game.defaultPresentationStandard += 2
+      game.defaultPunctualityStandard += 2
+      game.defaultPrecisionStandard += 2
+      game.defaultPleasantryStandard += 2
+      weekText += ` By end of week HR requests your standards are as follows:\n\nPresentation: ${game.secretshopperPresentationStandard}%\nPunctuality: ${game.secretshopperPunctualityStandard}%\nPrecision: ${game.secretshopperPrecisionStandard}%\nPleasantry: ${game.secretshopperPleasantryStandard}%`
+      game.weekDescription.text = weekText
+    } else {
+      
+      game.defaultPresentationStandard = (game.secretshopperPresentationStandard + 2)
+      game.defaultPunctualityStandard = (game.secretshopperPunctualityStandard + 2)
+      game.defaultPrecisionStandard = (game.secretshopperPrecisionStandard + 2)
+      game.defaultPleasantryStandard = (game.secretshopperPleasantryStandard + 2)
+    }
+  } else {
+    game.weekDescription.text = game.thisWeeksInfo.description
+
+    if (game.thisWeeksInfo.c_standards) {
+      game.defaultPresentationStandard = game.thisWeeksInfo.c_standards[0];
+      game.defaultPunctualityStandard = game.thisWeeksInfo.c_standards[1];
+      game.defaultPrecisionStandard = game.thisWeeksInfo.c_standards[2];
+      game.defaultPleasantryStandard = game.thisWeeksInfo.c_standards[3];
+    }
+    if (game.thisWeeksInfo.s_standards) {
+      game.secretshopperPresentationStandard = game.thisWeeksInfo.s_standards[0];
+      game.secretshopperPunctualityStandard = game.thisWeeksInfo.s_standards[1];
+      game.secretshopperPrecisionStandard = game.thisWeeksInfo.s_standards[2];
+      game.secretshopperPleasantryStandard = game.thisWeeksInfo.s_standards[3];
+    }
+  }
+
+  if (game.thisWeeksInfo.events.includes("bouncyball")) {
+    game.bouncyballsAllowed = true;
+  }
+
+  if (game.thisWeeksInfo.events.includes("secretshopper") || (game.currentWeek % 2 == 0 && game.currentWeek >= 4)) {
+    game.secretShopperWeek = true;
+  } else {
+    game.secretShopperWeek = false;
+  }
+
+  showWeekFrameHandler(game)
+}
+
 const dayEndHandler = (game, just_launched) => {
   game.registry.set("DayOver", true);
   game.dailyCustomerCount = 0;
 
-  if (just_launched) {
-    game.dayText.text = "Day " + game.currentDay + " Complete!";
-    game.dayUpdateText.text = "";
-    game.dayUpdateSprite = null;
-    showDayFrame(game, true);
-    return;
+  if (game.dayOfWeek === "Friday") {
+    game.currentWeek += 1;
+    game.newWeek = true;
   }
+  // if (just_launched) {
+  //   game.dayText.text = "Day " + game.currentDay + " (" + game.dayOfWeek + ")" + " Complete!";
+  //   game.dayUpdateText.text = "";
+  //   game.dayUpdateSprite = null;
+  //   showDayFrame(game, true);
+  //   return;
+  // }
   const moreCustomersSuccess = (game.currentDay + 1) % 4;
   if (moreCustomersSuccess == 0) {
     const moreCustomers = Math.floor(Math.random() * 2) + 1;
@@ -569,7 +679,7 @@ const dayEndHandler = (game, just_launched) => {
   }
   game.registry.set("IngredientMax", parseInt(game.ingredientMax));
 
-  game.dayText.text = "Day " + game.currentDay + " Complete!";
+  game.dayText.text = game.dayOfWeek + " (" + "Day " + game.currentDay + ")" + " Complete!";
   game.dayUpdateText.text = "";
   game.dayUpdateSprite = null;
   //console.log("unlocked customer", unlockedCustomerSuccess);
@@ -591,15 +701,20 @@ const dayEndHandler = (game, just_launched) => {
       game.currentUnlockedCustomers[game.currentUnlockedCustomers.length - 1];
     game.registry.set("Unlocked_Customers", game.currentUnlockedCustomers);
     if (game.currentLockedCustomers.length <= 0) {
-      game.dayUpdateText.text = "You have now unlocked all customers!";
+      game.dayUpdateText.text += "You have now unlocked all customers!";
       game.dayUpdateSprite = "penguin_sheet";
     } else {
-      game.dayUpdateText.text = "You have unlocked a new customer!";
+      game.dayUpdateText.text += "You have unlocked a new customer!";
     }
   }
 
-  game.dayUpdateText.text +=
-    "\n Tomorrow you will have " + game.dailyCustomerMax + " visitors.";
+  if (game.secretShopperWeek === true && game.dayOfWeek === "Thursday") {
+    game.dayUpdateText.text += "\n Tomorrow you will have " + (game.dailyCustomerMax + 1) + " visitors.\n Tomorrow is the day."
+
+  } else {
+    game.dayUpdateText.text +=
+      "\n Tomorrow you will have " + game.dailyCustomerMax + " visitors.";
+  }
 
   showDayFrame(game, true);
 };
@@ -617,7 +732,11 @@ const dayButtonHandler = (game, button) => {
       repeat: 0,
       yoyo: true,
       onComplete: function () {
-        dayStartHandler(game);
+        if (game.newWeek == true) {
+          weekStartHandler(game);
+        } else {
+          dayStartHandler(game);
+        }
       },
     });
   });
@@ -751,7 +870,7 @@ const orderCompleteHandler = (game) => {
         duration: 500,
         repeat: 0,
         yoyo: false,
-        onComplete: function () {},
+        onComplete: function () { },
       });
       game.tweens.add({
         targets: game.text,
@@ -760,7 +879,7 @@ const orderCompleteHandler = (game) => {
         duration: 500,
         repeat: 0,
         yoyo: false,
-        onComplete: function () {},
+        onComplete: function () { },
       });
     },
     callbackScope: game,
@@ -851,8 +970,157 @@ const furnitureHandler = (game, furnitureList) => {
   }
 };
 
+const showWeekFrameHandler = (game) => {
+
+  game.tweens.add({
+    targets: [game.weekFrame],
+    y: game.weekFrame.y + 1000,
+    ease: "Power1",
+    duration: 200,
+    repeat: 0,
+    yoyo: false,
+  })
+  game.tweens.add({
+    targets: [game.weekTitle],
+    y: game.weekTitle.y + 1000,
+    ease: "Power1",
+    duration: 200,
+    repeat: 0,
+    yoyo: false,
+  })
+  game.tweens.add({
+    targets: [game.weekDescription],
+    y: game.weekDescription.y + 1000,
+    ease: "Power1",
+    duration: 200,
+    repeat: 0,
+    yoyo: false,
+  })
+  game.tweens.add({
+    targets: [game.introBeginButton],
+    y: game.introBeginButton.y + 1000,
+    ease: "Power1",
+    duration: 200,
+    repeat: 0,
+    yoyo: false,
+  })
+
+
+}
+
+const introFrameHandler = (game) => {
+  // game.introBeginButton.on("pointerover",(pointer,gameObject)=>{
+  //   game.tweens.add({
+  //     targets: [game.introBeginButton],
+  //     scale: .21,
+  //   ease: "Power1",
+  //     duration: 100,
+  //     repeat: 0,
+  //     yoyo: false
+  //   })
+  // })
+  // game.introBeginButton.on("pointerout",(pointer,gameObject)=>{
+  //   game.tweens.add({
+  //     targets: [game.introBeginButton],
+  //     scale: .2,
+  //   ease: "Power1",
+  //     duration: 100,
+  //     repeat: 0,
+  //     yoyo: false
+  //   })
+  // })
+  // weekFrame creation
+  game.weekFrame = game.add.image(500, 500, "order_background").setOrigin(.5, .5).setDepth(9).setInteractive()
+  game.weekTitle = game.add
+    .text(500, 300, "First day on the job.", {
+      fontFamily: "unifrakturcook",
+      fontSize: "70px",
+      fill: "black",
+      wordWrap: { width: 600 },
+      align: "center",
+    })
+    .setOrigin(0.5, 0.5)
+    .setDepth(10);
+  game.weekDescription = game.add
+    .text(500, 550, "You got a job at a nearby burger place. Your goal is to appease the customers. Precision, Punctuality and Presentation matter. Pleasantry will matter later. Spend tips you make in the shop. You can make 5 mistakes before they fire you. The rest is up to you.\n\nGood luck.", {
+      fontFamily: "font1",
+      fontSize: "30px",
+      fill: "black",
+      wordWrap: { width: 600 },
+      align: "center",
+    })
+    .setOrigin(0.5, 0.5)
+    .setDepth(10);
+  game.introBeginButton = game.add.image(500, 700, "begin_button").setOrigin(0.5, 0.5)
+    .setDepth(10).setInteractive().setTint(0x2dfa67)
+  game.introBeginButton.visible = false;
+  game.introBeginButton.scale = .2;
+
+  game.time.addEvent({
+    delay: 1000,
+    callback: () => {
+      game.weekFrame.on("pointerdown", (pointer, gameObject) => {
+        game.food_click_sfx.play();
+        game.tweens.add({
+          targets: [game.introBeginButton],
+          scale: .15,
+          ease: "Power1",
+          duration: 100,
+          repeat: 0,
+          yoyo: true,
+          onComplete: function () {
+            game.tweens.add({
+              targets: [game.weekFrame],
+              y: game.weekFrame.y - 1000,
+              ease: "Power1",
+              duration: 200,
+              repeat: 0,
+              yoyo: false,
+            })
+            game.tweens.add({
+              targets: [game.weekTitle],
+              y: game.weekTitle.y - 1000,
+              ease: "Power1",
+              duration: 200,
+              repeat: 0,
+              yoyo: false,
+            })
+            game.tweens.add({
+              targets: [game.weekDescription],
+              y: game.weekDescription.y - 1000,
+              ease: "Power1",
+              duration: 200,
+              repeat: 0,
+              yoyo: false,
+            })
+            game.tweens.add({
+              targets: [game.introBeginButton],
+              y: game.introBeginButton.y - 1000,
+              ease: "Power1",
+              duration: 200,
+              repeat: 0,
+              yoyo: false,
+              onComplete: function () {
+                //weekStartHandler(game);
+              }
+            })
+            if (game.newWeek === true) {
+              game.newWeek = false;
+              dayStartHandler(game);
+            } else {
+              newCustomer(game, true);
+            }
+          }
+        })
+      })
+    },
+    callbackScope: game,
+    loop: false,
+  });
+}
+
 var GameState = {
-  preload() {},
+  preload() { },
 
   create() {
     // this.bgMusic = this.sound.add("cluttered_ambience2");
@@ -869,6 +1137,7 @@ var GameState = {
     this.spooky_sfx3 = this.sound.add("spooky_sfx3");
     this.success_sfx1 = this.sound.add("success_sfx1");
     this.click_sfx = this.sound.add("submit_click");
+    this.food_click_sfx = this.sound.add("food_click");
     this.game_over_sfx = this.sound.add("game_over_sfx");
     this.door_open_sfx = this.sound.add("door_open").setVolume(1);
     this.door_rattle_sfx = this.sound.add("door_rattling").setVolume(0.2);
@@ -935,6 +1204,9 @@ var GameState = {
       .setOrigin(0, 0)
       .setDepth(4);
 
+
+    introFrameHandler(this)
+
     // dayFrame creation
     this.dayFrame = this.add
       .image(500, -1000, "notice_background")
@@ -944,7 +1216,7 @@ var GameState = {
     this.dayText = this.add
       .text(500, -1100, "Day 1 Complete!", {
         fontFamily: "unifrakturcook",
-        fontSize: "80px",
+        fontSize: "70px",
         fill: "#FF7FC5",
         wordWrap: { width: 600 },
         align: "center",
@@ -1064,6 +1336,7 @@ var GameState = {
     this.currentWeek = parseInt(this.registry.get("Week") || 0);
     this.dailyCustomerCount = this.registry.get("DailyCustomerCount") || 0;
     this.newUnlockedCustomer = null;
+
     this.currentAllowedIngredients = {
       topBun: true,
       bottomBun: true,
@@ -1096,10 +1369,33 @@ var GameState = {
     );
     this.current_customer_index = 0;
 
-    //this.registry.set("Day", this.currentDay);
+    this.defaultPunctualityStandard = 70;
+    this.defaultPresentationStandard = 70;
+    this.defaultPrecisionStandard = 70;
+    this.defaultPleasantryStandard = 0;
+
+    this.dayOfWeek = "Monday";
+    this.currentDay = 1
+    this.currentWeek = 0
+    // this.secretShopperWeek = true
+    this.thisWeeksInfo = weeks_info.actual_weeks[this.currentWeek]
+
+    if (this.thisWeeksInfo.c_standards) {
+      this.defaultPresentationStandard = this.thisWeeksInfo.c_standards[0];
+      this.defaultPunctualityStandard = this.thisWeeksInfo.c_standards[1];
+      this.defaultPrecisionStandard = this.thisWeeksInfo.c_standards[2];
+      this.defaultPleasantryStandard = this.thisWeeksInfo.c_standards[3];
+    }
+    if (this.thisWeeksInfo.s_standards) {
+      this.secretshopperPresentationStandard = this.thisWeeksInfo.s_standards[0];
+      this.secretshopperPunctualityStandard = this.thisWeeksInfo.s_standards[1];
+      this.secretshopperPrecisionStandard = this.thisWeeksInfo.s_standards[2];
+      this.secretshopperPleasantryStandard = this.thisWeeksInfo.s_standards[3];
+    }
+    this.registry.set("Day", this.currentDay)
+    this.registry.set("Week", this.currentWeek)
     //this.registry.set("Health", 5);
     this.registry.set("SwitchNotAllowed", true);
-    newCustomer(this, true);
   },
 
   update() {
