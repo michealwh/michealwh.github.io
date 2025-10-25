@@ -18,7 +18,7 @@ const shuffleArray = (array) => {
   }
 };
 
-const dialogHandler = (passage, game) => {
+const dialogHandler = (passage, game, startingOrder) => {
   const textStyle = {
     fontFamily: "font1",
     fontSize: "20px",
@@ -42,7 +42,7 @@ const dialogHandler = (passage, game) => {
     yoyo: true,
     onComplete: function () {
       if (game.selectedNote !== undefined) {
-      } else {
+      } else if (startingOrder) {
         game.registry.set("Order_Began", true);
         game.registry.set("SwitchNotAllowed", false);
       }
@@ -344,7 +344,7 @@ const customerHandler = (customer, game) => {
           object.play("glob_talk");
           //game.talk_sfx.play();
         }
-        dialogHandler(text, game);
+        dialogHandler(text, game,true);
       },
     });
   }
