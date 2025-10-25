@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes as Switch, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes as Switch, Route } from 'react-router-dom';
 import HomePage from './pages/Home';
 import AboutPage from './pages/About';
 import SlorgsEatery from './pages/SlorgsEatery';
