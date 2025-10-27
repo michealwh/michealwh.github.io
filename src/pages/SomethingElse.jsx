@@ -133,9 +133,9 @@ const config = {
     //     if (!isPlaying){
           
     //       setIsPlaying(true);
-    //       console.log(isPlaying)
+    //       //console.log(isPlaying)
     //     playBackgroundMusic();
-    //     console.log(isPlaying)
+    //     //console.log(isPlaying)
     //   }
     //   });
       

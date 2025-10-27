@@ -49,7 +49,7 @@ const healthHandler = (game) => {
   if (new_health < game.health) {
     // health was taken away
     const difference = game.health - new_health;
-    console.log("Health decreased by " + difference);
+    //console.log("Health decreased by " + difference);
     for (let i = 0; i < difference; i++) {
       if (game.healthItems.length > 0) {
         game.health -= 1;
@@ -285,11 +285,11 @@ var MenuState = {
         }
         click_sfx.play();
         this.time_paused_start = this.time.now;
-        //console.log("setting start of paused time", this.time_paused_start);
+        ////console.log("setting start of paused time", this.time_paused_start);
       } else {
         click_sfx.play();
         this.time_paused += this.time.now - this.time_paused_start;
-        //console.log(this.time_paused, this.time_paused_start, this.time.now);
+        ////console.log(this.time_paused, this.time_paused_start, this.time.now);
       }
 
       if (this.scene.isActive("OrderState")) {
@@ -532,7 +532,7 @@ var MenuState = {
         1000;
 
       const ingredientCount = this.registry.get("Order").length;
-      // console.log(
+      // //console.log(
       //   "Time per each ingredient:" + time_finished / ingredientCount
       // );
       const punctualityStat = Math.floor(
@@ -549,7 +549,7 @@ var MenuState = {
       //   );
       // }
       // this.registry.set("Average_Punctuality", punctualityToSet);
-      // console.log(
+      // //console.log(
       //   "Order Time Finished",
       //   this.registry.get("Order_Time_Finished")
       // );
