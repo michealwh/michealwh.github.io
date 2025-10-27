@@ -335,7 +335,7 @@ const ModifierAsset = (game, modifier, x, y, quantity) => {
 };
 
 const ModUpdater = (game) => {
-  //console.log("IN MOD UPDATER");
+  console.log("IN MOD UPDATER");
 
   for (let i = 0; i < game.modifierAssets.length; i++) {
     game.modifierAssets[i].destroy();
@@ -533,7 +533,7 @@ var GalleryState = {
       .get("Unlocked_Customers")
       .slice();
 
-    //console.log("SETTING LAST MODIFIER IN CREATE");
+    console.log("SETTING LAST MODIFIER IN CREATE");
     this.lastModifiers = this.registry.get("Modifiers").slice();
 
     this.modifierAssets = [];
@@ -662,7 +662,7 @@ var GalleryState = {
     }
     if (this.registry.get("Modifiers").length !== this.lastModifiers.length) {
       this.lastModifiers = this.registry.get("Modifiers").slice();
-      //console.log("just set last mod");
+      console.log("just set last mod");
       ModUpdater(this);
     }
     if(this.registry.get("NewNoteEvent") === true){

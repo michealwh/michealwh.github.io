@@ -51,7 +51,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     (recieved_order.length <= 0 && ingredients_missed.length === 0) === false
   ) {
     // check precision
-    //console.log(
+    console.log(
       "failed from precision",
       recieved_order.length,
       ingredients_missed.length
@@ -70,8 +70,8 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     pleasantryChance = game.secretshopperPleasantryStandard;
     precisionChance = game.secretshopperPrecisionStandard;
   }
-  ////console.log("pres:",presentationChance,presentationStat)
-  ////console.log("punc:",punctualityChance,punctualityStat)
+  //console.log("pres:",presentationChance,presentationStat)
+  //console.log("punc:",punctualityChance,punctualityStat)
 
   const CurrentDay = game.registry.get("Day");
   const Total_Orders = game.registry.get("Total_Orders");
@@ -100,7 +100,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         }
         break;
       case "burgerpolish":
-        //console.log("incrementing burgerpolish");
+        console.log("incrementing burgerpolish");
         presentationStat += 1.5;
         break;
       case "pragmaticparty":
@@ -214,7 +214,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     if (punctualityStat < 50) {
       glob_change = glob_change * (punctualityStat / 100);
     }
-    ////console.log("GLOBS EARNED:", glob_change);
+    //console.log("GLOBS EARNED:", glob_change);
     if (npc_info.name.includes("Glorb")) {
       tipMod += 1;
     }
@@ -243,7 +243,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     let selectedNote = null;
     if (notes_dictionary[game.npcName]) {
       let notes_info = notes_dictionary[game.npcName];
-      //console.log(notes_info.startday, CurrentDay);
+      console.log(notes_info.startday, CurrentDay);
       if (
         (notes_info.startday && CurrentDay >= notes_info.startday) ||
         (CurrentDay >= defaultStartDay && !notes_info.startday)
@@ -256,7 +256,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
           let noteSuccess = Math.floor(
             Math.random() * notes_dictionary[game.npcName].chance
           );
-          //console.log("note success:", noteSuccess);
+          console.log("note success:", noteSuccess);
           if (noteSuccess === 0) {
             if (order === "chrono") {
               if (npc_collected === undefined) {
@@ -273,7 +273,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
                 }
               }
             } else if (order === "random") {
-              //console.log("not implemented")
+              console.log("not implemented")
             }
             game.registry.set("Notes", all_collected_notes);
           }
@@ -317,16 +317,16 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     if (!savedThisTime) {
        healthsToBeLost += 1;
       // const current_health = game.registry.get("Health");
-      // //console.log("current health:", current_health);
+      // console.log("current health:", current_health);
       // game.registry.set("Health", current_health - 1);
-      //console.log("current health after first loss:", game.registry.get("Health"));
+      console.log("current health after first loss:", game.registry.get("Health"));
     }
 
     if (
       game.secretShopperCustomer
     ) {
       // secret shopper fail
-      //console.log("secret shopper failed");
+      console.log("secret shopper failed");
       let protectedHealth = Math.floor(Math.random() * 100) + 1;
 
       let savedThisTime = false;
@@ -337,14 +337,14 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
 
       if (!savedThisTime) {
         healthsToBeLost += 1;
-        //console.log("secret shopper lost life");
+        console.log("secret shopper lost life");
         game.time.addEvent({
         delay: 200,
         callback: function () {
           // const current_health = game.registry.get("Health");
-          // //console.log("current health:", current_health);
+          // console.log("current health:", current_health);
           // game.registry.set("Health", current_health - 1);
-          // //console.log("current health after secret shopper loss:", game.registry.get("Health"));
+          // console.log("current health after secret shopper loss:", game.registry.get("Health"));
           const sound_num = Math.floor(Math.random() * 3) + 1;
           game["spooky_sfx" + sound_num].play();
         }
@@ -353,8 +353,8 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     }
     if (healthsToBeLost > 0) {
       const current_health = game.registry.get("Health");
-      //console.log("current health:", current_health);
-      //console.log("healths to be lost:", healthsToBeLost);
+      console.log("current health:", current_health);
+      console.log("healths to be lost:", healthsToBeLost);
       game.registry.set("Health", current_health - healthsToBeLost);
     }
     //game.registry.set("ChangedHealth", true);

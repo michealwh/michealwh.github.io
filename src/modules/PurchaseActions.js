@@ -230,7 +230,7 @@ const purchaseActions = {
 
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("chair1")
-    //console.log(currentModList)
+    console.log(currentModList)
     game.registry.set("Modifiers",currentModList)
 
     let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
