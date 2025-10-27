@@ -93,12 +93,12 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
 
       return;
     }
-    //--console.log("dragend", dropped);
+    ////console.log("dragend", dropped);
 
     object.body.setAllowGravity(true);
     let velocityY = objectCurrentVelocityY;
     let velocityX = objectCurrentVelocityX;
-    //--console.log("after dragend: velocityX", velocityX, "velocityY", velocityY);
+    ////console.log("after dragend: velocityX", velocityX, "velocityY", velocityY);
     object.setVelocity(velocityX, velocityY);
   });
 };
@@ -180,7 +180,7 @@ const foodButtonHandler = (object, game) => {
   });
 
   // object.on('pointerup', (pointer, gameObject) => {
-  //   --console.log("POINTER IS UP THIS SHOULD STOP")
+  //   //console.log("POINTER IS UP THIS SHOULD STOP")
   //   game.objectDragging=false
   //   game.draggedObject=null
   //   });
@@ -216,13 +216,13 @@ const submitButtonhandler = (object, game) => {
             loop: false,
           });
         }
-        //--console.log(distOff / Burger_Ingredients.length);
-        //--console.log(Math.min(50, distOff / Burger_Ingredients.length));
+        ////console.log(distOff / Burger_Ingredients.length);
+        ////console.log(Math.min(50, distOff / Burger_Ingredients.length));
         const presentationStat = Math.min(
           100,
           (50 - Math.min(50, distOff / Burger_Ingredients.length - 1)) * 2 + 5
         ); // 5 is perfect 10 is good 50 is cut off for bad
-        --console.log("Presentation stat", presentationStat);
+        //console.log("Presentation stat", presentationStat);
 
         let presentationToSet = Math.floor(presentationStat);
         game.registry.set("Current_Presentation", presentationToSet);
@@ -538,7 +538,7 @@ var KitchenState = {
     if (this.used_ingredients.length > 0) {
       for (let i = 0; i < this.used_ingredients.length; i++) {
         const objectTrashed = (object, trashcan) => {
-          --console.log("USED INGREDIENTS GETTING TRASHED");
+          //console.log("USED INGREDIENTS GETTING TRASHED");
           if (this.top_ingredient == this.servingplate) {
             return;
           }

@@ -26,18 +26,18 @@ var ShakeState = {
       const game = this
       const Burger_Information = this.registry.get("Burger_Information")
 
-      --console.log(Burger_Information)
+      //console.log(Burger_Information)
       const serving_plate = this.add.image(350, plateOffset + yMove, "servingplate").setOrigin(0, 0)
       this.burgerIngredients.push(serving_plate)
       for (let i = 0; i < Burger_Information.length; i++) {
         const object = Burger_Information[i]
-        //--console.log(object)
+        ////console.log(object)
         const food = this.add.image(serving_plate.x - object.xPos, serving_plate.y - object.yPos, object.ingredient_string).setOrigin(0, 0)
         this.burgerIngredients.push(food)
       }
 
       for (let i = 0; i < game.burgerIngredients.length; i++) {
-        //--console.log(game.burgerIngredients)
+        ////console.log(game.burgerIngredients)
 
         game.tweens.add({
           targets: [game.burgerIngredients[i]],
