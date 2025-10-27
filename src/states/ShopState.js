@@ -409,7 +409,7 @@ var ShopState = {
 
     const AlreadyOwnedItems = localStorage.getItem("Items");
     if (AlreadyOwnedItems) {
-      console.log("found owned items");
+      --console.log("found owned items");
       let itemList = JSON.parse(AlreadyOwnedItems);
       itemList.forEach((item) => {
         let itemInfo = shop_dictionary.purchasables[item];
@@ -491,7 +491,7 @@ var ShopState = {
   },
   update() {
     if (this.registry.get("Day") !== this.day) {
-      console.log("day changed in shop");
+      --console.log("day changed in shop");
       this.day = this.registry.get("Day");
       shuffleItems(this);
     }

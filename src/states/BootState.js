@@ -4,7 +4,7 @@ import earthSheet from "../assets/game/spritesheets/rotateEarth.png"
 import loadingSky from "../assets/game/loadingSky.png"
 
 function resizeApp() {
-  console.log("Resizing app...");
+  --console.log("Resizing app...");
   let game_ratio = 1000 / 1000;
 
   let div = document.getElementById("phaser-container");

@@ -230,7 +230,7 @@ const purchaseActions = {
 
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("chair1")
-    console.log(currentModList)
+    --console.log(currentModList)
     game.registry.set("Modifiers",currentModList)
 
     let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
@@ -305,6 +305,9 @@ const purchaseActions = {
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("pragmaticparty")
     game.registry.set("Modifiers",currentModList)
+    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
+    pleasantryScore += 1;
+    game.registry.set("Average_Pleasantry", pleasantryScore);
   },
   thewhisk: function (game){
     itemReveal(game,"thewhisk")

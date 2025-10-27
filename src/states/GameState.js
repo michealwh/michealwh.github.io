@@ -155,7 +155,7 @@ const setupNoteFrame = (game) => {
   game.noteInfoText = game.add
     .text(500, 510, "notes", {
       fontFamily: "font1",
-      lineSpacing: 20,
+      lineSpacing: 15,
       fontSize: "35px",
       fill: "black",
       wordWrap: { width: 500 },
@@ -214,7 +214,7 @@ const questionButtonHandler = (game) => {
 };
 
 const customerHandler = (customer, game) => {
-  console.log("new customer", customer);
+  --console.log("new customer", customer);
   game.registry.set("SwitchNotAllowed", true);
   if (game.npc !== undefined) {
     game.npc.destroy();
@@ -318,7 +318,7 @@ const customerHandler = (customer, game) => {
         }
         game.registry.set("Order_Text", order_list);
         game.registry.set("Order", game.order);
-        //console.log(order_list);
+        //--console.log(order_list);
         let text =
           dialog_dictionary.greetings[g_index] +
           " " +
@@ -472,19 +472,19 @@ const showDayFrame = (game, show, islong) => {
 const newCustomer = (game, just_launched) => {
   if (game.dailyCustomerCount == (game.dailyCustomerMax) && game.secretShopperWeek == true && game.dayOfWeek === "Friday") {
     game.secretShopperCustomer = true;
-    console.log("secret shopper is now.");
+    --console.log("secret shopper is now.");
   } else {
     game.secretShopperCustomer = false;
   }
   if ((game.dailyCustomerCount >= game.dailyCustomerMax && (!game.secretShopperWeek || (game.secretShopperWeek && game.dayOfWeek !== "Friday"))) || game.dailyCustomerCount >= (game.dailyCustomerMax + 1)) {
-    console.log("day is over");
+    --console.log("day is over");
     dayEndHandler(game, just_launched);
     return;
   } else if(game.todays_customers.length <= game.dailyCustomerCount) {
-    console.log(game.dailyCustomerCount >= game.dailyCustomerMax)
-    console.log(game.secretShopperWeek)
-    console.log(game.dayOfWeek)
-    console.log("day is over but this shouldn't be happening");
+    --console.log(game.dailyCustomerCount >= game.dailyCustomerMax)
+    --console.log(game.secretShopperWeek)
+    --console.log(game.dayOfWeek)
+    --console.log("day is over but this shouldn't be happening");
     dayEndHandler(game, just_launched);
     return;
   }
@@ -504,16 +504,16 @@ const newCustomer = (game, just_launched) => {
         game.current_customer_index =
           game.todays_customers[game.dailyCustomerCount];
 
-        console.log("customer max",game.dailyCustomerMax)
-        console.log("daily customer count", game.dailyCustomerCount);
-        console.log("todays customers", game.todays_customers);
+        --console.log("customer max",game.dailyCustomerMax)
+        --console.log("daily customer count", game.dailyCustomerCount);
+        --console.log("todays customers", game.todays_customers);
         let customer = npc_dictionary.npcs[game.current_customer_index];
         if (game.secretShopperCustomer) {
-          console.log("setting customer to secret shopper");
+          --console.log("setting customer to secret shopper");
           customer = npc_dictionary.secretshoppers[game.current_customer_index]
-          console.log("secret shopper customer is", customer);
+          --console.log("secret shopper customer is", customer);
         }
-        console.log("customer index", game.current_customer_index);
+        --console.log("customer index", game.current_customer_index);
         customerHandler(customer, game);
 
         game.door_open_sfx.play();
@@ -525,7 +525,7 @@ const newCustomer = (game, just_launched) => {
 };
 
 const dayStartHandler = (game) => {
-  console.log("starting new day");
+  --console.log("starting new day");
   game.registry.set("DayOver", false);
   game.currentDay = parseInt(game.currentDay) + 1;
   game.registry.set("Day", game.currentDay);
@@ -550,17 +550,17 @@ const dayStartHandler = (game) => {
     game.todays_customers = game.todays_customers.concat(
       game.currentUnlockedCustomers
     );
-    //console.log("adding todays customers", game.todays_customers);
+    //--console.log("adding todays customers", game.todays_customers);
   }
   shuffleArray(game.todays_customers);
-  //console.log("shuffled todays customers", game.todays_customers);
+  //--console.log("shuffled todays customers", game.todays_customers);
 
   game.todays_customers = game.todays_customers.slice(0, game.dailyCustomerMax);
   if (game.newUnlockedCustomer !== null) {
-    console.log("there is a new customer today", game.newUnlockedCustomer);
+    --console.log("there is a new customer today", game.newUnlockedCustomer);
     if (!game.todays_customers.includes(game.newUnlockedCustomer)) {
       game.todays_customers[0] = game.newUnlockedCustomer;
-      console.log("customer doesnt exist so we're adding it in");
+      --console.log("customer doesnt exist so we're adding it in");
     }
     game.newUnlockedCustomer = null;
   }
@@ -569,7 +569,7 @@ const dayStartHandler = (game) => {
     let randomShopper = Math.floor(Math.random() * npc_dictionary.secretshoppers.length);
     game.todays_customers.push(randomShopper) // add secret shopper character
   }
-  console.log("todays customers", game.todays_customers);
+  --console.log("todays customers", game.todays_customers);
 
   game.registry.set("DailyCustomerCount", game.dailyCustomerCount);
   showDayFrame(game, false);
@@ -653,6 +653,7 @@ const weekStartHandler = (game) => {
 }
 
 const dayEndHandler = (game, just_launched) => {
+  game.registry.set("SwitchNotAllowed", false);
   game.registry.set("DayOver", true);
   game.dailyCustomerCount = 0;
 
@@ -693,12 +694,12 @@ const dayEndHandler = (game, just_launched) => {
   game.dayText.text = game.dayOfWeek + " (" + "Day " + game.currentDay + ")" + " Complete!";
   game.dayUpdateText.text = "";
   game.dayUpdateSprite = null;
-  //console.log("unlocked customer", unlockedCustomerSuccess);
+  //--console.log("unlocked customer", unlockedCustomerSuccess);
   if (unlockedCustomerSuccess == 1 && game.currentLockedCustomers.length > 0) {
     let newCustomerIndex = Math.floor(
       Math.random() * game.currentLockedCustomers.length
     );
-    //console.log("unlocked customers and locked customers before",game.currentUnlockedCustomers,game.currentLockedCustomers);
+    //--console.log("unlocked customers and locked customers before",game.currentUnlockedCustomers,game.currentLockedCustomers);
 
     game.currentUnlockedCustomers.push(
       game.currentLockedCustomers[newCustomerIndex]
@@ -706,7 +707,7 @@ const dayEndHandler = (game, just_launched) => {
     game.currentLockedCustomers = game.currentLockedCustomers.filter(
       (item) => item !== game.currentLockedCustomers[newCustomerIndex]
     );
-    // console.log("unlocked customers and locked customers after",game.currentUnlockedCustomers,game.currentLockedCustomers);
+    // --console.log("unlocked customers and locked customers after",game.currentUnlockedCustomers,game.currentLockedCustomers);
 
     game.newUnlockedCustomer =
       game.currentUnlockedCustomers[game.currentUnlockedCustomers.length - 1];
@@ -770,16 +771,13 @@ const endOfOrderReviewHandler = (game) => {
     repeat: 0,
     yoyo: false,
   });
-  game.tweens.add({
-    targets: game.npc,
-    x: game.npc.x,
-    y: game.npc.y + 350,
-    ease: "Power1",
-    duration: 500,
-    repeat: 0,
-    yoyo: false,
-    onComplete: function () {
-      if (game.registry.get("Health") <= 0) {
+
+  game.time.addEvent({
+    delay: 500,
+    callback: () => {
+      if(game.registry.get("Health")>0){
+        newCustomer(game);
+      } else {
         game.game_over_sfx.play();
         // GAME OVER
         game.dayButton.scale = 0;
@@ -816,7 +814,18 @@ const endOfOrderReviewHandler = (game) => {
         game.scene.pause("MenuState");
         return;
       }
-      newCustomer(game);
+    }
+    })
+  
+  game.tweens.add({
+    targets: game.npc,
+    x: game.npc.x,
+    y: game.npc.y + (350*2),
+    ease: "Power1",
+    duration: 1000,
+    repeat: 0,
+    yoyo: false,
+    onComplete: function () {
     },
   });
 };
@@ -871,7 +880,7 @@ const orderCompleteHandler = (game) => {
         repeat: 0,
         yoyo: false,
         // onComplete: function () {
-        //   console.log("ui shown");
+        //   --console.log("ui shown");
         // },
       });
       game.tweens.add({
@@ -899,7 +908,7 @@ const orderCompleteHandler = (game) => {
   game.time.addEvent({
     delay: 5500,
     callback: () => {
-      console.log("doing review");
+      --console.log("doing review");
       OrderSubmittedHandler(game, dialogHandler);
       game.time.addEvent({
         delay: 3000,
@@ -1367,7 +1376,7 @@ var GameState = {
     const unlockedMaxRatio = Math.floor(
       this.dailyCustomerMax / this.currentUnlockedCustomers.length + 0.5
     );
-    //console.log("unlocked max ratio", unlockedMaxRatio);
+    //--console.log("unlocked max ratio", unlockedMaxRatio);
     for (let i = 0; i < unlockedMaxRatio; i++) {
       this.todays_customers = this.todays_customers.concat(
         this.currentUnlockedCustomers

@@ -130,7 +130,7 @@ var notes = {
       {
         title: "Weightless",
         description:
-          "Everythings much brighter. My feet feel all the more lighter.\nAs I run to you. Now I know what I need to do.\nThree pretty words.\nJust for you.",
+          "Everythings much brighter.\nMy feet feel all the more lighter.\nAs I run to you.\I know what I need to do.\nThree pretty words.\nJust for you.",
       },
     ],
   },
