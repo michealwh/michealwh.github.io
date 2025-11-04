@@ -147,6 +147,7 @@ import presentation_sfx1 from "../assets/sounds/presentation_sfx1.mp3";
 import game_over_sfx from "../assets/sounds/game_over_sfx.mp3";
 import bouncy_open from "../assets/sounds/slorg_bouncy_open.mp3";
 import box_sfx from "../assets/sounds/box_sfx.mp3";
+import page_flip_sfx from "../assets/sounds/page_flip_sfx.mp3";
 
 import success_sfx1 from "../assets/sounds/success_sfx1.mp3";
 
@@ -214,6 +215,7 @@ var LoadState = {
     this.load.audio("bouncy_open", bouncy_open);
     this.load.audio("box_sfx", box_sfx);
     this.load.audio("game_over_sfx", game_over_sfx);
+    this.load.audio("page_flip_sfx", page_flip_sfx);
 
     //this.load.audio("cluttered_ambience2", cluttered_ambience2);
     this.load.spritesheet("glob_man_sheet", glob_man_sheet, {

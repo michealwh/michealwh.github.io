@@ -1,7 +1,6 @@
 import dialog_dictionary from "../dictonaries/dialog.json";
 import npc_dictionary from "../dictonaries/npcs.json";
 import notes_dictionary from "../dictonaries/notes.jsx";
-import weeks from "../dictonaries/weeks.jsx";
 
 const OrderSubmittedHandler = (game, dialogHandler) => {
 
@@ -51,7 +50,6 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     (recieved_order.length <= 0 && ingredients_missed.length === 0) === false
   ) {
     // check precision
-    //console.log(
     has_passed = false;
   }
 

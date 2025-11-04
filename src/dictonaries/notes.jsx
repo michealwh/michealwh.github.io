@@ -6,17 +6,17 @@ var notes = {
     startday: 5,
     notes: [
       {
-        title: "#1 It is never enough.",
+        title: "It is never enough. Pt.1",
         description: `I will always need more.\nThe job's rarely a bore.\nSo I keep working for this store.\nIt is never enough.`,
         image: false,
       },
       {
-        title: "#2 It is never enough.",
+        title: "It is never enough. Pt.2",
         description: `Another dollar in my pocket.\nOne more coin to deposit.\nA greasy burger on the market.\nIt is never enough.`,
         image: false,
       },
       {
-        title: "#3 It is never enough.",
+        title: "It is never enough. Pt.3",
         description: `Tirelessly I go on.\nWorking from dusk to dawn.\nAm I a moron?\nIt is never enough.`,
         image: false,
       },
@@ -113,11 +113,24 @@ var notes = {
     key: "Marmaduke Gloo",
     order: "chrono",
     chance: 3,
-    startday: 6,
+    startday: 4,
     notes: [
       {
         title: "Untitled #3",
         description: `Jellyfish aren't actually fish. They don't have fins or gills and instead swim by opening or closing their “bells.”`,
+      },
+    ],
+  },
+  "Alonzo Gloo": {
+    key: "Alonzo Gloo",
+    order: "chrono",
+    chance: 3,
+    startday: 6,
+    notes: [
+      {
+        title: "The Apartment",
+        description: `A man resided in a small dusty apartment\nNot much to his name. Not much in his department.\nBut the man never let this get to his heart.\nFor on his plate he had toast. For on his canvas he had art.`,
+        fontSize: 20,
       },
     ],
   },
@@ -130,7 +143,7 @@ var notes = {
       {
         title: "Weightless",
         description:
-          "Everythings much brighter.\nMy feet feel all the more lighter.\nAs I run to you.\I know what I need to do.\nThree pretty words.\nJust for you.",
+          "Everything's much brighter.\nMy feet feel all the more lighter.\nAs I run to you.\nI know what I need to do.\nThree pretty words.\nJust for you.",
       },
     ],
   },
@@ -146,6 +159,20 @@ var notes = {
       },
     ],
   },
+  "Bentley Gloo": {
+    key: "Bentley Gloo",
+    order: "chrono",
+    chance: 2,
+    startday: 5,
+    notes: [
+      {
+        title: "Validation Damnation",
+        description: "I yearn for that place at the top of the hill.\nOnly 30 paces—the trip couldn't be much of a thrill.\nBut hill turns to mountain, and the fountain runs dry.\nWith each step this task feels impossible to try.\nA question resurfaces—a mental negotiation.\nI ask myself, will I ever be cured and find my foundation?",
+        fontSize: 20,
+      },
+    ],
+  },
+
   "Felippe Diaz": {
     key: "Felippe Diaz",
     order: "chrono",

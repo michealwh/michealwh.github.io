@@ -11,7 +11,6 @@ export const Routes = () => {
         <Route path="/about" element={<AboutPage/>} />
         <Route path="/race" element={<SlorgsEatery/>} />
         <Route path="/something-else" element={<SomethingElse/>} />
-        <Route path="*" element={<AboutPage/>} />
       </Switch>
     </Router>
   );

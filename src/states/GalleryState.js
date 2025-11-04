@@ -128,6 +128,7 @@ const hideInfo = (game) => {
   }
   game.modInfoImage.visible = false;
   game.note_background.visible = false;
+  game.noteInfoTitle.visible=false;
   game.noteInfoText.visible = false;
   game.noteAuthorText.visible=false;
 };
@@ -412,26 +413,35 @@ const setupNoteTab = (game) => {
     .image(0, 0, "order_background")
     .setOrigin(0, 0)
     .setDepth(6).setInteractive();
+  game.noteInfoTitle = game.add
+    .text(220, 280, "Name", {
+      fontFamily: "font1",
+      fontSize: "50px",
+      fill: "black",
+    })
+    .setOrigin(0, 0.5)
+    .setDepth(7);
   game.noteAuthorText = game.add
-    .text(500, 330, "notes", {
+    .text(220, 330, "notes", {
       fontFamily: "font1",
       fontSize: "20px",
       fill: "black",
       wordWrap: { width: 500 },
-      align: "center",
-    }).setOrigin(.5,.5)
+      align: "left",
+    }).setOrigin(0,.5)
     .setDepth(7);
   game.noteInfoText = game.add
-    .text(500, 510, "notes", {
+    .text(220, 400, "notes", {
       fontFamily: "font1",
       lineSpacing: 15,
       fontSize: "35px",
       fill: "black",
-      wordWrap: { width: 500 },
-      align: "center",
-    }).setOrigin(.5,0.5)
+      wordWrap: { width: 600 },
+      align: "left",
+    }).setOrigin(0,0)
     .setDepth(7);
   game.note_background.visible = false;
+  game.noteInfoTitle.visible=false;
   game.noteAuthorText.visible=false;
   game.noteInfoText.visible = false;
   
@@ -499,15 +509,20 @@ const NoteUpdater = (game) => {
           function showNoteInfo(show, npc, note_info) {
             if (show) {
               game.click_sfx.play();
-              game.npcInfoTitle.text = note_info.title;
+              game.noteInfoTitle.text = note_info.title;
               //game.modInfoImage.setTexture(mod_info.key);
               game.noteAuthorText.text = "By: " + npc
               let infotext = "";
               if (note_info.description) {
                 infotext += note_info.description;
               }
+              if(note_info.fontSize){
+                game.noteInfoText.setFontSize(note_info.fontSize+"px")
+              } else {
+                game.noteInfoText.setFontSize("35px")
+              }
               game.noteInfoText.text = infotext;
-              game.npcInfoTitle.visible = true;
+              game.noteInfoTitle.visible = true;
               game.noteInfoText.visible = true;
               game.noteAuthorText.visible=true;
               game.note_background.visible = true;

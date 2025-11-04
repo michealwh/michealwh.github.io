@@ -1,39 +1,67 @@
-const yMove = 500
-const plateOffset = 780
-const handsOffset = 50
+const yMove = 500;
+const plateOffset = 780;
+const handsOffset = 50;
 
 const shakeEvent = (game, duration, intensity) => {
-  game.cameras.main.shake(duration, intensity)
-}
+  game.cameras.main.shake(duration, intensity);
+};
 
 var ShakeState = {
-  preload() {
-
-  },
+  preload() {},
 
   create() {
-    const hands = this.add.image(500, handsOffset + yMove, "hands").setOrigin(.5, 0)
+    const hands = this.add
+      .image(500, handsOffset + yMove, "hands")
+      .setOrigin(0.5, 0);
     this.eat_sfx = this.sound.add("eat_sfx1");
     this.presentation_sfx = this.sound.add("presentation_sfx1");
-    this.presentation_sfx.setVolume(.9);
-    this.hands = hands
-    this.burgerIngredients = []
+    this.presentation_sfx.setVolume(0.9);
+    this.hands = hands;
+    this.burgerIngredients = [];
+    this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X)
+
   },
 
   update() {
+    if (Phaser.Input.Keyboard.JustDown(this.keyX)) {
+      let inTransition = false;
+      if (this.handsTweenY) {
+        inTransition = true;
+        this.handsTweenY.stop();
+      }
+      if (this.burgerHideTween) {
+        inTransition = true;
+        this.burgerHideTween.stop();
+      }
+      if (inTransition) {
+        for (let i = 0; i < this.burgerIngredients.length; i++) {
+          this.burgerIngredients[i].destroy();
+        }
+        this.burgerIngredients = [];
+        this.hands.y = handsOffset + yMove;
+      }
+    }
     if (this.registry.get("Order_Complete") === true) {
-      shakeEvent(this, 2000, .002)
-      const game = this
-      const Burger_Information = this.registry.get("Burger_Information")
+      shakeEvent(this, 2000, 0.002);
+      const game = this;
+      const Burger_Information = this.registry.get("Burger_Information");
 
-      //console.log(Burger_Information)
-      const serving_plate = this.add.image(350, plateOffset + yMove, "servingplate").setOrigin(0, 0)
-      this.burgerIngredients.push(serving_plate)
+      //console.log(Burger_Information);
+      const serving_plate = this.add
+        .image(350, plateOffset + yMove, "servingplate")
+        .setOrigin(0, 0);
+      this.burgerIngredients.push(serving_plate);
       for (let i = 0; i < Burger_Information.length; i++) {
-        const object = Burger_Information[i]
+        const object = Burger_Information[i];
         ////console.log(object)
-        const food = this.add.image(serving_plate.x - object.xPos, serving_plate.y - object.yPos, object.ingredient_string).setOrigin(0, 0)
-        this.burgerIngredients.push(food)
+        const food = this.add
+          .image(
+            serving_plate.x - object.xPos,
+            serving_plate.y - object.yPos,
+            object.ingredient_string
+          )
+          .setOrigin(0, 0);
+        this.burgerIngredients.push(food);
       }
 
       for (let i = 0; i < game.burgerIngredients.length; i++) {
@@ -42,13 +70,12 @@ var ShakeState = {
         game.tweens.add({
           targets: [game.burgerIngredients[i]],
           y: game.burgerIngredients[i].y - yMove,
-          ease: 'Power1',
+          ease: "Power1",
           duration: 2000,
           repeat: 0,
           yoyo: false,
-          onComplete: function () {
-          }
-        })
+          onComplete: function () {},
+        });
       }
 
       // var handsTweenX= this.tweens.add({
@@ -60,21 +87,20 @@ var ShakeState = {
       //   yoyo: true,
       // })
       game.presentation_sfx.play();
-      var handsTweenY = this.tweens.add({
+      game.handsTweenY = this.tweens.add({
         targets: [this.hands],
         y: this.hands.y - yMove,
-        ease: 'Power1',
+        ease: "Power1",
         duration: 2000,
         repeat: 0,
         yoyo: false,
         onComplete: function () {
-
           function hideFood() {
             game.eat_sfx.play();
             for (let i = 0; i < game.burgerIngredients.length; i++) {
-              game.tweens.add({
+              game.burgerHideTween = game.tweens.add({
                 targets: [game.burgerIngredients[i]],
-                ease: 'Power1',
+                ease: "Power1",
                 duration: 500,
                 alpha: 0,
                 repeat: 0,
@@ -83,14 +109,14 @@ var ShakeState = {
                   for (let i = 0; i < game.burgerIngredients.length; i++) {
                     game.burgerIngredients[i].destroy();
                   }
-                  game.burgerIngredients = []
-                }
-              })
+                  game.burgerIngredients = [];
+                },
+              });
             }
           }
 
           function hideHands() {
-            game.hands.y=handsOffset + yMove
+            game.hands.y = handsOffset + yMove;
             //game.hands.destroy()
             // var tween = game.tweens.add({
             //   targets: [game.hands],
@@ -106,25 +132,22 @@ var ShakeState = {
             //     game.burgerIngredients = []
             //   }
             // })
-
           }
 
           game.time.addEvent({
             delay: 500,
-            callback:
-              hideFood,
+            callback: hideFood,
             callbackScope: game,
             loop: false,
           });
           game.time.addEvent({
             delay: 501,
-            callback:
-              hideHands,
+            callback: hideHands,
             callbackScope: game,
             loop: false,
           });
-        }
-      })
+        },
+      });
 
       // function endOfPresentingBurger() {
       //   //this.scene.bringToTop("GameState")
@@ -139,7 +162,7 @@ var ShakeState = {
       //   loop: false,
       // });
     }
-  }
+  },
 };
 
 export default ShakeState;
