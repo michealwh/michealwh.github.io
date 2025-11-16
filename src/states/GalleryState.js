@@ -312,7 +312,7 @@ const ModifierAsset = (game, modifier, x, y, quantity) => {
       fontFamily: "font1",
       fontSize: "20px",
       fill: "black",
-      wordWrap: { width: 100 },
+      wordWrap: { width: 120 },
       align: "center",
     })
     .setOrigin(0.5, 0.5)
@@ -368,7 +368,7 @@ const ModUpdater = (game) => {
     let modAssets = ModifierAsset(
       game,
       item,
-      currentRowCount * 100 + 150,
+      currentRowCount * 120 + 87,
       currentRowY,
       modCountList[item]
     );

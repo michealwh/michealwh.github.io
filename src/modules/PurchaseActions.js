@@ -1,3 +1,5 @@
+import shop_dictionary from "../dictonaries/shop.json";
+
 function itemReveal(game, item) {
   game.promptOpen = true;
   game.registry.set("SwitchNotAllowed", true);
@@ -30,9 +32,13 @@ function itemReveal(game, item) {
             .setOrigin(0.5, 0.5);
           itemView.setDepth(8);
           itemView.scale = 0;
+          let targetScale = .5;
+          if(shop_dictionary.purchasables[item].scale){
+            targetScale=shop_dictionary.purchasables[item].scale
+          }
           game.tweens.add({
             targets: itemView,
-            scale: .5,
+            scale: targetScale,
             ease: "Linear",
             duration: 100,
             repeat: 0,

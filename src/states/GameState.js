@@ -62,7 +62,7 @@ const questionHandler = (game, action, passage) => {
     align: "center",
   };
   let text = game.add.text(500, 830, passage, textStyle).setOrigin(0.5, 0.5);
-  text.depth = 4;
+  text.depth = 4+uiDepth;
   if (game.text !== undefined) {
     game.text.destroy();
   }
@@ -1286,14 +1286,14 @@ var GameState = {
     this.qYesButton = this.add
       .image(320, 920, "yes_button")
       .setOrigin(0.5, 0.5)
-      .setDepth(8)
+      .setDepth(8+uiDepth)
       .setInteractive();
     this.qYesButton.scale = 0.2;
     this.qYesButton.visible = false;
     this.qNoButton = this.add
       .image(680, 920, "no2_button")
       .setOrigin(0.5, 0.5)
-      .setDepth(8)
+      .setDepth(8+uiDepth)
       .setInteractive();
     this.qNoButton.scale = 0.2;
     this.qNoButton.visible = false;
