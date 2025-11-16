@@ -3,7 +3,7 @@
     "magicdirt": {
       "key": "magicdirt",
       "title": "Magic Dirt",
-      "description": "50% chance to make all stats 90% every 5th customer.",
+      "description": "50% chance to make all stats at least 90% every 5th customer.",
       "type": "modifier",
       "cost": 30.99,
       "repeatable": true
@@ -53,6 +53,24 @@
       "repeatable": true
     },
 
+    "killercheddar": {
+      "key": "killercheddar",
+      "title": "Killer Cheddar",
+      "description": "20% chance a rat infestations is invalidated.",
+      "type": "modifier",
+      "cost": 54.99,
+      "repeatable": true
+    },
+
+    "ratnip": {
+      "key": "ratnip",
+      "title": "Ratnip",
+      "description": "$5 added on to each tip for every rat in your kitchen.",
+      "type": "modifier",
+      "cost": 84.99,
+      "repeatable": true
+    },
+
     "bouncyball": {
       "key": "bouncyball",
       "title": "Super Bouncy Ball Mystery Pack",
@@ -60,6 +78,15 @@
       "type": "ingredient",
       "cost": 5.99,
       "repeatable": true
+    },
+
+    "glumdevil": {
+      "key": "glumdevil",
+      "title": "Glorp Mart's Glum Devil Mystery Pack",
+      "description": "increases pleasantry by +4% (secret by +6%)",
+      "type": "furniture",
+      "cost": 49.99,
+      "repeatable": 100
     },
 
     "chair1": {

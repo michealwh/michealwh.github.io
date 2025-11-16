@@ -28,7 +28,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     (Math.max(
       0,
       expected_order.length -
-        (recieved_order.length + ingredients_missed.length)
+      (recieved_order.length + ingredients_missed.length)
     ) /
       expected_order.length) *
     100;
@@ -53,11 +53,16 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     has_passed = false;
   }
 
+  //console.log("currentstandards",game.defaultPresentationStandard,game.defaultPunctualityStandard,game.defaultPrecisionStandard,game.defaultPleasantryStandard)
+
   let presentationChance = Math.floor(Math.random() * game.defaultPresentationStandard); // for normal
   let punctualityChance = Math.floor(Math.random() * game.defaultPunctualityStandard);
   let pleasantryChance = Math.floor(Math.random() * game.defaultPleasantryStandard);
   let precisionChance = Math.floor(Math.random() * game.defaultPrecisionStandard);
 
+  if (game.defaultPleasantryStandard==0){
+    pleasantryChance=0;
+  }
   if (game.secretShopperCustomer) {
     presentationChance = game.secretshopperPresentationStandard;
     punctualityChance = game.secretshopperPunctualityStandard;
@@ -74,6 +79,8 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
 
   let tipMod = 0;
 
+  let tipAdditions = 0;
+
   let chanceOfNoLossLife = 0;
 
   for (let i = 0; i < Modifiers.length; i++) {
@@ -82,9 +89,10 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         if ((Total_Orders + 1) % 5 == 0) {
           let chance = Math.floor(Math.random() * 2) + 1;
           if (chance == 1) {
-            pleasantryStat = 90;
-            presentationStat = 90;
-            punctualityStat = 90;
+            pleasantryStat = math.max(90, pleasantryStat);
+            presentationStat = math.max(90, presentationStat);
+            punctualityStat = math.max(90, presentationStat);
+            precisionStat = math.max(90, precisionStat);
           }
         }
         break;
@@ -110,7 +118,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
           if (npc_info.standards && npc_info.standards.presentation) {
             totalStandards += npc_info.standards.presentation;
           } else {
-            if(game.secretShopperCustomer) {
+            if (game.secretShopperCustomer) {
               totalStandards += game.secretshopperPresentationStandard;
             } else {
               totalStandards += game.defaultPresentationStandard;
@@ -134,9 +142,25 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         chanceOfNoLossLife += 1;
         break;
       }
+      case "ratnip": {
+        let ratsNotAdded = game.registry.get("RatsToAdd") || 0
+        let ratsAdded = game.registry.get("KitchenRatCount") || 0
+        for(let i=0; i< (ratsNotAdded+ratsAdded);i++){
+          tipAdditions+=5;
+        }
+        break;
+      }
       default:
         break;
     }
+  }
+
+  // rat effect handling
+  let ratsNotAdded = game.registry.get("RatsToAdd") || 0
+  let ratsAdded = game.registry.get("KitchenRatCount") || 0
+
+  for(let i=0; i< (ratsNotAdded+ratsAdded);i++){
+    pleasantryStat-=3
   }
 
   if (npc_info.standards) {
@@ -194,10 +218,17 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     }
   }
 
+  //console.log("pres",presentationStat,presentationChance)
+  //console.log("pleas",pleasantryStat,pleasantryChance)
+
   if (has_passed === true) {
     // burger success
     const index = Math.floor(Math.random() * dialog_dictionary.success.length);
-    const good_response = dialog_dictionary.success[index];
+    let good_response = dialog_dictionary.success[index];
+    if (game.secretShopperCustomer){
+      const secretindex = Math.floor(Math.random()* dialog_dictionary.secret_success.length)
+      good_response = dialog_dictionary.secret_success[secretindex];
+    }
     let glob_change =
       Math.floor(
         ((presentationStat + precisionStat + punctualityStat) / 4.6) * 10
@@ -213,6 +244,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
       tipMod += 1;
     }
     glob_change += parseFloat(glob_change) * tipMod;
+    glob_change += tipAdditions
     let new_total_globs = parseFloat(
       parseFloat(current_globs) + parseFloat(glob_change)
     );
@@ -300,16 +332,20 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     game["spooky_sfx" + sound_num].play();
     dialogHandler(bad_response, game);
 
-    let protectedHealth = Math.floor(Math.random() * 100) + 1;
+    let protectedHealth = 0;
 
     let savedThisTime = false;
 
-    if (protectedHealth <= chanceOfNoLossLife) {
-      savedThisTime = true;
+    for (let i = 0; i < chanceOfNoLossLife; i++) {
+      protectedHealth = Math.floor(Math.random() * 100) + 1;
+      if (protectedHealth == 100) {
+        savedThisTime = true;
+        break
+      }
     }
     let healthsToBeLost = 0;
     if (!savedThisTime) {
-       healthsToBeLost += 1;
+      healthsToBeLost += 1;
       // const current_health = game.registry.get("Health");
       // //console.log("current health:", current_health);
       // game.registry.set("Health", current_health - 1);
@@ -321,28 +357,32 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     ) {
       // secret shopper fail
       //console.log("secret shopper failed");
-      let protectedHealth = Math.floor(Math.random() * 100) + 1;
+      let protectedHealth = 0;
 
       let savedThisTime = false;
 
-      if (protectedHealth <= chanceOfNoLossLife) {
-        savedThisTime = true;
+      for (let i = 0; i < chanceOfNoLossLife; i++) {
+        protectedHealth = Math.floor(Math.random() * 100) + 1;
+        if (protectedHealth == 100) {
+          savedThisTime = true;
+          break
+        }
       }
 
       if (!savedThisTime) {
         healthsToBeLost += 1;
         //console.log("secret shopper lost life");
         game.time.addEvent({
-        delay: 200,
-        callback: function () {
-          // const current_health = game.registry.get("Health");
-          // //console.log("current health:", current_health);
-          // game.registry.set("Health", current_health - 1);
-          // //console.log("current health after secret shopper loss:", game.registry.get("Health"));
-          const sound_num = Math.floor(Math.random() * 3) + 1;
-          game["spooky_sfx" + sound_num].play();
-        }
-      });
+          delay: 200,
+          callback: function () {
+            // const current_health = game.registry.get("Health");
+            // //console.log("current health:", current_health);
+            // game.registry.set("Health", current_health - 1);
+            // //console.log("current health after secret shopper loss:", game.registry.get("Health"));
+            const sound_num = Math.floor(Math.random() * 3) + 1;
+            game["spooky_sfx" + sound_num].play();
+          }
+        });
       }
     }
     if (healthsToBeLost > 0) {

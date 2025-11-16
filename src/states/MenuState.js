@@ -51,7 +51,7 @@ const healthHandler = (game) => {
     const difference = game.health - new_health;
     //console.log("Health decreased by " + difference);
     for (let i = 0; i < difference; i++) {
-      if (game.healthItems.length > 0) {
+      if (game.healthItems.length > 0 && game.health>0) {
         game.health -= 1;
         const targetHealthPart = game.healthItems[i];
         targetHealthPart.rotation = -5 * (Math.PI / 180);
@@ -76,6 +76,42 @@ const healthHandler = (game) => {
       }
     }
   }
+};
+
+const ratHandler = (game) => {
+
+   game.ratLoop = game.time.addEvent({
+    delay: (Math.floor(Math.random()*10)+20)*1000,
+    callback: () => {
+      //console.log("increasing rat count")
+      let ratCount = game.registry.get("RatsToAdd") || 0
+      let kitchenCount = game.registry.get("KitchenRatCount") || 0
+      if (game.registry.get("DayOver") === true){
+        return
+      }
+      if (game.registry.get("currentRatChance")){
+        let chanceCount = game.registry.get("currentRatChance")
+        let ratInfestationFailed = false;
+        for(let i =0;i<chanceCount;i++){
+          //console.log("loopin rat killer")
+          let chanceOfFailure = Math.random()*100 +1
+          //console.log("chanceoffail",chanceOfFailure)
+          if(chanceOfFailure<=20){
+            //console.log("no rat")
+            ratInfestationFailed=true;
+            break
+          }
+        }
+        if (ratInfestationFailed===true){
+          return
+        }
+      }
+      game.registry.set("RatsToAdd",ratCount+1)
+      game.ratLoop.delay=(Math.floor(Math.random()*10)+20)*1000
+    },
+    callbackScope: game,
+    loop: true,
+  });
 };
 
 var MenuState = {
@@ -150,43 +186,6 @@ var MenuState = {
     this.addedText = addedText;
 
     // health items
-
-    // const tintColor = Phaser.Display.Color.GetColor(10, 10, 10);
-    // const burgerBottomBG = this.physics.add
-    //   .image(955, 105, "bottomBun")
-    //   .setOrigin(0.5, 0.5);
-    // burgerBottomBG.scale = 0.3;
-    // burgerBottomBG.setTint(tintColor);
-    // burgerBottomBG.tintFill = true;
-    // burgerBottomBG.body.setAllowGravity(false);
-    // const beefpattyBG = this.physics.add
-    //   .image(955, 100, "beefpatty")
-    //   .setOrigin(0.5, 0.5);
-    // beefpattyBG.scale = 0.3;
-    // beefpattyBG.setTint(tintColor);
-    // beefpattyBG.tintFill = true;
-    // beefpattyBG.body.setAllowGravity(false);
-    // const lettuceBG = this.physics.add
-    //   .image(955, 95, "lettuce")
-    //   .setOrigin(0.5, 0.5);
-    // lettuceBG.scale = 0.3;
-    // lettuceBG.setTint(tintColor);
-    // lettuceBG.tintFill = true;
-    // lettuceBG.body.setAllowGravity(false);
-    // const ketchupBG = this.physics.add
-    //   .image(955, 90, "ketchup")
-    //   .setOrigin(0.5, 0.5);
-    // ketchupBG.scale = 0.3;
-    // ketchupBG.setTint(tintColor);
-    // ketchupBG.tintFill = true;
-    // ketchupBG.body.setAllowGravity(false);
-    // const burgerTopBG = this.physics.add
-    //   .image(955, 80, "topBun")
-    //   .setOrigin(0.5, 0.5);
-    // burgerTopBG.setTint(tintColor);
-    // burgerTopBG.tintFill = true;
-    // burgerTopBG.scale = 0.3;
-    // burgerTopBG.body.setAllowGravity(false);
 
     const burgerBottom = this.physics.add
       .image(955, 105, "bottomBun")
@@ -516,6 +515,11 @@ var MenuState = {
         globUpdateHandler(game);
       } else if (key === "Health") {
         healthHandler(game);
+      } else if (key === "RatsAdded"){
+        //console.log("rats added menu state")
+        // let ratCount = game.registry.get("RatsToAdd") || 0
+        // game.registry.set("RatsToAdd",ratCount+1)
+        ratHandler(game);
       }
     });
   },

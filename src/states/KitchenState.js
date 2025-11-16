@@ -1,3 +1,5 @@
+import npc_dictionary from "../dictonaries/npcs.json"
+
 const physicsObjectHandler = (object, game, currentlyHolding) => {
   object.setInteractive({
     draggable: true,
@@ -11,8 +13,8 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
   game.active_ingredients.push(object);
 
   object.setBounce(0.2, 0.2);
-  if (object.texture.key.includes("ball")){
-    const bounce = Math.random() * (1.2-.5) + .5;
+  if (object.texture.key.includes("ball")) {
+    const bounce = Math.random() * (1.2 - .5) + .5;
     object.setBounce(bounce);
   }
   object.setCollideWorldBounds(true);
@@ -67,11 +69,11 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
     object.setVelocity(0, 0);
     if (
       dragX > 0 &&
-      dragX < game.scale.gameSize.width - object.width){
-         object.x = dragX;
-         objectCurrentVelocityX = velocityX;
-      }
-      if (dragY > 0 &&
+      dragX < game.scale.gameSize.width - object.width) {
+      object.x = dragX;
+      objectCurrentVelocityX = velocityX;
+    }
+    if (dragY > 0 &&
       dragY < game.scale.gameSize.height - object.height
     ) {
       object.y = dragY;
@@ -103,19 +105,19 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
   });
 };
 
-const newKitchenItem = (game,image_key) =>{
+const newKitchenItem = (game, image_key) => {
   const object = game.physics.add
-        .image(500, 500, image_key)
-        .setOrigin(0, 0);
-      object.body.setAllowGravity(true);
-      object.scale = 1;
-      physicsObjectHandler(object,game,false)
+    .image(500, 500, image_key)
+    .setOrigin(0, 0);
+  object.body.setAllowGravity(true);
+  object.scale = 1;
+  physicsObjectHandler(object, game, false)
 }
 
 const foodButtonHandler = (object, game) => {
   object.scale = 0.5;
   let image_key = object.texture.key;
-  if (image_key.includes("Bottle")){
+  if (image_key.includes("Bottle")) {
     image_key = image_key.replace("Bottle", "")
   }
   object.on("pointerdown", (pointer, gameObject) => {
@@ -125,10 +127,10 @@ const foodButtonHandler = (object, game) => {
     ) {
       game.food_click.play();
       const clone = game.physics.add
-        .image(object.x -90, object.y, image_key)
+        .image(object.x - 90, object.y, image_key)
         .setOrigin(0, 0);
-      if(clone.x<clone.width/2){
-        clone.x=clone.width/2
+      if (clone.x < clone.width / 2) {
+        clone.x = clone.width / 2
       }
       game.active_drag_object = clone;
       clone.body.setAllowGravity(false);
@@ -141,7 +143,7 @@ const foodButtonHandler = (object, game) => {
         repeat: 0,
         yoyo: false,
       });
-      object.scale=.5;
+      object.scale = .5;
       game.objectDragging = true;
       physicsObjectHandler(clone, game, true);
     }
@@ -186,6 +188,170 @@ const foodButtonHandler = (object, game) => {
   //   });
 };
 
+const ratMinigameSetup = (game) => {
+
+
+  game.ratGameOngoing = false;
+
+  game.ratNoBtn.on("pointerdown", (pointer, gameObject) => {
+    game.food_click.play()
+    game.canRatMinigame = true;
+    game.ratYesBtn.visible = false;
+    game.ratNoBtn.visible = false;
+    game.ratTitle.visible = false;
+    game.ratInfo.visible = false;
+    game.ratFrame.visible = false;
+  })
+
+  game.ratYesBtn.on("pointerdown", (pointer, gameObject) => {
+    game.food_click.play()
+    game.ratYesBtn.visible = false;
+    game.ratNoBtn.visible = false;
+    game.ratInfo.visible = false;
+    let gameFrameScale = game.ratGameFrame.scale
+    game.ratGameFrame.scale = 0
+    game.ratGameFrame.visible = true
+    game.tweens.add({
+      targets: game.ratGameFrame,
+      scale: gameFrameScale,
+      duration: 200,
+      onComplete: function () {
+        game.ratGameOngoing = true
+        game.ratGameArrow.visible = true
+        game.ratGameBar.visible = true
+        let speed = Math.random() * 1000 + 600
+        game.ratGameArrow.x = 620
+        game.ratArrowTween = game.tweens.add({
+          targets: game.ratGameArrow,
+          duration: speed,
+          x: 380,
+          yoyo: true,
+          repeat: -1
+        })
+      }
+    })
+  })
+
+  game.EventEmitter.on("ratGameOver", (val) => {
+    game.tweens.add({
+      targets: game.ratGameArrow,
+      y: game.ratGameArrow.y-10,
+      duration: 100,
+      yoyo: true,
+
+      onComplete: function () {
+        game.ratGameArrow.visible = false
+        game.ratGameBar.visible = false
+        game.ratGameFrame.visible = false
+        game.ratInfo.visible = true;
+        let diff = Math.abs(game.ratGameArrow.x - 500)
+        let failed = false;
+        if (diff > 10) {
+          game.rat_click.play();
+          failed = true;
+          //console.log("failed")
+          game.ratInfo.text = "You have failed. Try again in 10 seconds."
+        } else {
+          game.ratInfo.text = "Rat expunged."
+          game.trash_sfx.play()
+          game.tweens.add({
+            targets: game.activeRat,
+            scale: 0,
+            duration: 500,
+            onComplete: function () {
+              game.activeRat.destroy()
+            }
+          })
+        }
+        game.time.addEvent({
+          delay: 1000,
+          callback: function () {
+            game.ratTitle.visible = false
+            game.ratInfo.visible = false
+            let frameScale = game.ratFrame.scale
+            game.tweens.add({
+            targets: game.ratFrame,
+            scale: 0,
+            duration: 200,
+            onComplete: function () {
+              game.ratFrame.visible=false
+              game.ratFrame.scale=frameScale
+            }
+          })
+            if (failed) {
+              game.time.addEvent({
+                delay: 1000 * 10,
+                callback: function () {
+                  game.canRatMinigame = true;
+                }
+              });
+            } else {
+              let count = game.registry.get("KitchenRatCount")
+              game.registry.set("KitchenRatCount", (count - 1))
+              game.canRatMinigame = true;
+            }
+          }
+        });
+      }
+    })
+  });
+}
+
+const ratMinigameShow = (game, rat) => {
+  game.activeRat = rat;
+  game.canRatMinigame = false;
+  let ratFrameScale = game.ratFrame.scale
+  game.ratFrame.scale = 0
+  game.ratFrame.visible = true
+  game.ratInfo.text = "Expunge of rat?"
+  game.tweens.add({
+    targets: game.ratFrame,
+    scale: ratFrameScale,
+    duration: 200,
+    onComplete: function () {
+      game.ratTitle.text = rat.ratName
+      game.ratYesBtn.visible = true;
+      game.ratNoBtn.visible = true;
+      game.ratTitle.visible = true;
+      game.ratInfo.visible = true;
+    }
+  })
+}
+
+const ratHandler = (game) => {
+  const rat = game.physics.add
+    .image(50, 1000, "rat_creature")
+    .setOrigin(0.5, 1)
+    .setInteractive();
+  rat.scale = 0
+  let targetScale = ((Math.random() * 8) + 1) * .1
+  let ratSpeed = 150 * (1 - targetScale)
+  game.tweens.add({
+    targets: rat,
+    scale: targetScale,
+    duration: 500,
+    onComplete: function () {
+      game.rat_sfx.play()
+      rat.setVelocityX(ratSpeed);
+      rat.body.onWorldBounds = true
+    }
+  })
+  let ratName = npc_dictionary.rat_names[Math.floor(Math.random() * npc_dictionary.rat_names.length)]
+  rat.ratName = ratName;
+  rat.setBounce(1);
+  rat.setDepth(1000);
+  rat.setCollideWorldBounds(true);
+  let count = game.registry.get("KitchenRatCount") || 0
+  game.registry.set("KitchenRatCount", (count + 1))
+
+  rat.on("pointerdown", (pointer, gameObject) => {
+    if (game.canRatMinigame !== false) {
+      game.rat_sfx2.play()
+      ratMinigameShow(game, rat)
+    }
+  })
+}
+
 const submitButtonhandler = (object, game) => {
   object.scale = 0.2;
   object.on("pointerdown", (pointer, gameObject) => {
@@ -202,8 +368,10 @@ const submitButtonhandler = (object, game) => {
 
         for (let i = 0; i < game.used_ingredients.length; i++) {
           if (i + 1 < game.used_ingredients.length) {
+            let actualPos1 = game.used_ingredients[i].x + game.used_ingredients[i].width/2
+            let actualPos2 = game.used_ingredients[i+1].x + game.used_ingredients[i+1].width/2
             distOff += Math.abs(
-              game.used_ingredients[i].x - game.used_ingredients[i + 1].x
+              actualPos1 - actualPos2
             );
           }
           Burger_Ingredients.push(game.used_ingredients[i].texture.key);
@@ -262,20 +430,20 @@ const submitButtonhandler = (object, game) => {
   });
 };
 var KitchenState = {
-  preload() {},
+  preload() { },
 
   create() {
     // this.bgMusic = this.sound.add("bgMusic")
     // this.bgMusic.setLoop(true);
     // this.bgMusic.volume = 0.1;
     // this.bgMusic.play()
-
+    this.EventEmitter = new Phaser.Events.EventEmitter();
     this.max_ingredients = 10;
 
     this.active_ingredients = [];
 
     this.used_ingredients = [];
-    this.adding_items=false;
+    this.adding_items = false;
     this.registry.set("Burger", this.used_ingredients);
 
     this.food_sfx = this.sound.add("food_sfx1");
@@ -283,6 +451,9 @@ var KitchenState = {
     this.click_sfx = this.sound.add("submit_click");
     this.trash_sfx = this.sound.add("trash_sfx");
     this.food_click = this.sound.add("food_click");
+    this.rat_sfx = this.sound.add("rat_sfx");
+    this.rat_sfx2 = this.sound.add("rat_sfx2");
+    this.rat_click = this.sound.add("rat_click");
 
     this.add.image(0, 0, "kitchen").setOrigin(0, 0);
 
@@ -356,10 +527,142 @@ var KitchenState = {
     ranchBtn.body.setAllowGravity(false);
     foodButtonHandler(ranchBtn, this);
 
+
+    const cheddarBtn = this.physics.add
+      .image(20 + 70, 215 + 5, "cheddar")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    cheddarBtn.body.setAllowGravity(false);
+    foodButtonHandler(cheddarBtn, this);
+    const pepperjackBtn = this.physics.add
+      .image(170 + 70, 215 + 5, "pepperjack")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    pepperjackBtn.body.setAllowGravity(false);
+    foodButtonHandler(pepperjackBtn, this);
+    const swisscheeseBtn = this.physics.add
+      .image(320 + 70, 215 + 5, "swisscheese")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    swisscheeseBtn.body.setAllowGravity(false);
+    foodButtonHandler(swisscheeseBtn, this);
+
+    cheddarBtn.visible = false;
+    pepperjackBtn.visible = false;
+    swisscheeseBtn.visible = false;
+    this.cheddarBtn = cheddarBtn
+    this.pepperjackBtn = pepperjackBtn
+    this.swisscheeseBtn = swisscheeseBtn
+
+    this.ratFrame = this.add
+      .image(500, 500, "order_background")
+      .setOrigin(0.5, 0.5)
+      .setTint(0x2dfa67, 0x076b22)
+      .setInteractive()
+      .setDepth(1001);
+    this.ratFrame.scale = .5
+    this.ratTitle = this.add
+      .text(340, 390, "Greggle", {
+        fontFamily: "font1",
+        fontSize: "30px",
+        fill: "blue",
+      })
+      .setOrigin(0, 0.5)
+      .setDepth(1002);
+    this.ratInfo = this.add
+      .text(500, 500, "Expunge of rat?", {
+        fontFamily: "font1",
+        fontSize: "25px",
+        fill: "blue",
+        align: "center",
+        wordWrap: { width: 300 }
+      })
+
+      .setOrigin(0.5, 0.5)
+      .setDepth(1002);
+    this.ratYesBtn = this.add
+      .image(400, 600, "yes_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(1002)
+      .setInteractive()
+      .setScale(.15);
+    this.ratNoBtn = this.add
+      .image(600, 600, "no2_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(1002)
+      .setInteractive()
+      .setScale(.15);
+
+    this.ratGameFrame = this.add
+      .image(500, 522, "order_background")
+      .setOrigin(0.5, 0.5)
+      .setTint(0x1328D6)
+      .setInteractive()
+      .setDepth(1003).setScale(.38);
+    this.ratGameArrow = this.add
+      .image(500, 505, "arrow_indicator")
+      .setOrigin(0.5, 0.5)
+      .setTint(0x2dfa67)
+      .setInteractive()
+      .setDepth(1004).setScale(.45);
+    this.ratGameBar = this.add
+      .image(500, 530, "ratgame_bar")
+      .setOrigin(0.5, 0.5)
+      .setInteractive()
+      .setDepth(1003).setScale(.9);
+
+    ratMinigameSetup(this)
+
+    this.ratMinigameAssets = [this.ratFrame, this.ratTitle, this.ratInfo, this.ratYesBtn, this.ratNoBtn, this.ratGameFrame, this.ratGameArrow, this.ratGameBar]
+    for (let i = 0; i < this.ratMinigameAssets.length; i++) {
+      this.ratMinigameAssets[i].visible = false
+    }
+    this.physics.world.on('worldbounds', (body, up, down, left, right) => { // for flipping rats
+      let scale = body.gameObject.scale
+      if (right) {
+        const game = this
+        this.tweens.add({
+          targets: body.gameObject,
+          scaleX: scale / 4,
+          ease: 'Linear',
+          duration: 100,
+          onComplete: function () {
+            body.gameObject.flipX = true
+            game.tweens.add({
+              targets: body.gameObject,
+              scaleX: scale,
+              ease: 'Linear',
+              duration: 100,
+
+            })
+          }
+        })
+      } else if (left) {
+        const game = this
+        this.tweens.add({
+          targets: body.gameObject,
+          scaleX: scale / 4,
+          ease: 'Linear',
+          duration: 100,
+          onComplete: function () {
+            body.gameObject.flipX = false
+            game.tweens.add({
+              targets: body.gameObject,
+              scaleX: scale,
+              ease: 'Linear',
+              duration: 100,
+
+            })
+          }
+        })
+      }
+    });
+
     const submitBtn = this.add
       .image(735 + 70, 940 + 10, "submit_button")
       .setOrigin(0.5, 0.5)
-      .setInteractive();
+      .setInteractive()
+      .setDepth(1001);
     submitButtonhandler(submitBtn, this);
 
     this.trashcan = this.physics.add
@@ -393,31 +696,58 @@ var KitchenState = {
         const object = this.active_drag_object;
         this.active_drag_object.body.setAllowGravity(true);
         const prevPosition = savedPointer.prevPosition;
-        const velocityX = (this.active_drag_object.x-prevPosition.x)/4; // might need change to match force of normal drag
-        const velocityY = (this.active_drag_object.y-prevPosition.y)/4;
+        const velocityX = (this.active_drag_object.x - prevPosition.x) / 4; // might need change to match force of normal drag
+        const velocityY = (this.active_drag_object.y - prevPosition.y) / 4;
         object.setVelocity(velocityX, velocityY);
         this.active_drag_object = null;
       }
     }
+
     this.input.on(Phaser.Input.Events.POINTER_UP, (pointer) => {
       objectDragCheck(pointer);
     });
 
-    this.input.on(Phaser.Input.Events.POINTER_UP_OUTSIDE, function(pointer) {
+    this.input.on(Phaser.Input.Events.POINTER_DOWN, (pointer) => {
+      if (this.ratGameOngoing === true) {
+        if (this.ratArrowTween) {
+          this.ratArrowTween.stop();
+          this.ratArrowTween.destroy();
+          this.ratGameOngoing = false;
+          this.EventEmitter.emit('ratGameOver', true);
+        }
+      }
+    });
+
+    this.input.on(Phaser.Input.Events.POINTER_UP_OUTSIDE, function (pointer) {
       objectDragCheck(pointer);
-});
+    });
+
+    //ratHandler(this);
   },
   update() {
 
+    if (this.registry.get("CheeseAdded") == true && this.swisscheeseBtn.visible == false) {
+      this.cheddarBtn.visible = true;
+      this.pepperjackBtn.visible = true;
+      this.swisscheeseBtn.visible = true;
+    }
 
-    if(this.registry.get("NewKitchenItemEvent").length>0 && this.adding_items==false){
+    if (this.registry.get("RatsToAdd") > 0) {
+      let count = this.registry.get("RatsToAdd")
+      this.registry.set("RatsToAdd", 0)
+      for (let i = 0; i < count; i++) {
+        ratHandler(this)
+      }
+    }
+
+    if (this.registry.get("NewKitchenItemEvent").length > 0 && this.adding_items == false) {
       this.adding_items = true
       const itemList = this.registry.get("NewKitchenItemEvent")
-      
-      for (let i = 0; i < itemList.length; i++){
-        newKitchenItem(this,itemList[i],"specialitem");
+
+      for (let i = 0; i < itemList.length; i++) {
+        newKitchenItem(this, itemList[i], "specialitem");
       }
-      this.registry.set("NewKitchenItemEvent",[]);
+      this.registry.set("NewKitchenItemEvent", []);
       this.adding_items = false
     }
 
@@ -453,7 +783,7 @@ var KitchenState = {
     if (this.active_ingredients.length > 0) {
       for (let i = 0; i < this.active_ingredients.length; i++) {
         const objectTrashed = (object, trashcan) => {
-          if(object.texture.key.includes("ball")){
+          if (object.texture.key.includes("ball")) {
             return
           }
           if (object === this.active_drag_object) {

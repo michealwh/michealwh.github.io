@@ -45,6 +45,8 @@ import gorath from "../assets/game/special/gorath.png";
 import monrock from "../assets/game/special/morock.png";
 import rethnor from "../assets/game/special/rethnor.png";
 
+import rat_creature from "../assets/game/special/rat_creature.png"
+
 // SPRITESHEET ASSETS
 
 import glob_man_sheet from "../assets/game/spritesheets/glob_man_sprite_sheet.png";
@@ -72,6 +74,9 @@ import ketchupBottle from "../assets/game/food/ketchupBottle.png";
 import mustardBottle from "../assets/game/food/mustardBottle.png";
 import bbqBottle from "../assets/game/food/bbqBottle2.png";
 import ranchBottle from "../assets/game/food/ranchBottle.png";
+import cheddar from "../assets/game/food/cheddar.png";
+import pepperjack from "../assets/game/food/pepperjackcheese.png";
+import swisscheese from "../assets/game/food/swisscheese.png";
 
 // SHOP ASSETS
 import purple_bg from "../assets/game/purple_bg.png";
@@ -87,6 +92,9 @@ import burgerpolish_box from "../assets/game/shop/burgerpolish_box.png";
 import pragmaticparty_box from "../assets/game/shop/pragmaticparty_box.png";
 import thewhisk_box from "../assets/game/shop/thewhisk_box.png";
 import aqualificprism_box from "../assets/game/shop/aqualificprism_box.png";
+import killercheddar_box from "../assets/game/shop/killercheddar_box.png";
+import ratnip_box from "../assets/game/shop/ratnip_box.png";
+import glumdevil_box from "../assets/game/shop/glumdevil_box.png";
 
 
 
@@ -104,6 +112,14 @@ import burgerpolish from "../assets/game/shop/burgerpolish.png";
 import pragmaticparty from "../assets/game/shop/pragmaticparty.png";
 import thewhisk from "../assets/game/shop/thewhisk.png";
 import aqualificprism from "../assets/game/shop/aqualificprism.png";
+import killercheddar from "../assets/game/shop/killercheddar.png";
+import ratnip from "../assets/game/shop/ratnip.png";
+import glumdevil from "../assets/game/shop/glumdevil.png"
+import glumglum from "../assets/game/shop/glumglum.png"
+import glumgrin from "../assets/game/shop/glumgrin.png"
+import glumheart from "../assets/game/shop/glumheart.png"
+import glumpleased from "../assets/game/shop/glumpleased.png"
+import glumwhistle from "../assets/game/shop/glumwhistle.png"
 
 
 
@@ -130,6 +146,8 @@ import yellow_hue from "../assets/ui/yellow_hue.png";
 import tab_frame from "../assets/ui/tab_frame.png";
 import no2_button from "../assets/ui/no2_button.png"
 import begin_button from "../assets/ui/begin_button.png"
+import arrow_indicator from "../assets/ui/arrow_indicator.png"
+import ratgame_bar from "../assets/ui/ratgame_bar.png"
 
 // SOUND ASSETS
 import door_open from "../assets/sounds/door_opening.mp3";
@@ -148,6 +166,9 @@ import game_over_sfx from "../assets/sounds/game_over_sfx.mp3";
 import bouncy_open from "../assets/sounds/slorg_bouncy_open.mp3";
 import box_sfx from "../assets/sounds/box_sfx.mp3";
 import page_flip_sfx from "../assets/sounds/page_flip_sfx.mp3";
+import rat_sfx from "../assets/sounds/rat_sfx.mp3";
+import rat_sfx2 from "../assets/sounds/rat_sfx2.mp3";
+import rat_click from "../assets/sounds/rat_click.mp3";
 
 import success_sfx1 from "../assets/sounds/success_sfx1.mp3";
 
@@ -216,6 +237,9 @@ var LoadState = {
     this.load.audio("box_sfx", box_sfx);
     this.load.audio("game_over_sfx", game_over_sfx);
     this.load.audio("page_flip_sfx", page_flip_sfx);
+    this.load.audio("rat_sfx",rat_sfx);
+    this.load.audio("rat_sfx2",rat_sfx2);
+    this.load.audio("rat_click",rat_click);
 
     //this.load.audio("cluttered_ambience2", cluttered_ambience2);
     this.load.spritesheet("glob_man_sheet", glob_man_sheet, {
@@ -244,6 +268,8 @@ var LoadState = {
     this.load.image("tab_frame",tab_frame);
     this.load.image("no2_button",no2_button);
     this.load.image("begin_button",begin_button);
+    this.load.image("arrow_indicator",arrow_indicator);
+    this.load.image("ratgame_bar",ratgame_bar);
 
     this.load.image("sky", skyBg);
     this.load.image("room", roomBg);
@@ -282,6 +308,8 @@ var LoadState = {
     this.load.image("monrock", monrock);
     this.load.image("rethnor", rethnor);
 
+    this.load.image("rat_creature",rat_creature)
+
     this.load.image("kitchen", jebsKitchen);
     this.load.image("trashcan", trash_can);
     this.load.image("servingplate", serving_plate);
@@ -300,6 +328,9 @@ var LoadState = {
     this.load.image("mustardBottle", mustardBottle);
     this.load.image("bbqBottle", bbqBottle);
     this.load.image("ranchBottle", ranchBottle);
+    this.load.image("cheddar",cheddar);
+    this.load.image("pepperjack",pepperjack);
+    this.load.image("swisscheese",swisscheese);
 
     this.load.image("shop_bg", purple_bg);
     this.load.image("rarebouncyball25", rarebouncyball25);
@@ -318,6 +349,14 @@ var LoadState = {
     this.load.image("pragmaticparty",pragmaticparty)
     this.load.image("thewhisk",thewhisk)
     this.load.image("aqualificprism",aqualificprism)
+    this.load.image("killercheddar",killercheddar)
+    this.load.image("ratnip",ratnip)
+    this.load.image("glumdevil",glumdevil)
+    this.load.image("glumglum",glumglum)
+    this.load.image("glumgrin",glumgrin)
+    this.load.image("glumheart",glumheart)
+    this.load.image("glumpleased",glumpleased)
+    this.load.image("glumwhistle",glumwhistle)
 
     this.load.image("chair1_box", chair1_box);
     this.load.image("table1_box", table1_box);
@@ -329,6 +368,9 @@ var LoadState = {
     this.load.image("pragmaticparty_box",pragmaticparty_box);
     this.load.image("thewhisk_box",thewhisk_box);
     this.load.image("aqualificprism_box",aqualificprism_box);
+    this.load.image("killercheddar_box",killercheddar_box);
+    this.load.image("ratnip_box",ratnip_box);
+    this.load.image("glumdevil_box",glumdevil_box);
 
 
     this.load.spritesheet("penguin_sheet", penguinclap, {
@@ -389,6 +431,8 @@ var LoadState = {
       this.registry.set("Items", []);
       this.registry.set("Notes",{})
       this.registry.set("Modifiers",[])
+      this.registry.set("CheeseAdded",false)
+      this.registry.set("RatsAdded",false)
 
       // modifier values
 
@@ -460,6 +504,7 @@ var LoadState = {
     this.scene.launch("ShakeState");
     //this.scene.launch("ShopState");
     this.scene.launch("GameState");
+    //this.scene.launch("KitchenState");
     //this.scene.launch("GalleryState");
   },
 };

@@ -2,7 +2,7 @@ var notes = {
   "Morris Maulde": {
     key: "Morris Maulde",
     order: "chrono",
-    chance: 5,
+    chance: 3,
     startday: 5,
     notes: [
       {
@@ -61,7 +61,7 @@ var notes = {
   "Grugory Hefert": {
     key: "Grugory Hefert",
     order: "chrono",
-    chance: 2,
+    chance: 4,
     startday: 4,
     notes: [
       {
@@ -89,7 +89,7 @@ var notes = {
   "Laura Hefert": {
     key: "Laura Hefert",
     order: "chrono",
-    chance: 2,
+    chance: 4,
     startday: 4,
     notes: [
       {
@@ -112,7 +112,7 @@ var notes = {
   "Marmaduke Gloo": {
     key: "Marmaduke Gloo",
     order: "chrono",
-    chance: 3,
+    chance: 2,
     startday: 4,
     notes: [
       {
@@ -129,8 +129,8 @@ var notes = {
     notes: [
       {
         title: "The Apartment",
-        description: `A man resided in a small dusty apartment\nNot much to his name. Not much in his department.\nBut the man never let this get to his heart.\nFor on his plate he had toast. For on his canvas he had art.`,
-        fontSize: 20,
+        description: `A man resided in a small dusty apartment.\nNot much to his name. Not much in his department.\nBut the man never let this get to his heart.\nFor on his plate he had toast. For on his canvas he had art.`,
+        fontSize: 25,
       },
     ],
   },
@@ -162,7 +162,7 @@ var notes = {
   "Bentley Gloo": {
     key: "Bentley Gloo",
     order: "chrono",
-    chance: 2,
+    chance: 4,
     startday: 5,
     notes: [
       {
@@ -195,7 +195,7 @@ var notes = {
       {
         title: "Falling",
         description:
-          "Leaves turned brown. The world goes round.\nIt's autumn now and I'm numb.",
+          "Leaves turned brown.\nThe world goes round.\nIt's autumn now and I'm numb.",
       },
     ],
   },
