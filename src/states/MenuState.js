@@ -80,8 +80,15 @@ const healthHandler = (game) => {
 
 const ratHandler = (game) => {
 
+  const ratToll = 10;
+
+  const getRatDelay = () => {
+
+    return Math.max(1000,((Math.floor(Math.random()*10)+10)*1000)-game.registry.get("Day"))
+  }
+
    game.ratLoop = game.time.addEvent({
-    delay: (Math.floor(Math.random()*10)+20)*1000,
+    delay: getRatDelay(),
     callback: () => {
       //console.log("increasing rat count")
       let ratCount = game.registry.get("RatsToAdd") || 0
@@ -106,8 +113,10 @@ const ratHandler = (game) => {
           return
         }
       }
+      const currentPleasantry = game.registry.get("Average_Pleasantry")
+      game.registry.set("Average_Pleasantry",currentPleasantry-ratToll);
       game.registry.set("RatsToAdd",ratCount+1)
-      game.ratLoop.delay=(Math.floor(Math.random()*10)+20)*1000
+      game.ratLoop.delay=getRatDelay()
     },
     callbackScope: game,
     loop: true,

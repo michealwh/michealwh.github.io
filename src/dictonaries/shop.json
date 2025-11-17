@@ -64,7 +64,7 @@
       "title": "Killer Cheddar",
       "description": "20% chance a rat infestations is invalidated.",
       "type": "modifier",
-      "cost": 54.99,
+      "cost": 344.99,
       "scale": 2,
       "repeatable": true
     },
@@ -75,8 +75,8 @@
       "description": "$5 added on to each tip for every rat in your kitchen.",
       "type": "modifier",
       "scale": 2,
-      "cost": 84.99,
-      "repeatable": true
+      "cost": 124.99,
+      "repeatable": false
     },
 
     "bouncyball": {

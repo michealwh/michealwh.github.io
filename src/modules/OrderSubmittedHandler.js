@@ -156,12 +156,12 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
   }
 
   // rat effect handling
-  let ratsNotAdded = game.registry.get("RatsToAdd") || 0
-  let ratsAdded = game.registry.get("KitchenRatCount") || 0
+  // let ratsNotAdded = game.registry.get("RatsToAdd") || 0
+  // let ratsAdded = game.registry.get("KitchenRatCount") || 0
 
-  for(let i=0; i< (ratsNotAdded+ratsAdded);i++){
-    pleasantryStat-=3
-  }
+  // for(let i=0; i< (ratsNotAdded+ratsAdded);i++){
+  //   pleasantryStat-=3
+  // }
 
   if (npc_info.standards) {
     // check custom standards

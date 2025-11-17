@@ -105,6 +105,8 @@ var SettingsState = {
     }
      if (this.registry.get("Average_Pleasantry")) {
       this.ples_text.text = "Pleasantry: " + this.registry.get("Average_Pleasantry") + "%"
+    } else {
+      this.ples_text.text = "Pleasantry: 0%"
     }
   }
 };

@@ -190,6 +190,8 @@ const foodButtonHandler = (object, game) => {
 
 const ratMinigameSetup = (game) => {
 
+  const ratToll = 10;
+
 
   game.ratGameOngoing = false;
 
@@ -288,6 +290,8 @@ const ratMinigameSetup = (game) => {
             } else {
               let count = game.registry.get("KitchenRatCount")
               game.registry.set("KitchenRatCount", (count - 1))
+              const currentPleasantry = game.registry.get("Average_Pleasantry") // removing rat mod
+              game.registry.set("Average_Pleasantry",currentPleasantry+ratToll);
               game.canRatMinigame = true;
             }
           }

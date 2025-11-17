@@ -29,7 +29,7 @@ const dialogHandler = (passage, game, startingOrder) => {
     align: "center",
   };
   let text = game.add.text(500, 850, passage, textStyle).setOrigin(0.5, 0.5);
-  text.depth = 4+uiDepth;
+  text.depth = 4 + uiDepth;
   if (game.text !== undefined) {
     game.text.destroy();
   }
@@ -62,7 +62,7 @@ const questionHandler = (game, action, passage) => {
     align: "center",
   };
   let text = game.add.text(500, 830, passage, textStyle).setOrigin(0.5, 0.5);
-  text.depth = 4+uiDepth;
+  text.depth = 4 + uiDepth;
   if (game.text !== undefined) {
     game.text.destroy();
   }
@@ -148,7 +148,7 @@ const setupNoteFrame = (game) => {
   game.note_background = game.add
     .image(0, 0, "order_background")
     .setOrigin(0, 0)
-    .setDepth(6+uiDepth)
+    .setDepth(6 + uiDepth)
     .setInteractive();
   game.noteInfoTitle = game.add
     .text(220, 280, "Name", {
@@ -158,7 +158,7 @@ const setupNoteFrame = (game) => {
       align: "left",
     })
     .setOrigin(0, 0.5)
-    .setDepth(7+uiDepth);
+    .setDepth(7 + uiDepth);
   game.noteAuthorText = game.add
     .text(220, 330, "notes", {
       fontFamily: "font1",
@@ -168,7 +168,7 @@ const setupNoteFrame = (game) => {
       align: "left",
     })
     .setOrigin(0, 0.5)
-    .setDepth(7+uiDepth);
+    .setDepth(7 + uiDepth);
   game.noteInfoText = game.add
     .text(220, 400, "notes", {
       fontFamily: "font1",
@@ -179,7 +179,7 @@ const setupNoteFrame = (game) => {
       align: "left",
     })
     .setOrigin(0, 0)
-    .setDepth(7+uiDepth);
+    .setDepth(7 + uiDepth);
   game.note_background.visible = false;
   game.noteInfoTitle.visible = false;
   game.noteAuthorText.visible = false;
@@ -284,7 +284,7 @@ const customerHandler = (customer, game) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () { },
+      onComplete: function () {},
     });
     game.tweens.add({
       targets: [frame],
@@ -402,7 +402,7 @@ const showDayFrame = (game, show, islong) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () { },
+      onComplete: function () {},
     });
     game.tweens.add({
       targets: [game.dayText],
@@ -411,7 +411,7 @@ const showDayFrame = (game, show, islong) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () { },
+      onComplete: function () {},
     });
     game.tweens.add({
       targets: [game.dayUpdateText],
@@ -458,7 +458,7 @@ const showDayFrame = (game, show, islong) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () { },
+      onComplete: function () {},
     });
     game.tweens.add({
       targets: [game.dayUpdateText],
@@ -506,10 +506,10 @@ const newCustomer = (game, just_launched) => {
   if (
     (game.dailyCustomerCount >= game.dailyCustomerMax &&
       !game.secretShopperDay) ||
-    game.dailyCustomerCount >= (game.dailyCustomerMax + 1)
+    game.dailyCustomerCount >= game.dailyCustomerMax + 1
   ) {
     //console.log("day is over");
-    //console.log("secretshopper day", game.secretShopperDay)
+    //console.log("secretshopper day", game.secretShopperDay);
     dayEndHandler(game, just_launched);
     return;
   } else if (game.todays_customers.length <= game.dailyCustomerCount) {
@@ -556,7 +556,7 @@ const newCustomer = (game, just_launched) => {
 
 const dayStartHandler = (game) => {
   //console.log("starting new day");
-  game.registry.set("SwitchNotAllowed", true)
+  game.registry.set("SwitchNotAllowed", true);
   game.registry.set("DayOver", false);
   game.currentDay = parseInt(game.currentDay) + 1;
   game.registry.set("Day", game.currentDay);
@@ -585,7 +585,7 @@ const dayStartHandler = (game) => {
   }
 
   if (game.secretShopperDay == true) {
-    //console.log("secret shopper is today!!!!")
+    //console.log("secret shopper is today!!!!");
     // day is friday secret shopper yes
     let randomShopper = Math.floor(
       Math.random() * npc_dictionary.secretshoppers.length
@@ -610,11 +610,13 @@ const dayEndHandler = (game, just_launched) => {
   game.registry.set("SwitchNotAllowed", false);
   game.registry.set("DayOver", true);
   game.dailyCustomerCount = 0;
-  const moreCustomersSuccess = (game.currentDay + 1) % 4;
-  if (moreCustomersSuccess == 0) {
-    const moreCustomers = Math.floor(Math.random() * 2) + 1;
-    game.dailyCustomerMax += moreCustomers;
-    game.registry.set("DailyCustomerMax", game.dailyCustomerMax);
+  if (game.dailyCustomerMax < 6) {
+    const moreCustomersSuccess = (game.currentDay + 1) % 4;
+    if (moreCustomersSuccess == 0) {
+      const moreCustomers = 1; //Math.floor(Math.random() * 2) + 1;
+      game.dailyCustomerMax += moreCustomers;
+      game.registry.set("DailyCustomerMax", game.dailyCustomerMax);
+    }
   }
   const unlockedCustomerSuccess = (game.currentDay + 1) % 2;
 
@@ -672,7 +674,7 @@ const dayEndHandler = (game, just_launched) => {
     if ((game.currentDay + 1) % 5 == 0) {
       // every fifth day have a secret shopper
       dayText += "There will be a Secret Shopper arriving tomorrow.";
-      let alottedPoints = 5 * Math.floor((game.currentDay + 1) / 2);
+      let alottedPoints = Math.floor(Math.pow(1.1, game.currentDay + 1)); // this is expo progression
 
       while (alottedPoints > 0) {
         let statToIncrease = Math.floor(Math.random() * 4);
@@ -692,7 +694,8 @@ const dayEndHandler = (game, just_launched) => {
       game.defaultPrecisionStandard += 2;
       game.defaultPleasantryStandard += 2;
       dayText += ` By end of day HR requests your standards are as follows:\nPresentation: ${game.secretshopperPresentationStandard}% Punctuality: ${game.secretshopperPunctualityStandard}%\nPrecision: ${game.secretshopperPrecisionStandard}%  Pleasantry: ${game.secretshopperPleasantryStandard}%`;
-    } else if (game.currentDay + 1 > lastDayNum) { // has to be after the last recorded day
+    } else if (game.currentDay + 1 > lastDayNum) {
+      // has to be after the last recorded day
       game.defaultPresentationStandard =
         game.secretshopperPresentationStandard + 2;
       game.defaultPunctualityStandard =
@@ -700,12 +703,13 @@ const dayEndHandler = (game, just_launched) => {
       game.defaultPrecisionStandard = game.secretshopperPrecisionStandard + 2;
       game.defaultPleasantryStandard = game.secretshopperPleasantryStandard + 2;
     }
-    game.dayUpdateText.text += ("\n" + dayText);
+    game.dayUpdateText.text += "\n" + dayText;
     //console.log("adding", game.dayUpdateText.text, "to update text");
   } else {
     //console.log("adding", game.thisDaysInfo.description, "to update text");
-    game.dayUpdateText.text += ("\n" + game.thisDaysInfo.description);
-
+    if(game.thisDaysInfo.description){
+      game.dayUpdateText.text += "\n" + game.thisDaysInfo.description;
+    }
     if (game.thisDaysInfo.c_standards) {
       game.defaultPresentationStandard = game.thisDaysInfo.c_standards[0];
       game.defaultPunctualityStandard = game.thisDaysInfo.c_standards[1];
@@ -733,18 +737,16 @@ const dayEndHandler = (game, just_launched) => {
     game.secretShopperDay = false;
   }
 
-  if (
-    (game.thisDaysInfo && game.thisDaysInfo.events.includes("cheese"))
-  ) {
-    game.registry.set("CheeseAdded", true)
-    game.availableIngredients.push("cheddar")
-    game.availableIngredients.push("pepperjack")
-    game.availableIngredients.push("swisscheese")
+  if (game.thisDaysInfo && game.thisDaysInfo.events.includes("cheese")) {
+    game.registry.set("CheeseAdded", true);
+    game.availableIngredients.push("cheddar");
+    game.availableIngredients.push("pepperjack");
+    game.availableIngredients.push("swisscheese");
   }
 
   if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rats")) {
-    //console.log("setting rats added to true")
-    game.registry.set("RatsAdded", true)
+    //console.log("setting rats added to true");
+    game.registry.set("RatsAdded", true);
   }
 
   if (game.secretShopperDay === true) {
@@ -848,7 +850,7 @@ const endOfOrderReviewHandler = (game) => {
     duration: 1000,
     repeat: 0,
     yoyo: false,
-    onComplete: function () { },
+    onComplete: function () {},
   });
 };
 
@@ -873,7 +875,7 @@ const orderCompleteHandler = (game) => {
       // this was added because the hands are initially shown in the shakestate and cannot be placed behind the dialogframe so they
       // are created again here to be hidden
       const handsToHide = game.add.image(500, 50, "hands").setOrigin(0.5, 0);
-      handsToHide.depth = 3+uiDepth;
+      handsToHide.depth = 3 + uiDepth;
 
       game.time.addEvent({
         delay: 200,
@@ -912,7 +914,7 @@ const orderCompleteHandler = (game) => {
         duration: 500,
         repeat: 0,
         yoyo: false,
-        onComplete: function () { },
+        onComplete: function () {},
       });
       game.tweens.add({
         targets: game.text,
@@ -921,7 +923,7 @@ const orderCompleteHandler = (game) => {
         duration: 500,
         repeat: 0,
         yoyo: false,
-        onComplete: function () { },
+        onComplete: function () {},
       });
     },
     callbackScope: game,
@@ -1020,15 +1022,14 @@ const furnitureHandler = (game, furnitureList) => {
       // } else {
       //   yPos=710
       // }
-      let xPos = Math.floor(Math.random()*850)+100;
-      let yPos = Math.floor(Math.random()*200)+670;
+      let xPos = Math.floor(Math.random() * 850) + 100;
+      let yPos = Math.floor(Math.random() * 200) + 670;
 
       const glum = game.add
         .image(xPos, yPos, object)
         .setOrigin(1, 0)
-        .setDepth(yPos-668);
+        .setDepth(yPos - 668);
       glum.scale = 1;
-
     }
   }
 };
@@ -1058,7 +1059,7 @@ const introFrameHandler = (game) => {
   game.introFrame = game.add
     .image(500, 500, "order_background")
     .setOrigin(0.5, 0.5)
-    .setDepth(9+uiDepth)
+    .setDepth(9 + uiDepth)
     .setInteractive();
   game.introTitle = game.add
     .text(500, 300, "First day on the job.", {
@@ -1069,7 +1070,7 @@ const introFrameHandler = (game) => {
       align: "center",
     })
     .setOrigin(0.5, 0.5)
-    .setDepth(10+uiDepth);
+    .setDepth(10 + uiDepth);
   game.introDescription = game.add
     .text(
       500,
@@ -1084,11 +1085,11 @@ const introFrameHandler = (game) => {
       }
     )
     .setOrigin(0.5, 0.5)
-    .setDepth(10+uiDepth);
+    .setDepth(10 + uiDepth);
   game.introBeginButton = game.add
     .image(500, 700, "begin_button")
     .setOrigin(0.5, 0.5)
-    .setDepth(10+uiDepth)
+    .setDepth(10 + uiDepth)
     .setInteractive()
     .setTint(0x2dfa67);
   game.introBeginButton.visible = false;
@@ -1154,7 +1155,7 @@ const introFrameHandler = (game) => {
 };
 
 var GameState = {
-  preload() { },
+  preload() {},
 
   create() {
     // this.bgMusic = this.sound.add("cluttered_ambience2");
@@ -1229,7 +1230,7 @@ var GameState = {
     this.dialog_frame = this.add
       .image(0, 500, "dialog_frame")
       .setOrigin(0, 0)
-      .setDepth(4+uiDepth);
+      .setDepth(4 + uiDepth);
     this.dialog_title = this.add
       .text(200, 750 + dialogYMove, "", {
         fontFamily: "font1",
@@ -1237,7 +1238,7 @@ var GameState = {
         fill: "black",
       })
       .setOrigin(0, 0)
-      .setDepth(4+uiDepth);
+      .setDepth(4 + uiDepth);
 
     introFrameHandler(this);
 
@@ -1245,7 +1246,7 @@ var GameState = {
     this.dayFrame = this.add
       .image(500, -1000, "notice_background")
       .setOrigin(0.5, 0.5)
-      .setDepth(7+uiDepth);
+      .setDepth(7 + uiDepth);
     this.dayFrame.Scale = 0.8;
     this.dayText = this.add
       .text(500, -1100, "Day 1 Complete!", {
@@ -1256,7 +1257,7 @@ var GameState = {
         align: "center",
       })
       .setOrigin(0.5, 0)
-      .setDepth(8+uiDepth);
+      .setDepth(8 + uiDepth);
     this.dayUpdateText = this.add
       .text(500, -900, "", {
         fontFamily: "font1",
@@ -1266,11 +1267,11 @@ var GameState = {
         align: "center",
       })
       .setOrigin(0.5, 0)
-      .setDepth(8+uiDepth);
+      .setDepth(8 + uiDepth);
     this.dayButton = this.add
       .image(500, -950, "day_button")
       .setOrigin(0.5, 0.5)
-      .setDepth(8+uiDepth)
+      .setDepth(8 + uiDepth)
       .setInteractive();
     dayButtonHandler(this, this.dayButton);
     this.dayButton.scale = 0.2;
@@ -1278,7 +1279,7 @@ var GameState = {
     this.restartButton = this.add
       .image(500, -500, "yes_button")
       .setOrigin(0.5, 0.5)
-      .setDepth(8+uiDepth)
+      .setDepth(8 + uiDepth)
       .setInteractive();
     this.restartButton.scale = 0.2;
     restartGameHandler(this, this.restartButton);
@@ -1286,14 +1287,14 @@ var GameState = {
     this.qYesButton = this.add
       .image(320, 920, "yes_button")
       .setOrigin(0.5, 0.5)
-      .setDepth(8+uiDepth)
+      .setDepth(8 + uiDepth)
       .setInteractive();
     this.qYesButton.scale = 0.2;
     this.qYesButton.visible = false;
     this.qNoButton = this.add
       .image(680, 920, "no2_button")
       .setOrigin(0.5, 0.5)
-      .setDepth(8+uiDepth)
+      .setDepth(8 + uiDepth)
       .setInteractive();
     this.qNoButton.scale = 0.2;
     this.qNoButton.visible = false;
@@ -1370,7 +1371,7 @@ var GameState = {
     this.dailyCustomerCount = this.registry.get("DailyCustomerCount") || 0;
     this.newUnlockedCustomer = null;
 
-    this.availableIngredients = ingredients_dictionary.ingredients
+    this.availableIngredients = ingredients_dictionary.ingredients;
     this.currentUnlockedCustomers = this.registry.get("Unlocked_Customers") || [
       0, 1,
     ];
