@@ -106,7 +106,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         break;
       case "stevenswish":
         if (CurrentDay % 2 == 0) {
-          tipMod += 0.2;
+          tipMod += 0.4;
         }
         break;
       case "burgerpolish":

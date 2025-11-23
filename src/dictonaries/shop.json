@@ -13,7 +13,7 @@
     "stevenswish": {
       "key": "stevenswish",
       "title": "Steven's Wish",
-      "description": "tip modifier by x1.2 on even days.",
+      "description": "tip modifier by x1.4 on even days.",
       "type": "modifier",
       "cost": 24.68,
       "scale": 2,
@@ -44,7 +44,7 @@
       "title": "The Whisk",
       "description": "30% chance of tip modifier by x2 customer's average standards.",
       "type": "modifier",
-      "cost": 45.99,
+      "cost": 42.29,
       "scale": 2,
       "repeatable": true
     },
