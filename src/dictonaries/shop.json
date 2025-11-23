@@ -5,7 +5,7 @@
       "title": "Magic Dirt",
       "description": "50% chance to make all stats at least 90% every 5th customer.",
       "type": "modifier",
-      "cost": 30.99,
+      "cost": 20.99,
       "scale": 2,
       "repeatable": true
     },
@@ -13,7 +13,7 @@
     "stevenswish": {
       "key": "stevenswish",
       "title": "Steven's Wish",
-      "description": "Tip modifier by x1.5 on even days.",
+      "description": "tip modifier by x1.2 on even days.",
       "type": "modifier",
       "cost": 24.68,
       "scale": 2,
@@ -22,9 +22,9 @@
     "burgerpolish": {
       "key": "burgerpolish",
       "title": "Burger Polish",
-      "description": "1.5% increase in presentation on all orders.",
+      "description": "3% increase in presentation on all orders.",
       "type": "modifier",
-      "cost": 14.99,
+      "cost": 34.99,
       "scale": 2,
       "repeatable": true
     },
@@ -42,9 +42,9 @@
     "thewhisk": {
       "key": "thewhisk",
       "title": "The Whisk",
-      "description": "20% chance your tip gets multiplied by x2 customer standards.",
+      "description": "30% chance of tip modifier by x2 customer's average standards.",
       "type": "modifier",
-      "cost": 35.99,
+      "cost": 45.99,
       "scale": 2,
       "repeatable": true
     },
@@ -62,11 +62,12 @@
     "killercheddar": {
       "key": "killercheddar",
       "title": "Killer Cheddar",
-      "description": "20% chance a rat infestations is invalidated.",
+      "description": "20% chance a rat infestation is dealt with.",
       "type": "modifier",
       "cost": 344.99,
       "scale": 2,
-      "repeatable": true
+      "repeatable": true,
+      "day":15
     },
 
     "ratnip": {
@@ -76,7 +77,59 @@
       "type": "modifier",
       "scale": 2,
       "cost": 124.99,
-      "repeatable": false
+      "repeatable": false,
+      "day":15
+    },
+
+    "cryochamber": {
+      "key": "cryochamber",
+      "title": "Cryochamber",
+      "description": "customer's punctuality standards are dropped by 4%.",
+      "type": "modifier",
+      "scale": 1.5,
+      "cost": 68.99,
+      "repeatable": true
+    },
+
+    "burgertime": {
+      "key": "burgertime",
+      "title": "Burger Time",
+      "description": "2% added to punctuality for each ingredient on the burger.",
+      "type": "modifier",
+      "cost": 99.99,
+      "scale": 1.2,
+      "repeatable": true
+    },
+
+    "scentedbounce": {
+      "key": "scentedbounce",
+      "title": "Scented Bounce",
+      "description": "+1% presentation for each bouncy ball in your kitchen.",
+      "type": "modifier",
+      "cost": 69.99,
+      "scale": 1.2,
+      "repeatable": true
+    },
+
+    "glumtrident": {
+      "key": "glumtrident",
+      "title": "Glum Trident",
+      "description": "+1% precision for every glum devil you have.",
+      "type": "modifier",
+      "cost": 78.99,
+      "scale": 1,
+      "repeatable": true,
+      "day": 15
+    },
+
+    "bouncezine": {
+      "key": "bouncezine",
+      "title": "The Bounce Zine",
+      "description": "20% chance of a free bouncy ball each day.",
+      "type": "modifier",
+      "cost": 22.99,
+      "scale": 1.5,
+      "repeatable": true
     },
 
     "bouncyball": {
@@ -90,8 +143,8 @@
 
     "glumdevil": {
       "key": "glumdevil",
-      "title": "Glorp Mart's Glum Devil's",
-      "description": "increases pleasantry by +4% (secret by +6%)",
+      "title": "Glorp Mart's Glum Devils",
+      "description": "increases pleasantry by +4% (secret by +10%)",
       "type": "furniture",
       "cost": 49.99,
       "repeatable": 100

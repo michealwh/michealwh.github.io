@@ -3,8 +3,9 @@
 
 const globUpdateHandler = (game) => {
   const currentAmount = parseFloat(game.globText.text);
-  const newAmount = game.registry.get("Globs");
+  const newAmount = parseFloat(game.registry.get("Globs")).toFixed(2);
   const difference = (newAmount - currentAmount).toFixed(2);
+  //console.log("difference added to the glob",difference);
   game.globText.setText(newAmount.toString());
   if (difference > 0) {
     game.addedText.setText("+" + difference);
@@ -83,8 +84,8 @@ const ratHandler = (game) => {
   const ratToll = 10;
 
   const getRatDelay = () => {
-
-    return Math.max(1000,((Math.floor(Math.random()*10)+10)*1000)-game.registry.get("Day"))
+    // 25-40 seconds decreasing with days
+    return Math.max(1000,((Math.floor(Math.random()*15)+25)*1000)-game.registry.get("Day"));
   }
 
    game.ratLoop = game.time.addEvent({

@@ -95,6 +95,11 @@ import aqualificprism_box from "../assets/game/shop/aqualificprism_box.png";
 import killercheddar_box from "../assets/game/shop/killercheddar_box.png";
 import ratnip_box from "../assets/game/shop/ratnip_box.png";
 import glumdevil_box from "../assets/game/shop/glumdevil_box.png";
+import cryochamber_box from "../assets/game/shop/cryochamber_box.png";
+import burgertime_box from "../assets/game/shop/burgertime_box.png";
+import scentedbounce_box from "../assets/game/shop/scentedbounce_box.png";
+import glumtrident_box from "../assets/game/shop/glumtrident_box.png";
+import bouncezine_box from "../assets/game/shop/bouncezine_box.png";
 
 
 
@@ -120,6 +125,11 @@ import glumgrin from "../assets/game/shop/glumgrin.png"
 import glumheart from "../assets/game/shop/glumheart.png"
 import glumpleased from "../assets/game/shop/glumpleased.png"
 import glumwhistle from "../assets/game/shop/glumwhistle.png"
+import cryochamber from "../assets/game/shop/cryochamber.png"
+import burgertime from "../assets/game/shop/burgertime.png"
+import scentedbounce from "../assets/game/shop/scentedbounce.png"
+import glumtrident from "../assets/game/shop/glumtrident.png"
+import bouncezine from "../assets/game/shop/bouncezine.png"
 
 
 
@@ -146,6 +156,7 @@ import yellow_hue from "../assets/ui/yellow_hue.png";
 import tab_frame from "../assets/ui/tab_frame.png";
 import no2_button from "../assets/ui/no2_button.png"
 import begin_button from "../assets/ui/begin_button.png"
+import reroll_button from "../assets/ui/reroll_button2.png"
 import arrow_indicator from "../assets/ui/arrow_indicator.png"
 import ratgame_bar from "../assets/ui/ratgame_bar.png"
 
@@ -268,6 +279,7 @@ var LoadState = {
     this.load.image("tab_frame",tab_frame);
     this.load.image("no2_button",no2_button);
     this.load.image("begin_button",begin_button);
+    this.load.image("reroll_button",reroll_button);
     this.load.image("arrow_indicator",arrow_indicator);
     this.load.image("ratgame_bar",ratgame_bar);
 
@@ -357,6 +369,11 @@ var LoadState = {
     this.load.image("glumheart",glumheart)
     this.load.image("glumpleased",glumpleased)
     this.load.image("glumwhistle",glumwhistle)
+    this.load.image("cryochamber",cryochamber)
+    this.load.image("burgertime",burgertime)
+    this.load.image("scentedbounce",scentedbounce)
+    this.load.image("glumtrident",glumtrident)
+    this.load.image("bouncezine",bouncezine)
 
     this.load.image("chair1_box", chair1_box);
     this.load.image("table1_box", table1_box);
@@ -371,6 +388,11 @@ var LoadState = {
     this.load.image("killercheddar_box",killercheddar_box);
     this.load.image("ratnip_box",ratnip_box);
     this.load.image("glumdevil_box",glumdevil_box);
+    this.load.image("cryochamber_box",cryochamber_box);
+    this.load.image("burgertime_box",burgertime_box);
+    this.load.image("scentedbounce_box",scentedbounce_box);
+    this.load.image("glumtrident_box",glumtrident_box);
+    this.load.image("bouncezine_box",bouncezine_box);
 
 
     this.load.spritesheet("penguin_sheet", penguinclap, {

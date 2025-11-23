@@ -341,6 +341,40 @@ const purchaseActions = {
     currentModList.push("ratnip")
     game.registry.set("Modifiers", currentModList)
   },
+  cryochamber: function (game) {
+    itemReveal(game, "cryochamber")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("cryochamber")
+    game.registry.set("Modifiers", currentModList)
+  },
+  burgertime: function (game) {
+    itemReveal(game, "burgertime")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("burgertime")
+    game.registry.set("Modifiers", currentModList)
+  },
+
+  scentedbounce: function (game) {
+    itemReveal(game, "scentedbounce")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("scentedbounce")
+    game.registry.set("Modifiers", currentModList)
+  },
+
+  glumtrident: function (game) {
+    itemReveal(game, "glumtrident")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("glumtrident")
+    game.registry.set("Modifiers", currentModList)
+  },
+
+  bouncezine: function (game) {
+    itemReveal(game, "bouncezine")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("bouncezine")
+    game.registry.set("Modifiers", currentModList)
+  },
+
   glumdevil: function (game) {
     game.registry.set("SwitchNotAllowed", true);
     game.promptOpen = true;
@@ -381,10 +415,6 @@ const purchaseActions = {
               boxView.rotation = 0;
               let chosenglum =
                 glumtypes[Math.floor(Math.random() * glumtypes.length)];
-              if (chosenglum === "glumheart") {
-                chosenglum =
-                  glumtypes[Math.floor(Math.random() * glumtypes.length)];
-              }
               if (chosenglum === "glumheart") {
                 chosenglum =
                   glumtypes[Math.floor(Math.random() * glumtypes.length)];
@@ -482,9 +512,11 @@ const purchaseActions = {
                                 let currentModList = game.registry.get("Modifiers") || [];
                                 currentModList.push("glumdevil")
                                 game.registry.set("Modifiers", currentModList)
+                                const currentGlumCount = game.registry.get("GlumDevilCount") || 0;
+                                game.registry.set("GlumDevilCount", currentGlumCount + 1);
                                 let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
                                 if (chosenglum == "glumheart") {
-                                  pleasantryScore+=6;
+                                  pleasantryScore+=10;
                                 } else {
                                   pleasantryScore+=4;
                                 }

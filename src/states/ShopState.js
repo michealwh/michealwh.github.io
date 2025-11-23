@@ -101,7 +101,7 @@ const confirmButtonHandler = (game, object) => {
         let new_globs = current_globs - game.activeItemInfo.cost;
         game.registry.set("Globs", new_globs.toFixed(2));
         if (!game.activeItemInfo.repeatable) {
-          game.activeButton.tint = "22222288";
+          game.activeButton.tint = "0x2E2E2E";
           game.activeButton.input.enabled = false;
           let newKeys = game.allItemKeys.filter(
             (item) => item !== game.activeItemInfo.key
@@ -110,7 +110,7 @@ const confirmButtonHandler = (game, object) => {
         } else if (game.activeItemInfo.repeatable > 0) {
           game[game.activeItemInfo.key + "Left"] -= 1;
           if (game[game.activeItemInfo.key + "Left"] <= 0) {
-            game.activeButton.tint = "22222288";
+            game.activeButton.tint = "0x2E2E2E";
             game.activeButton.input.enabled = false;
             let newKeys = game.allItemKeys.filter(
               (item) => item !== game.activeItemInfo.key
@@ -160,7 +160,7 @@ const cancelButtonHandler = (game, object) => {
   });
 };
 
-const shuffleItems = (game) => {
+const shuffleItems = (game, animate) => {
   const shuffleArray = (array) => {
     let currentIndex = array.length;
     while (currentIndex != 0) {
@@ -174,13 +174,46 @@ const shuffleItems = (game) => {
   };
   let shuffledItems = game.allItemKeys;
   shuffleArray(shuffledItems);
-  game.dailyItems = [shuffledItems[0], shuffledItems[1], shuffledItems[2],"bouncyball"];
+  game.dailyItems = [
+    shuffledItems[0],
+    shuffledItems[1],
+    shuffledItems[2],
+    "bouncyball",
+  ];
   game.shopItem1.setTexture(game.dailyItems[0] + "_box");
   game.shopItem2.setTexture(game.dailyItems[1] + "_box");
   game.shopItem3.setTexture(game.dailyItems[2] + "_box");
-  game.shopButton1.input.enabled=true;
-  game.shopButton2.input.enabled=true;
-  game.shopButton3.input.enabled=true;
+
+  if (animate == true) {
+    game.shopItem1.setTint(0x000000);
+    game.shopItem2.setTint(0x000000);
+    game.shopItem3.setTint(0x000000);
+    // game.shopItem1.scale=0;
+    // game.shopItem2.scale=0;
+    // game.shopItem3.scale=0;
+    game.shopItem1.rotation = -5 * (Math.PI / 180);
+    game.shopItem2.rotation = -5 * (Math.PI / 180);
+    game.shopItem3.rotation = -5 * (Math.PI / 180);
+    game.tweens.add({
+      targets: [game.shopItem1, game.shopItem2, game.shopItem3],
+      rotation: 5 * (Math.PI / 180),
+      ease: "Power1",
+      duration: 100,
+      repeat: 2,
+      yoyo: true,
+      onComplete: function () {
+        game.shopItem1.clearTint();
+        game.shopItem2.clearTint();
+        game.shopItem3.clearTint();
+        game.shopItem1.rotation = 0;
+        game.shopItem2.rotation = 0;
+        game.shopItem3.rotation = 0;
+      },
+    });
+  }
+  game.shopButton1.input.enabled = true;
+  game.shopButton2.input.enabled = true;
+  game.shopButton3.input.enabled = true;
   game.shopButton1.clearTint();
   game.shopButton2.clearTint();
   game.shopButton3.clearTint();
@@ -272,7 +305,7 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
         duration: 100,
         repeat: 0,
         yoyo: false,
-      })
+      });
       game.tweens.add({
         targets: [game.infoText],
         scale: 1,
@@ -298,6 +331,82 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
   });
 };
 
+const reRollButtonhandler = (game, object) => {
+  const rerollButton = object;
+  rerollButton.scale = 0.2;
+  let debounce = false;
+  rerollButton.on("pointerdown", (pointer, gameObject) => {
+    game.infoFrame.scale = 0;
+    game.infoText.scale = 0;
+    if (game.promptOpen === false) {
+      game.click_sfx.play();
+      rerollButton.input.enabled = false;
+      shuffleItems(game, true);
+      rerollButton.tint = "0x2E2E2E";
+      game.tweens.add({
+        targets: rerollButton,
+        rotation: 360 * (Math.PI / 180),
+        ease: "Linear",
+        duration: 400,
+        repeat: 0,
+        yoyo: false,
+        onComplete: function () {},
+      });
+    }
+  });
+  let mouseEnter = false;
+  rerollButton.on("pointerover", (pointer, gameObject) => {
+    if (game.promptOpen === false) {
+      mouseEnter = true;
+      if (object.x + object.width / 4 + game.infoFrame.width > 1000) {
+        game.infoFrame.x = object.x - 5;
+        game.infoText.x = object.x - 145;
+        game.infoFrame.flipX = true;
+        game.infoFrame.setOrigin(1, 1);
+        game.infoText.setOrigin(1, 1);
+      } else {
+        game.infoFrame.setOrigin(0, 1);
+        game.infoText.setOrigin(0, 1);
+        game.infoFrame.flipX = false;
+        game.infoFrame.x = object.x + 50;
+        game.infoText.x = object.x + 130;
+      }
+      game.infoFrame.y = object.y - 5;
+      game.infoText.y = object.y - 120;
+      game.infoText.text = "reroll today's shop items";
+      game.tweens.add({
+        targets: [game.infoFrame],
+        scale: 1.5,
+        ease: "Power1",
+        duration: 100,
+        repeat: 0,
+        yoyo: false,
+      });
+      game.tweens.add({
+        targets: [game.infoText],
+        scale: 1,
+        ease: "Power1",
+        duration: 100,
+        repeat: 0,
+        yoyo: false,
+        onComplete: function () {
+          if (mouseEnter == false) {
+            game.infoFrame.scale = 0;
+            game.infoText.scale = 0;
+          }
+        },
+      });
+    }
+  });
+  rerollButton.on("pointerout", (pointer, gameObject) => {
+    mouseEnter = false;
+    if (game.promptOpen === false) {
+      game.infoFrame.scale = 0;
+      game.infoText.scale = 0;
+    }
+  });
+};
+
 var ShopState = {
   preload() {},
 
@@ -310,7 +419,7 @@ var ShopState = {
     this.promptOpen = false;
     this.day = 1;
     this.activeItemInfo = {};
-    this.dailyItems = ["magicdirt", "chair1", "table1","bouncyball"];
+    this.dailyItems = ["magicdirt", "chair1", "table1", "bouncyball"];
     this.allItemKeys = [];
 
     for (const item in shop_dictionary.purchasables) {
@@ -339,7 +448,7 @@ var ShopState = {
       .setOrigin(0.5, 0.5)
       .setDepth(4);
 
-      this.infoContentText = this.add
+    this.infoContentText = this.add
       .text(720, 200, "new stock every day", {
         fontFamily: "font1",
         fontSize: "30px",
@@ -349,8 +458,8 @@ var ShopState = {
       })
       .setOrigin(0.5, 0.5)
       .setDepth(4);
-      this.infoContentText.rotation = 15 * (Math.PI/180);
-    // bouncy ball
+    this.infoContentText.rotation = 15 * (Math.PI / 180);
+    // first item
     this.shopItem1 = this.add
       .image(280, 500, "magicdirt_box")
       .setOrigin(0.5, 0.5)
@@ -364,7 +473,7 @@ var ShopState = {
       .setInteractive();
     purchaseButtonhandler(this, this.shopButton1, 0);
 
-    // chairs
+    // second item
     this.shopItem2 = this.add
       .image(500, 500, "chair1_box")
       .setOrigin(0.5, 0.5)
@@ -378,7 +487,7 @@ var ShopState = {
       .setInteractive();
     purchaseButtonhandler(this, this.shopButton2, 1);
 
-    // tables
+    // third item
     this.shopItem3 = this.add
       .image(720, 500, "table1_box")
       .setOrigin(0.5, 0.5)
@@ -391,7 +500,6 @@ var ShopState = {
       .setDepth(4)
       .setInteractive();
     purchaseButtonhandler(this, this.shopButton3, 2);
-
 
     // bouncy ball
     this.shopItem4 = this.add
@@ -407,6 +515,15 @@ var ShopState = {
       .setInteractive();
     purchaseButtonhandler(this, this.shopButton4, 3);
 
+    this.rerollButton = this.add
+      .image(820, 340, "reroll_button")
+      .setDepth(4)
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+    this.rerollButton.scale = 0.2;
+    //this.rerollButton.rotation=35*(Math.PI/180);
+    reRollButtonhandler(this, this.rerollButton);
+
     const AlreadyOwnedItems = localStorage.getItem("Items");
     if (AlreadyOwnedItems) {
       //console.log("found owned items");
@@ -417,14 +534,14 @@ var ShopState = {
           return;
         }
         if (!itemInfo.repeatable) {
-          this[item + "Button"].tint = "22222288";
+          this[item + "Button"].tint = "0x2E2E2E";
           this[item + "Button"].input.enabled = false;
           let newKeys = this.allItemKeys.filter((item) => item !== item);
           this.allItemKeys = newKeys;
         } else if (itemInfo.repeatable > 0) {
           this[item + "Left"] -= 1;
           if (this[item + "Left"] <= 0) {
-            this[item + "Button"].tint = "22222288";
+            this[item + "Button"].tint = "0x2E2E2E";
             this[item + "Button"].input.enabled = false;
             let newKeys = this.allItemKeys.filter((item) => item !== item);
             this.allItemKeys = newKeys;
@@ -450,7 +567,7 @@ var ShopState = {
       .setOrigin(0, 1)
       .setDepth(6);
     this.infoText.scale = 0;
-    Phaser.Display.Align.In.Center(this.infoText,this.infoFrame);
+    Phaser.Display.Align.In.Center(this.infoText, this.infoFrame);
     this.shopPrompt = this.add
       .image(500, -500, "notice_background2")
       .setOrigin(0.5, 0.5)
@@ -493,6 +610,8 @@ var ShopState = {
     if (this.registry.get("Day") !== this.day) {
       //console.log("day changed in shop");
       this.day = this.registry.get("Day");
+      this.rerollButton.input.enabled = true;
+      this.rerollButton.clearTint();
       shuffleItems(this);
     }
   },

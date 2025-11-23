@@ -5,6 +5,9 @@ import notes_dictionary from "../dictonaries/notes.jsx";
 const OrderSubmittedHandler = (game, dialogHandler) => {
 
   const recieved_order = game.registry.get("Burger");
+
+  const recieved_order_copy = [...recieved_order];
+
   const expected_order = game.registry.get("Order");
   let moneyAddition = 0;
   let ingredients_missed = [];
@@ -55,10 +58,15 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
 
   //console.log("currentstandards",game.defaultPresentationStandard,game.defaultPunctualityStandard,game.defaultPrecisionStandard,game.defaultPleasantryStandard)
 
-  let presentationChance = Math.floor(Math.random() * game.defaultPresentationStandard); // for normal
-  let punctualityChance = Math.floor(Math.random() * game.defaultPunctualityStandard);
-  let pleasantryChance = Math.floor(Math.random() * game.defaultPleasantryStandard);
-  let precisionChance = Math.floor(Math.random() * game.defaultPrecisionStandard);
+
+  function getStandardChance(baseStandard){
+    return Math.max(0,baseStandard - Math.floor(Math.random()*10))
+  }
+
+  let presentationChance = getStandardChance(game.defaultPresentationStandard) // for normal
+  let punctualityChance =  getStandardChance(game.defaultPunctualityStandard);
+  let pleasantryChance = getStandardChance(game.defaultPleasantryStandard);
+  let precisionChance = getStandardChance(game.defaultPrecisionStandard);
 
   if (game.defaultPleasantryStandard==0){
     pleasantryChance=0;
@@ -89,21 +97,21 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         if ((Total_Orders + 1) % 5 == 0) {
           let chance = Math.floor(Math.random() * 2) + 1;
           if (chance == 1) {
-            pleasantryStat = math.max(90, pleasantryStat);
-            presentationStat = math.max(90, presentationStat);
-            punctualityStat = math.max(90, presentationStat);
-            precisionStat = math.max(90, precisionStat);
+            pleasantryStat = Math.max(90, pleasantryStat);
+            presentationStat = Math.max(90, presentationStat);
+            punctualityStat = Math.max(90, presentationStat);
+            precisionStat = Math.max(90, precisionStat);
           }
         }
         break;
       case "stevenswish":
         if (CurrentDay % 2 == 0) {
-          tipMod += 0.5;
+          tipMod += 0.2;
         }
         break;
       case "burgerpolish":
         //console.log("incrementing burgerpolish");
-        presentationStat += 1.5;
+        presentationStat += 3;
         break;
       case "pragmaticparty":
         presentationStat += 1;
@@ -112,9 +120,18 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         //pleasantryStat += 1;
         break;
       case "thewhisk": {
-        let chance = Math.floor(Math.random() * 5) + 1;
-        if (chance == 1) {
-          let totalStandards = 100;
+        let chance = Math.floor(Math.random() * 100) + 1;
+        if (chance <= 30) {
+          let totalStandards = 0;
+          if (npc_info.standards && npc_info.standards.precision) {
+            totalStandards += npc_info.standards.precision;
+          } else {
+            if (game.secretShopperCustomer) {
+              totalStandards += game.secretshopperPrecisionStandard;
+            } else {
+              totalStandards += game.defaultPrecisionStandard;
+            }
+          }
           if (npc_info.standards && npc_info.standards.presentation) {
             totalStandards += npc_info.standards.presentation;
           } else {
@@ -133,8 +150,19 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
               totalStandards += game.defaultPunctualityStandard;
             }
           }
-          let newAmount = (totalStandards / 3) * 2;
-          tipMod += Math.floor(newAmount);
+          if (npc_info.standards && npc_info.standards.pleasantry) {
+            totalStandards += npc_info.standards.pleasantry;
+          } else {
+            if (game.secretShopperCustomer) {
+              totalStandards += game.secretshopperPleasantryStandard;
+            } else {
+              totalStandards += game.defaultPleasantryStandard;
+            }
+          }
+          //console.log("modifier",totalStandards/4,(totalStandards/4)*.01*2)
+          let newAmount = ((totalStandards / 4))*.01 *2;
+
+          tipMod += newAmount;
         }
         break;
       }
@@ -143,11 +171,37 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         break;
       }
       case "ratnip": {
-        let ratsNotAdded = game.registry.get("RatsToAdd") || 0
-        let ratsAdded = game.registry.get("KitchenRatCount") || 0
-        for(let i=0; i< (ratsNotAdded+ratsAdded);i++){
-          tipAdditions+=5;
-        }
+        const ratsNotAdded = game.registry.get("RatsToAdd") || 0
+        const ratsAdded = game.registry.get("KitchenRatCount") || 0
+
+        tipAdditions+= ((ratsNotAdded+ratsAdded)*5);
+        break;
+      }
+      case "cryochamber": {
+        punctualityChance-=4;
+        //console.log("punct chance decreased by 4 to",punctualityChance)
+        //console.log("new punct chance:",punctualityChance)
+        break;
+      }
+      case "burgertime": {
+        const ingredientBonus = (2 * recieved_order_copy.length);
+        punctualityStat+= ingredientBonus
+        //console.log("punct stat increased by",ingredientBonus)
+        //console.log("new punct stat:",punctualityStat)
+        break;
+      }
+      case "scentedbounce": {
+        const bouncyBallsInKitchen = game.registry.get("BouncyBallsInKitchen") || 0
+        presentationStat += (bouncyBallsInKitchen)
+        //console.log("presentation stat increased by",bouncyBallsInKitchen)
+        //console.log("new presentation stat:",presentationStat)
+        break;
+      }
+      case "glumtrident": {
+        const glumDevilCount = game.registry.get("GlumDevilCount") || 0
+        precisionStat += (glumDevilCount)
+        //console.log("precision stat increased by",glumDevilCount)
+        //console.log("new precision stat:",precisionStat)
         break;
       }
       default:

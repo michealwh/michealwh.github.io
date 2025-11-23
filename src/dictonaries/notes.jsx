@@ -167,7 +167,7 @@ var notes = {
     notes: [
       {
         title: "Validation Damnation",
-        description: "I yearn for that place at the top of the hill.\nOnly 30 paces—the trip couldn't be much of a thrill.\nBut hill turns to mountain, and the fountain runs dry.\nWith each step this task feels impossible to try.\nA question resurfaces—a mental negotiation.\nI ask myself, will I ever be cured and find my foundation?",
+        description: "I yearn for that place at the top of the hill.\nOnly 30 paces, the trip couldn't be much of a thrill.\nBut hills turn to mountains, and the fountain runs dry.\nWith each step this task feels impossible to try.\nA question resurfaces, a mental negotiation.\nI ask myself, will I ever be cured and find my foundation?",
         fontSize: 20,
       },
     ],

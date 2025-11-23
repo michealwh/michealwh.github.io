@@ -16,6 +16,9 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
   if (object.texture.key.includes("ball")) {
     const bounce = Math.random() * (1.2 - .5) + .5;
     object.setBounce(bounce);
+    //console.log("adding bouncy ball to kitchen registry")
+    let bouncyBallsInKitchen = game.registry.get("BouncyBallsInKitchen") || 0
+    game.registry.set("BouncyBallsInKitchen", bouncyBallsInKitchen + 1);
   }
   object.setCollideWorldBounds(true);
 
@@ -834,6 +837,12 @@ var KitchenState = {
               const ingredient_object = { xPos, yPos, ingredient_string };
               Burger_Information.push(ingredient_object);
               Burger_Ingredients.push(ingredient_string);
+            }
+
+            if (object.texture.key.includes("ball")) {
+              //console.log("removing bouncy ball from kitchen registry")
+              let bouncyBallsInKitchen = this.registry.get("BouncyBallsInKitchen") || 1
+              this.registry.set("BouncyBallsInKitchen", bouncyBallsInKitchen - 1);
             }
 
             this.registry.set("Burger_Information", Burger_Information);

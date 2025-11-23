@@ -348,7 +348,7 @@ const customerHandler = (customer, game) => {
           order_list +
           ".";
         if (game.secretShopperCustomer) {
-          text = "I am customer. Give me the burger with" + order_list + ".";
+          text = "i am customer. give me the burger with" + order_list + ".";
         }
         if (bouncyStyled) {
           text = text.slice(0, text.length - 19);
@@ -562,6 +562,41 @@ const dayStartHandler = (game) => {
   game.registry.set("Day", game.currentDay);
   game.dailyCustomerCount = 0;
   game.todays_customers = [];
+
+  // modifier handling
+
+  const modifiers = game.registry.get("Modifiers") || [];
+
+  const bouncezineCount = modifiers.reduce(
+    (n, val) => n + (val === "bouncezine"),
+    0
+  );
+
+  for (let i = 0; i < bouncezineCount; i++) {
+    let chance = Math.floor(Math.random() * 5); // 20% chance
+    if (chance === 0) {
+      //console.log("adding free bouncyball");
+      let balltypes = [
+        "blueball",
+        "redball",
+        "yellowball",
+        "greenball",
+        "rarebouncyball25",
+      ];
+      let chosenball = balltypes[Math.floor(Math.random() * balltypes.length)];
+      if (chosenball === "rarebouncyball25") {
+        chosenball = balltypes[Math.floor(Math.random() * balltypes.length)];
+      }
+      let itemList = game.registry.get("NewKitchenItemEvent");
+
+      itemList.push(chosenball);
+      game.registry.set("NewKitchenItemEvent", itemList);
+    } else {
+      //console.log("not adding free bouncyball");
+    }
+  }
+  //console.log("bouncezine count:", bouncezineCount);
+  // customer selection
   const unlockedMaxRatio = Math.floor(
     game.dailyCustomerMax / game.currentUnlockedCustomers.length + 0.5
   );
@@ -610,10 +645,13 @@ const dayEndHandler = (game, just_launched) => {
   game.registry.set("SwitchNotAllowed", false);
   game.registry.set("DayOver", true);
   game.dailyCustomerCount = 0;
-  if (game.dailyCustomerMax < 6) {
+  if (game.dailyCustomerMax < 8) {
     const moreCustomersSuccess = (game.currentDay + 1) % 4;
     if (moreCustomersSuccess == 0) {
-      const moreCustomers = 1; //Math.floor(Math.random() * 2) + 1;
+      let moreCustomers = Math.floor(Math.random() * 2) + 1;
+      if (game.dailyCustomerMax + moreCustomers > 8) {
+        moreCustomers = 1;
+      }
       game.dailyCustomerMax += moreCustomers;
       game.registry.set("DailyCustomerMax", game.dailyCustomerMax);
     }
@@ -707,7 +745,7 @@ const dayEndHandler = (game, just_launched) => {
     //console.log("adding", game.dayUpdateText.text, "to update text");
   } else {
     //console.log("adding", game.thisDaysInfo.description, "to update text");
-    if(game.thisDaysInfo.description){
+    if (game.thisDaysInfo.description) {
       game.dayUpdateText.text += "\n" + game.thisDaysInfo.description;
     }
     if (game.thisDaysInfo.c_standards) {
@@ -727,6 +765,8 @@ const dayEndHandler = (game, just_launched) => {
       game.bouncyballsAllowed = true;
     }
   }
+
+  //console.log(game.thisDaysInfo || "nothing");
 
   if (
     (game.thisDaysInfo && game.thisDaysInfo.events.includes("secretshopper")) ||
@@ -1406,6 +1446,7 @@ var GameState = {
 
     this.currentDay = 1;
     this.secretShopperDay = false;
+    this.bouncyballsAllowed = false;
     // this.secretShopperDay = true
     this.thisDaysInfo = days_info.actual_days[this.currentDay];
 
