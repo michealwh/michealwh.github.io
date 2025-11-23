@@ -85,7 +85,8 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
   });
 
   object.on("dragend", (pointer, gameObject, dropped) => {
-    game.active_drag_object = null;
+    //console.log("dragend")
+    //game.active_drag_object = null;
     if (game.used_ingredients.includes(object)) {
       const xDif = object.x - game.mealPosition[0];
       const yDif = object.y - game.mealPosition[1];
@@ -136,6 +137,7 @@ const foodButtonHandler = (object, game) => {
         clone.x = clone.width / 2
       }
       game.active_drag_object = clone;
+      //console.log("active drag object",clone)
       clone.body.setAllowGravity(false);
       clone.scale = 1;
       game.tweens.add({
@@ -697,8 +699,10 @@ var KitchenState = {
     this.top_ingredient = this.servingplate;
 
     const objectDragCheck = (pointer) => {
+      //console.log("object drag check",this.objectDragging,this.active_drag_object)
       const savedPointer = pointer;
       if (this.objectDragging === true && this.active_drag_object != undefined) {
+        //console.log("dropping object")
         this.objectDragging = false;
         const object = this.active_drag_object;
         this.active_drag_object.body.setAllowGravity(true);
