@@ -34,6 +34,12 @@
     "almost fell asleep there.",
     "i wish you were faster."
   ],
+  "goodreview": [
+    "this burger's amazing! where can i give you a good review?",
+    "can i speak to the manager? i need them to know of your talent.",
+    "i'm giving you a five star rating on shmelk!",
+    "do you have a credit card program with high interest rates i can sign up for?"
+  ],
   "fail": {
     "general": [
       "this isn't right.",
@@ -51,7 +57,7 @@
         "i do not eat something this disheveled."
     ],
     "punctuality": [
-        "finally",
+        "finally...",
         "this is cold.",
         "i've waited too long.",
         "i almost fell asleep.",

@@ -49,6 +49,12 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
   let has_passed = true;
   let failure_reason = "general";
 
+  let bottom_ingredient = recieved_order_copy[0];
+  if (bottom_ingredient !== "bottomBun" && expected_order.includes("bottomBun")) { // bottom ingredient check
+    //console.log("failed bottom bun check");
+    presentationStat -= 45;
+  }
+
   if (
     (recieved_order.length <= 0 && ingredients_missed.length === 0) === false
   ) {
@@ -316,7 +322,31 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     game.registry.set("Total_Globs", new_total_points.toFixed(2));
     const current_correct = parseInt(game.registry.get("Total_Correct")) || 0;
     game.registry.set("Total_Correct", current_correct + 1);
-    game.success_sfx1.play();
+
+        // chance of winning a review/life
+    let chanceTotal = presentationChance + punctualityChance + precisionChance + pleasantryChance
+    let statsTotal = presentationStat + punctualityStat + precisionStat + pleasantryStat
+
+    let ratio = statsTotal / chanceTotal;
+    const currentHealth = game.registry.get("Health");
+    const targetChance = 10; // chance of winning a life back
+    let chance = Math.floor(Math.random() * targetChance) + 1;
+    chance += (ratio/2);
+    if (ratio >= 1.5 && currentHealth < 5 && chance >=targetChance) {
+
+      // good review
+      ////console.log("WE GOT A GOOD REVIEW!!!",ratio,chance);
+      good_response = dialog_dictionary.goodreview[
+        Math.floor(Math.random() * dialog_dictionary.goodreview.length)
+      ];
+      let currentReviews = game.registry.get("Total_Good_Reviews") || 0;
+      game.registry.set("Total_Good_Reviews", currentReviews + 1);
+      game.registry.set("Health", currentHealth + 1);
+      game.good_review_sfx.play();
+    } else {
+      // normal success
+      game.success_sfx1.play();
+    }
 
     // NOTE SECTION
     const defaultStartDay = 5; // for notes

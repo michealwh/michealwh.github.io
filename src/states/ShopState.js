@@ -172,14 +172,39 @@ const shuffleItems = (game, animate) => {
       ];
     }
   };
-  let shuffledItems = game.allItemKeys;
-  shuffleArray(shuffledItems);
-  game.dailyItems = [
-    shuffledItems[0],
-    shuffledItems[1],
-    shuffledItems[2],
-    "bouncyball",
-  ];
+
+  const currentMoney = game.registry.get("Globs");
+  const currentDay = game.registry.get("Day");
+
+  if (currentDay > 20) {
+    let shuffledItems = game.allItemKeys;
+    shuffleArray(shuffledItems);
+    let item1 = shuffledItems[0];
+    let item2 = shuffledItems[1];
+    let item3 = shuffledItems[2];
+
+    game.dailyItems = [item1, item2, item3, "bouncyball"];
+  } else {
+    let shuffledItems = game.allItemKeys;
+    let shuffledPles = game.allPleasantryKeys;
+
+    shuffleArray(shuffledItems);
+    shuffleArray(shuffledPles);
+    if (currentMoney < 100 && currentDay < 12) {
+      shuffledItems = game.allCheapItemKeys;
+      shuffleArray(shuffledItems);
+    }
+
+    let item1 = shuffledPles[0];
+    let item2 = shuffledItems.find((item) => item !== item1);
+    let item3 = shuffledItems.find((item) => item !== item1 && item !== item2);
+
+    let itemList = [item1, item2, item3];
+    shuffleArray(itemList);
+
+    game.dailyItems = [itemList[0], itemList[1], itemList[2], "bouncyball"];
+  }
+
   game.shopItem1.setTexture(game.dailyItems[0] + "_box");
   game.shopItem2.setTexture(game.dailyItems[1] + "_box");
   game.shopItem3.setTexture(game.dailyItems[2] + "_box");
@@ -422,10 +447,27 @@ var ShopState = {
     this.dailyItems = ["magicdirt", "chair1", "table1", "bouncyball"];
     this.allItemKeys = [];
 
+    this.allPleasantryKeys = [];
+    this.allCheapItemKeys = [];
+    this.allExpensiveItemKeys = [];
+
     for (const item in shop_dictionary.purchasables) {
       if (item === "bouncyball") continue;
+      const itemInfo = shop_dictionary.purchasables[item];
       this.allItemKeys.push(item);
-      const itemRepeatable = shop_dictionary.purchasables[item].repeatable;
+      if (
+        itemInfo.description.includes("pleasantry") ||
+        item === "pragmaticparty"
+      ) {
+        this.allPleasantryKeys.push(item);
+        //console.log(this.allPleasantryKeys);
+      }
+      if (itemInfo.cost < 100) {
+        this.allCheapItemKeys.push(item);
+      } else {
+        this.allExpensiveItemKeys.push(item);
+      }
+      const itemRepeatable = itemInfo.repeatable;
       if (typeof itemRepeatable === "number") {
         this[item + "Left"] = itemRepeatable;
       }
@@ -545,6 +587,18 @@ var ShopState = {
             this[item + "Button"].input.enabled = false;
             let newKeys = this.allItemKeys.filter((item) => item !== item);
             this.allItemKeys = newKeys;
+            let newPlesKeys = this.allPleasantryKeys.filter(
+              (item) => item !== item
+            );
+            this.allPleasantryKeys = newPlesKeys;
+            let newCheapKeys = this.allCheapItemKeys.filter(
+              (item) => item !== item
+            );
+            this.allCheapItemKeys = newCheapKeys;
+            let newExpensiveKeys = this.allExpensiveItemKeys.filter(
+              (item) => item !== item
+            );
+            this.allExpensiveItemKeys = newExpensiveKeys;
           }
         }
       });

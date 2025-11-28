@@ -62,6 +62,8 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
       }
 
       return;
+    } else {
+      game.objectDragging = true;
     }
 
     object.depth = game.top_ingredient.depth + 1;
@@ -711,6 +713,7 @@ var KitchenState = {
         const velocityY = (this.active_drag_object.y - prevPosition.y) / 4;
         object.setVelocity(velocityX, velocityY);
         this.active_drag_object = null;
+        ////console.log("active drag object after drop",this.active_drag_object)
       }
     }
 
@@ -820,6 +823,7 @@ var KitchenState = {
         };
 
         const ingredientAdded = (object, top_ingredient) => {
+          ////console.log("object:", object, "active_drag_object:", this.active_drag_object,"is above ingredient:",(object.height < 40 && object.y < this.top_ingredient.y + 30));
           if (
             this.active_drag_object !== object &&
             (object.y < this.top_ingredient.y ||

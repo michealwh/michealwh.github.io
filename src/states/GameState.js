@@ -1211,6 +1211,7 @@ var GameState = {
     this.spooky_sfx2 = this.sound.add("spooky_sfx2");
     this.spooky_sfx3 = this.sound.add("spooky_sfx3");
     this.success_sfx1 = this.sound.add("success_sfx1");
+    this.good_review_sfx = this.sound.add("success_sfx1");
     this.click_sfx = this.sound.add("submit_click");
     this.food_click_sfx = this.sound.add("food_click");
     this.game_over_sfx = this.sound.add("game_over_sfx");

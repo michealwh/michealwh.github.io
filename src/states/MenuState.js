@@ -55,6 +55,7 @@ const healthHandler = (game) => {
       if (game.healthItems.length > 0 && game.health>0) {
         game.health -= 1;
         const targetHealthPart = game.healthItems[i];
+        ////console.log("removing health part", targetHealthPart);
         targetHealthPart.rotation = -5 * (Math.PI / 180);
         game.tweens.add({
           targets: targetHealthPart,
@@ -72,8 +73,54 @@ const healthHandler = (game) => {
             targetHealthPart.setVelocity(direction * Math.random() * 15, -15);
 
             game.healthItems.splice(0, 1);
+            game.lostHealthItems.push(targetHealthPart);
           },
         });
+      }
+    }
+  } else if (new_health > game.health) {
+    // health was added
+    const difference = new_health - game.health;
+    ////console.log("Health increased by " + difference);
+    for (let i = 0; i < difference; i++) {
+      if (game.lostHealthItems.length > 0) {
+        game.health += 1;
+        const targetHealthPart = game.lostHealthItems[game.lostHealthItems.length - 1];
+        ////console.log("restoring health part", targetHealthPart);
+        targetHealthPart.body.setAllowGravity(false);
+        targetHealthPart.setVelocity(0, 0);
+        let yPos = game.healthYPositions[game.lostHealthItems.length - 1];
+        targetHealthPart.y = 1000+5*i;
+        ////console.log("moving to y pos",yPos)
+        ////console.log("healthypos",game.healthYPositions)
+        targetHealthPart.rotation=0
+        targetHealthPart.x=955
+        game.tweens.add({
+          targets: targetHealthPart,
+          y: yPos,
+          x: 955,
+          ease: "Linear",
+          duration: 2000,
+          repeat: 0,
+          yoyo: false,
+          onComplete: function () {
+          },
+        })
+
+        game.tweens.add({
+          targets: targetHealthPart,
+          rotation: 360 * (Math.PI / 180),
+          ease: "Linear",
+          duration: 2000/10,
+          repeat: 10,
+          yoyo: false,
+          onComplete: function () {
+          },
+        })
+        game.healthItems.unshift(targetHealthPart);
+        game.lostHealthItems.pop();
+        ////console.log("health items after restore", game.healthItems);
+        ////console.log("lost health items after restore", game.lostHealthItems);
       }
     }
   }
@@ -224,6 +271,8 @@ var MenuState = {
     burgerTop.body.setAllowGravity(false);
 
     this.healthItems = [burgerTop, ketchup, lettuce, beefpatty, burgerBottom];
+    this.lostHealthItems = [];
+    this.healthYPositions = [80, 90, 95, 100, 105];
     this.health = 5;
 
     const click_sfx = this.sound.add("menu_click");
