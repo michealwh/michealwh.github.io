@@ -110,27 +110,27 @@ const showModifierTab = (game, shouldShow) => {
 const showNoteTab = (game, shouldShow) => {
   if (shouldShow) {
     game.infoTitle.text = "Notes";
-    // 5x4 is 20 then x2 for the note title
-    const count = (game.noteCurrentPage+1)*40
-     for (let i = count-40; i < count; i++) {
-      if(game.noteAssets[i]){
+    // 5x3 is 15 then x2 for the note title
+    const count = (game.noteCurrentPage + 1) * 30;
+    for (let i = count - 30; i < count; i++) {
+      if (game.noteAssets[i]) {
         game.noteAssets[i].visible = true;
       } else {
-        break
+        break;
       }
     }
-    if(game.noteCurrentPage+1 < game.noteTotalPages){
-      game.noteNextPageBtn.visible=true
+    if (game.noteCurrentPage + 1 < game.noteTotalPages) {
+      game.noteNextPageBtn.visible = true;
     }
-    if(game.noteCurrentPage !== 0){
-      game.noteBackPageBtn.visible=true
+    if (game.noteCurrentPage !== 0) {
+      game.noteBackPageBtn.visible = true;
     }
   } else {
     for (let i = 0; i < game.noteAssets.length; i++) {
       game.noteAssets[i].visible = false;
     }
-    game.noteNextPageBtn.visible=false
-    game.noteBackPageBtn.visible=false
+    game.noteNextPageBtn.visible = false;
+    game.noteBackPageBtn.visible = false;
   }
 };
 
@@ -141,9 +141,9 @@ const hideInfo = (game) => {
   }
   game.modInfoImage.visible = false;
   game.note_background.visible = false;
-  game.noteInfoTitle.visible=false;
+  game.noteInfoTitle.visible = false;
   game.noteInfoText.visible = false;
-  game.noteAuthorText.visible=false;
+  game.noteAuthorText.visible = false;
 };
 
 const setupNPCTab = (game) => {
@@ -386,14 +386,14 @@ const ModUpdater = (game) => {
       modCountList[item]
     );
 
-    let showValue = false
-     if (game.currentTab === game.modifierTab){
-         showValue = true;
-      }
+    let showValue = false;
+    if (game.currentTab === game.modifierTab) {
+      showValue = true;
+    }
 
     for (let i = 0; i < modAssets.length; i++) {
       game.modifierAssets.push(modAssets[i]);
-      modAssets[i].visible=showValue
+      modAssets[i].visible = showValue;
     }
 
     function showModInfo(show, target) {
@@ -430,7 +430,8 @@ const setupNoteTab = (game) => {
   game.note_background = game.add
     .image(0, 0, "order_background")
     .setOrigin(0, 0)
-    .setDepth(6).setInteractive();
+    .setDepth(6)
+    .setInteractive();
   game.noteInfoTitle = game.add
     .text(220, 280, "Name", {
       fontFamily: "font1",
@@ -446,7 +447,8 @@ const setupNoteTab = (game) => {
       fill: "black",
       wordWrap: { width: 500 },
       align: "left",
-    }).setOrigin(0,.5)
+    })
+    .setOrigin(0, 0.5)
     .setDepth(7);
   game.noteInfoText = game.add
     .text(220, 400, "notes", {
@@ -456,48 +458,79 @@ const setupNoteTab = (game) => {
       fill: "black",
       wordWrap: { width: 600 },
       align: "left",
-    }).setOrigin(0,0)
+    })
+    .setOrigin(0, 0)
     .setDepth(7);
-  game.noteNextPageBtn = game.add.image(650, 250, "yes_button")
-    .setOrigin(.5, .5)
-    .setDepth(5).setInteractive();
-  game.noteNextPageBtn.scale=.2
-  game.noteBackPageBtn = game.add.image(350, 250, "no2_button")
-    .setOrigin(.5, .5)
-    .setDepth(5).setInteractive();
-  game.noteBackPageBtn.scale=.2
+  game.noteNextPageBtn = game.add
+    .image(650, 250, "next_button")
+    .setOrigin(0.5, 0.5)
+    .setDepth(5)
+    .setInteractive();
+  game.noteNextPageBtn.scale = 0.2;
+  game.noteBackPageBtn = game.add
+    .image(350, 250, "prev_button")
+    .setOrigin(0.5, 0.5)
+    .setDepth(5)
+    .setInteractive();
+  game.noteBackPageBtn.scale = 0.2;
   game.note_background.visible = false;
-  game.noteInfoTitle.visible=false;
-  game.noteAuthorText.visible=false;
+  game.noteInfoTitle.visible = false;
+  game.noteAuthorText.visible = false;
   game.noteInfoText.visible = false;
-  
+
   game.note_background.on("pointerdown", (pointer, gameObject) => {
     hideInfo(game);
   });
 
   game.noteNextPageBtn.on("pointerdown", (pointer, gameObject) => {
-    //console.log("next page")
-    game.noteCurrentPage+=1
-    // if(game.noteCurrentPage+1>=game.noteTotalPages){
-    //   game.noteNextPageBtn.visible=false
-    // }
-    // game.noteBackPageBtn.visible=true;
-    showNoteTab(game,false)
-    showNoteTab(game,true)
+    //console.log("next page");
+    game.click_sfx.play();
+
+    game.tweens.add({
+      targets: game.noteNextPageBtn,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        game.noteCurrentPage += 1;
+        // if(game.noteCurrentPage+1>=game.noteTotalPages){
+        //   game.noteNextPageBtn.visible=false
+        // }
+        // game.noteBackPageBtn.visible=true;
+        showNoteTab(game, false);
+        showNoteTab(game, true);
+      },
+    });
   });
   game.noteBackPageBtn.on("pointerdown", (pointer, gameObject) => {
-    //console.log("back page")
-    game.noteCurrentPage-=1;
-    // if(game.noteCurrentPage==0){
-    //   game.noteBackPageBtn.visible=false
-    // }
-    // game.noteNextPageBtn.visible=true;
-    showNoteTab(game,false)
-    showNoteTab(game,true)
+    //console.log("back page");
+    game.click_sfx.play();
+
+    game.tweens.add({
+      targets: game.noteBackPageBtn,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        game.noteCurrentPage -= 1;
+        // if(game.noteCurrentPage==0){
+        //   game.noteBackPageBtn.visible=false
+        // }
+        // game.noteNextPageBtn.visible=true;
+        showNoteTab(game, false);
+        showNoteTab(game, true);
+      },
+    });
   });
 };
 
-const NoteAsset = (game, image, title, x, y,curPage) => {
+const NoteAsset = (game, image, title, x, y, curPage) => {
   let noteAsset = game.add
     .image(x, y, image)
     .setOrigin(0.5, 0.5)
@@ -514,13 +547,13 @@ const NoteAsset = (game, image, title, x, y,curPage) => {
     })
     .setOrigin(0.5, 0.5)
     .setDepth(5);
-    let showValue = false
-     if (game.currentTab === game.noteTab && curPage ===0){
-        //console.log("showing val")
-         showValue = true;
-      }
-  noteAsset.visible=showValue
-  noteTitleText.visible=showValue
+  let showValue = false;
+  if (game.currentTab === game.noteTab && curPage === 0) {
+    //console.log("showing val");
+    showValue = true;
+  }
+  noteAsset.visible = showValue;
+  noteTitleText.visible = showValue;
 
   return [noteAsset, noteTitleText];
 };
@@ -538,11 +571,11 @@ const NoteUpdater = (game) => {
   let currentRowY = initialRowY;
 
   let currentPage = 0;
-  game.noteCurrentPage=0;
-  game.noteTotalPages=1;
+  game.noteCurrentPage = 0;
+  game.noteTotalPages = 1;
 
-  game.noteNextPageBtn.visible=false
-  game.noteBackPageBtn.visible=false
+  game.noteNextPageBtn.visible = false;
+  game.noteBackPageBtn.visible = false;
 
   Object.keys(note_dictionary).forEach((item) => {
     let npc_notes = note_dictionary[item].notes;
@@ -552,16 +585,17 @@ const NoteUpdater = (game) => {
         if (current_npc_notes.includes(i)) {
           if (currentColCount >= maxCol) {
             currentRowY += 140;
-            if(currentRowCount>= maxRow) {
-              currentPage+=1;
-              game.noteTotalPages+=1;
-              if (game.currentTab === game.noteTab){
-                game.noteNextPageBtn.visible=true
+
+            currentRowCount += 1;
+            if (currentRowCount >= maxRow) {
+              currentPage += 1;
+              game.noteTotalPages += 1;
+              if (game.currentTab === game.noteTab) {
+                game.noteNextPageBtn.visible = true;
               }
-              currentRowY=initialRowY
-              currentRowCount=0;
+              currentRowY = initialRowY;
+              currentRowCount = 0;
             }
-            currentRowCount+=1
             currentColCount = 0;
           }
           currentColCount += 1;
@@ -571,7 +605,8 @@ const NoteUpdater = (game) => {
             "order_background",
             noteInfo.title,
             currentColCount * 150 + 55,
-            currentRowY,currentPage
+            currentRowY,
+            currentPage
           );
 
           game.noteAssets.push(noteAssets[0]);
@@ -582,20 +617,20 @@ const NoteUpdater = (game) => {
               game.click_sfx.play();
               game.noteInfoTitle.text = note_info.title;
               //game.modInfoImage.setTexture(mod_info.key);
-              game.noteAuthorText.text = "By: " + npc
+              game.noteAuthorText.text = "By: " + npc;
               let infotext = "";
               if (note_info.description) {
                 infotext += note_info.description;
               }
-              if(note_info.fontSize){
-                game.noteInfoText.setFontSize(note_info.fontSize+"px")
+              if (note_info.fontSize) {
+                game.noteInfoText.setFontSize(note_info.fontSize + "px");
               } else {
-                game.noteInfoText.setFontSize("35px")
+                game.noteInfoText.setFontSize("35px");
               }
               game.noteInfoText.text = infotext;
               game.noteInfoTitle.visible = true;
               game.noteInfoText.visible = true;
-              game.noteAuthorText.visible=true;
+              game.noteAuthorText.visible = true;
               game.note_background.visible = true;
             }
           }
@@ -753,9 +788,9 @@ var GalleryState = {
       //console.log("just set last mod");
       ModUpdater(this);
     }
-    if(this.registry.get("NewNoteEvent") === true){
-      this.registry.set("NewNoteEvent",false)
-      NoteUpdater(this)
+    if (this.registry.get("NewNoteEvent") === true) {
+      this.registry.set("NewNoteEvent", false);
+      NoteUpdater(this);
     }
   },
 };
