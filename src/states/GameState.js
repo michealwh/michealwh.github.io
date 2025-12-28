@@ -1,6 +1,7 @@
 import dialog_dictionary from "../dictonaries/dialog.json";
 import ingredients_dictionary from "../dictonaries/ingredients.json";
 import npc_dictionary from "../dictonaries/npcs.json";
+import notes_dictionary from "../dictonaries/notes.jsx";
 import OrderSubmittedHandler from "../modules/OrderSubmittedHandler";
 import days_info from "../dictonaries/days";
 
@@ -561,7 +562,7 @@ const dayStartHandler = (game) => {
   game.currentDay = parseInt(game.currentDay) + 1;
   game.registry.set("Day", game.currentDay);
   game.dailyCustomerCount = 0;
-  game.todays_customers = [];
+  game.todays_customers = game.registry.get("Todays_Customer") || [];
 
   // modifier handling
 
@@ -629,6 +630,7 @@ const dayStartHandler = (game) => {
   }
   //console.log("todays customers", game.todays_customers);
 
+  game.registry.set("Todays_Customers", game.todays_customers);
   game.registry.set("DailyCustomerCount", game.dailyCustomerCount);
   showDayFrame(game, false);
   game.time.addEvent({
@@ -969,34 +971,34 @@ const orderCompleteHandler = (game) => {
     callbackScope: game,
     loop: false,
   });
+  //console.log("doing review");
   game.orderFinishedTimedEvent = game.time.addEvent({
-    delay: 5500,
+    delay: 2700,
     callback: () => {
-      //console.log("doing review");
       OrderSubmittedHandler(game, dialogHandler);
       game.time.addEvent({
-        delay: 3000,
-        callback: function () {
-          if (game.selectedNote === undefined) {
-            endOfOrderReviewHandler(game);
-          } else {
-            game.time.addEvent({
-              delay: 200,
-              callback: () => {
-                questionHandler(
-                  game,
-                  "note",
-                  "The customer hands you a note. Read it?"
-                );
-              },
-              callbackScope: game,
-              loop: false,
-            });
-          }
-        },
-        callbackScope: game,
-        loop: false,
-      });
+    delay: (3000 + 5500 -2700),
+    callback: function () {
+      if (game.selectedNote === undefined) {
+        endOfOrderReviewHandler(game);
+      } else {
+        game.time.addEvent({
+          delay: 200,
+          callback: () => {
+            questionHandler(
+              game,
+              "note",
+              "The customer hands you a note. Read it?"
+            );
+          },
+          callbackScope: game,
+          loop: false,
+        });
+      }
+    },
+    callbackScope: game,
+    loop: false,
+  });
     },
     callbackScope: game,
     loop: false,
@@ -1051,17 +1053,6 @@ const furnitureHandler = (game, furnitureList) => {
     } else if (object === "slorgbanner") {
       game.slorgbanner.visible = true;
     } else if (object.includes("glum")) {
-      // let currentCount = game.glumCount || 0
-      // game.glumCount=currentCount+1
-      // let xPos = 110+(17*game.glumCount)
-      // let yPos = 0
-      // if (game.glumCount%3 == 0){
-      //   yPos=850
-      // } else if(game.glumCount%3==2) {
-      //   yPos=780
-      // } else {
-      //   yPos=710
-      // }
       let xPos = Math.floor(Math.random() * 850) + 100;
       let yPos = Math.floor(Math.random() * 200) + 670;
 
@@ -1211,7 +1202,7 @@ var GameState = {
     this.spooky_sfx2 = this.sound.add("spooky_sfx2");
     this.spooky_sfx3 = this.sound.add("spooky_sfx3");
     this.success_sfx1 = this.sound.add("success_sfx1");
-    this.good_review_sfx = this.sound.add("success_sfx1");
+    this.good_review_sfx = this.sound.add("success_sfx2").setVolume(0.8);
     this.click_sfx = this.sound.add("submit_click");
     this.food_click_sfx = this.sound.add("food_click");
     this.game_over_sfx = this.sound.add("game_over_sfx");
@@ -1281,7 +1272,17 @@ var GameState = {
       .setOrigin(0, 0)
       .setDepth(4 + uiDepth);
 
-    introFrameHandler(this);
+    if (this.registry.get("Total_Orders") >= 1) {
+      //console.log("not at start skipping intro frame");
+      this.todays_customers = this.registry.get("Todays_Customer") || [];
+      if (this.registry.get("DayOver") == undefined) {
+        this.registry.set("DayOver", false);
+      }
+      newCustomer(this, true); // continuing the day will need to add handling for secret shopper other assigned customers
+    } else {
+      //console.log("orders was norders");
+      introFrameHandler(this);
+    }
 
     // dayFrame creation
     this.dayFrame = this.add
@@ -1453,6 +1454,23 @@ var GameState = {
 
     //console.log(this.thisDaysInfo);
     //console.log(days_info, days_info.actual_days);
+
+    let formattedNotes = notes_dictionary;
+    let untitledCount = 0;
+    for (var npc in formattedNotes) {
+      const npcNotes = formattedNotes[npc].notes;
+      if (npcNotes) {
+        for (let i = 0; i < npcNotes.length; i++) {
+          if (npcNotes[i].title == "Untitled") {
+            untitledCount += 1;
+            formattedNotes[npc].notes[i].title = `Untitled #${untitledCount}`;
+          }
+        }
+      }
+    }
+
+    this.formattedNotes = formattedNotes;
+
     if (this.thisDaysInfo.c_standards) {
       this.defaultPresentationStandard = this.thisDaysInfo.c_standards[0];
       this.defaultPunctualityStandard = this.thisDaysInfo.c_standards[1];
@@ -1483,7 +1501,7 @@ var GameState = {
         this.dialog_frame.y = this.dialog_frame.y - dialogYMove;
         (this.dialog_title.y = this.dialog_title.y - dialogYMove),
           //console.log("doing review");
-        OrderSubmittedHandler(this, dialogHandler);
+        OrderSubmittedHandler(this, dialogHandler, "skipEverything");
         this.time.addEvent({
           delay: 3000,
           callback: function () {

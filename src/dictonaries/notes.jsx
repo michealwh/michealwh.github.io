@@ -1,7 +1,7 @@
 var notes = {
   "Morris Maulde": {
     key: "Morris Maulde",
-    order: "chrono",
+    order: "random",
     chance: 3,
     startday: 5,
     notes: [
@@ -24,8 +24,8 @@ var notes = {
   },
   "Ranulf Gorrison": {
     key: "Ranulf Gorrison",
-    order: "chrono",
-    chance: 3,
+    order: "random",
+    chance: 5,
     startday: 3,
     notes: [
       {
@@ -34,53 +34,94 @@ var notes = {
           "Back and forth it goes.\nThe pizza is split up now.\nDinner is ready.",
       },
       {
-        title: "Come in.",
+        title: "Entry",
         description:
           "I do not impose.\nThere is fear of rejection.\nHe tells me come in.",
       },
+      {
+        title: "Aloe",
+        description: "Yearning for a ray.\nThe clouds dominate above.\nMaybe we'll get rain."
+      },
+      {
+        title: "Steel fan",
+        description: "Whirring and chirping.\nThe blades slightly hit the edge.\nBadonk Badonk Bonk."
+      },
+      {
+        title: "Hungry",
+        description: "A concept bubbles.\nA product of perfection.\nI ask for more beef."
+      }
+
     ],
   },
-  Glorbdon: {
+  "Glorbdon": {
     key: "Glorbdon",
+    order: "random",
+    chance: 8,
+    startday: 5,
+    notes: [
+      {
+        title: "Untitled",
+        description: "I hope this isn't my last burger.\nI'd be sad.",
+        image: false,
+      },
+      {
+        title: "Untitled",
+        description: "Do you know gratitude?",
+        image: false,
+      },
+      {
+        title: "Untitled",
+        description: "How many living creatures are in the room with you?",
+        image: false,
+      }
+    ],
+  },
+  "Glorbert": {
+    key: "Glorbert",
     order: "chrono",
     chance: 8,
     startday: 5,
     notes: [
       {
-        title: "Untitled #1",
-        description: "I hope this isn't my last burger.\nI'd be sad.",
+        title: "Untitled",
+        description: "I don't think I mind the ethical production of this burger.\nIt's just too good.",
         image: false,
       },
       {
-        title: "Untitled #2",
-        description: "Do you know gratitude?",
+        title: "Untitled",
+        description: "If I could get rid of any modern invention, I'd get rid of the mirror.",
         image: false,
       },
     ],
   },
   "Grugory Hefert": {
     key: "Grugory Hefert",
-    order: "chrono",
+    order: "random",
     chance: 4,
     startday: 4,
     notes: [
       {
-        title: "Untitled #5",
+        title: "Untitled",
         description:
           "I get tempted to get milk sometimes but I know it wouldn't be good for me.",
       },
       {
-        title: "Untitled #6",
+        title: "Untitled",
         description:
           "Does the sadness really go away as we grow up or do we just get better at burying it?",
       },
       {
-        title: "Untitled #7",
+        title: "Untitled",
+        description:
+          "I think as you get older you learn to appreciate the moments alone. Just you. It's really nice actually.",
+      },
+      {
+        title: "Untitled",
         description:
           "My children are to be my life, my heart, my soul, but they drain me.",
       },
       {
-        title: "Untitled #8",
+        title: "Untitled",
         description:
           "I dream of freedom, but I'm not certain I'd use it if I had it.\nI didn't back then.",
       },
@@ -88,37 +129,54 @@ var notes = {
   },
   "Laura Hefert": {
     key: "Laura Hefert",
-    order: "chrono",
+    order: "random",
     chance: 4,
     startday: 4,
     notes: [
       {
-        title: "Untitled #9",
+        title: "Untitled",
         description:
           "I want everything to be perfect for my family, but I can never seem to get it right.",
       },
       {
-        title: "Untitled #10",
+        title: "Untitled",
         description:
           "My little Tommy and Jamie are just the cutest. Tyrants in training if you ask me.",
       },
       {
-        title: "Untitled #11",
+        title: "Untitled",
         description:
           "Is it bad to hope your son will be a better man than his father? Oh I just worry.",
       },
+      {
+        title: "Untitled",
+        description: "I get so worried about our problems I forget our kids are growing up. I hope they aren't like us."
+      }
     ],
   },
   "Marmaduke Gloo": {
     key: "Marmaduke Gloo",
-    order: "chrono",
+    order: "random",
     chance: 2,
     startday: 4,
     notes: [
       {
-        title: "Untitled #3",
+        title: "Untitled",
         description: `Jellyfish aren't actually fish. They don't have fins or gills and instead swim by opening or closing their “bells.”`,
       },
+      {
+        title: "Untitled",
+        description: "I saw a talk by Slorg's Senior ELNP and it was outstanding. The margin spacing on those graphs would take your breath away."
+      },
+      {
+        title: "Untitled",
+        description: "The Red Widow spider is an interesting species. The male will offer himself to his female mate to be eaten by placing himself in her mandibles. If she declines he will continue doing this until she gives in, consuming the male."
+      },
+      {
+        title: "Untitled",
+        description: "Anaconda's are the largest known snakes in the world. Rather then using venom to kill their prey they actually constrict them by wrapping around the body of the prey until they suffocate."
+      },
+
     ],
   },
   "Alonzo Gloo": {
@@ -154,9 +212,14 @@ var notes = {
     startday: 3,
     notes: [
       {
-        title: "Untitled #4",
+        title: "Untitled",
         description: "I will tell my brothers of your establishment.",
       },
+      {
+        title: "Daily Routine",
+        description: "Drifting through this life day by day.\nNever finding a place to settle, to stay.\nConstant decisions are needed to be made.\nWill hardship be embraced to improve, to upgrade?\nThe sun's rays come to an end, everyone gather, the results are in.\nThe tape is looped, same story as last, I chose the easy route.",
+        fontSize: 20,
+      }
     ],
   },
   "Bentley Gloo": {
@@ -173,17 +236,34 @@ var notes = {
     ],
   },
 
-  "Felippe Diaz": {
-    key: "Felippe Diaz",
-    order: "chrono",
+  "Irina Turner": {
+    key: "Irina Turner",
+    order: "random",
     chance: 3,
     startday: 4,
     notes: [
       {
-        title: "Untitled #42",
+        title: "Untitled",
+        description: "I had a dream last night. It was normal. Isn't that weird?"
+      }
+    ]
+  },
+
+  "Felippe Díaz": {
+    key: "Felippe Díaz",
+    order: "random",
+    chance: 3,
+    startday: 4,
+    notes: [
+      {
+        title: "Untitled",
         description:
-          "I had a dream last night. Two towers. One of light. Another of blight. On each stood a prince. One upholding perception. The other following ignorance. They hated each other.",
+          "I had a dream last night. Two towers. One of light. Another of blight. On each stood a prince. One upholding perception. The other following ignorance.\nThey hated each other.",
       },
+      {
+        title: "Untitled",
+        description: "Did you hear the news? Slorg's Eatery has started producing weapons of war.\nHow innovative."
+      }
     ],
   },
   "Melf Proglog": {

@@ -2,7 +2,62 @@ import dialog_dictionary from "../dictonaries/dialog.json";
 import npc_dictionary from "../dictonaries/npcs.json";
 import notes_dictionary from "../dictonaries/notes.jsx";
 
-const OrderSubmittedHandler = (game, dialogHandler) => {
+const OrderSubmittedHandler = (game, dialogHandler, event) => {
+  const shuffleArray = (array) => {
+    let currentIndex = array.length;
+    while (currentIndex != 0) {
+      let randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+  };
+  const modifierAnimation = (game, modifier, quick) => {
+    const x = Math.floor(Math.random() * 900) + 50;
+    const y = 1000;
+
+    let waitTime = Math.floor(Math.random() * 1000) + 500;
+    if (quick === true) {
+      waitTime = Math.floor(Math.random() * 50) + 100;
+    }
+    game.time.addEvent({
+      delay: waitTime,
+      callback: () => {
+        const newMod = game.physics.add
+          .image(x, y, modifier)
+          .setOrigin(0.5, 0.5)
+          .setDepth(20)
+          .setInteractive()
+          .setDisplaySize(100, 100);
+        const dirx = Math.floor(Math.random() * 2);
+        let velx = Math.random() * 15 + 1;
+        if (dirx == 1) {
+          velx = velx * -1;
+        }
+        newMod.setVelocity(velx, -1 * (Math.random() * 100 + 900));
+        game.time.addEvent({
+          delay: 2500,
+          callback: () => {
+            game.tweens.add({
+              targets: [newMod],
+              scale: 0,
+              ease: "Linear",
+              duration: 200,
+              repeat: 0,
+              yoyo: false,
+              onComplete: function () {
+                if (newMod) {
+                  newMod.destroy();
+                }
+              },
+            });
+          },
+        });
+      },
+    });
+  };
 
   const recieved_order = game.registry.get("Burger");
 
@@ -37,7 +92,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     100;
   let presentationStat = parseInt(game.registry.get("Current_Presentation"));
   let punctualityStat = parseInt(game.registry.get("Current_Punctuality"));
-  let pleasantryStat = parseInt(game.registry.get("Average_Pleasantry"));
+  let pleasantryStat = parseInt(game.registry.get("Average_Pleasantry")) || 0;
 
   const current_globs = game.registry.get("Globs");
   const current_total_globs = game.registry.get("Total_Globs");
@@ -50,7 +105,11 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
   let failure_reason = "general";
 
   let bottom_ingredient = recieved_order_copy[0];
-  if (bottom_ingredient !== "bottomBun" && expected_order.includes("bottomBun")) { // bottom ingredient check
+  if (
+    bottom_ingredient !== "bottomBun" &&
+    expected_order.includes("bottomBun")
+  ) {
+    // bottom ingredient check
     //console.log("failed bottom bun check");
     presentationStat -= 45;
   }
@@ -62,20 +121,19 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     has_passed = false;
   }
 
-  //console.log("currentstandards",game.defaultPresentationStandard,game.defaultPunctualityStandard,game.defaultPrecisionStandard,game.defaultPleasantryStandard)
+  //console.log("currentstandards", game.defaultPresentationStandard, game.defaultPunctualityStandard, game.defaultPrecisionStandard, game.defaultPleasantryStandard);
 
-
-  function getStandardChance(baseStandard){
-    return Math.max(0,baseStandard - Math.floor(Math.random()*10))
+  function getStandardChance(baseStandard) {
+    return Math.max(0, baseStandard - Math.floor(Math.random() * 10));
   }
 
-  let presentationChance = getStandardChance(game.defaultPresentationStandard) // for normal
-  let punctualityChance =  getStandardChance(game.defaultPunctualityStandard);
+  let presentationChance = getStandardChance(game.defaultPresentationStandard); // for normal
+  let punctualityChance = getStandardChance(game.defaultPunctualityStandard);
   let pleasantryChance = getStandardChance(game.defaultPleasantryStandard);
   let precisionChance = getStandardChance(game.defaultPrecisionStandard);
 
-  if (game.defaultPleasantryStandard==0){
-    pleasantryChance=0;
+  if (game.defaultPleasantryStandard == 0) {
+    pleasantryChance = 0;
   }
   if (game.secretShopperCustomer) {
     presentationChance = game.secretshopperPresentationStandard;
@@ -89,7 +147,7 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
   const CurrentDay = game.registry.get("Day");
   const Total_Orders = game.registry.get("Total_Orders");
 
-  const Modifiers = game.registry.get("Modifiers");
+  const Modifiers = game.registry.get("Modifiers") || [];
 
   let tipMod = 0;
 
@@ -97,12 +155,15 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
 
   let chanceOfNoLossLife = 0;
 
+  let allActivatedMods = [];
+
   for (let i = 0; i < Modifiers.length; i++) {
     switch (Modifiers[i]) {
       case "magicdirt":
         if ((Total_Orders + 1) % 5 == 0) {
           let chance = Math.floor(Math.random() * 2) + 1;
           if (chance == 1) {
+            allActivatedMods.push("magicdirt");
             pleasantryStat = Math.max(90, pleasantryStat);
             presentationStat = Math.max(90, presentationStat);
             punctualityStat = Math.max(90, presentationStat);
@@ -113,21 +174,25 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
       case "stevenswish":
         if (CurrentDay % 2 == 0) {
           tipMod += 0.4;
+          allActivatedMods.push("stevenswish");
         }
         break;
       case "burgerpolish":
         //console.log("incrementing burgerpolish");
         presentationStat += 3;
+        allActivatedMods.push("burgerpolish");
         break;
       case "pragmaticparty":
         presentationStat += 1;
         punctualityStat += 1;
         precisionStat += 1;
         //pleasantryStat += 1;
+        allActivatedMods.push("pragmaticparty");
         break;
       case "thewhisk": {
         let chance = Math.floor(Math.random() * 100) + 1;
         if (chance <= 30) {
+          allActivatedMods.push("thewhisk");
           let totalStandards = 0;
           if (npc_info.standards && npc_info.standards.precision) {
             totalStandards += npc_info.standards.precision;
@@ -165,8 +230,8 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
               totalStandards += game.defaultPleasantryStandard;
             }
           }
-          //console.log("modifier",totalStandards/4,(totalStandards/4)*.01*2)
-          let newAmount = ((totalStandards / 4))*.01 *2;
+          //console.log("modifier", totalStandards / 4, (totalStandards / 4) * 0.01 * 2);
+          let newAmount = (totalStandards / 4) * 0.01 * 2;
 
           tipMod += newAmount;
         }
@@ -177,37 +242,48 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         break;
       }
       case "ratnip": {
-        const ratsNotAdded = game.registry.get("RatsToAdd") || 0
-        const ratsAdded = game.registry.get("KitchenRatCount") || 0
-
-        tipAdditions+= ((ratsNotAdded+ratsAdded)*5);
+        const ratsNotAdded = game.registry.get("RatsToAdd") || 0;
+        const ratsAdded = game.registry.get("KitchenRatCount") || 0;
+        if (ratsNotAdded + ratsAdded > 0) {
+          allActivatedMods.push("ratnip");
+        }
+        tipAdditions += (ratsNotAdded + ratsAdded) * 5;
         break;
       }
       case "cryochamber": {
-        punctualityChance-=4;
-        //console.log("punct chance decreased by 4 to",punctualityChance)
-        //console.log("new punct chance:",punctualityChance)
+        allActivatedMods.push("cryochamber");
+        punctualityChance -= 4;
+        //console.log("punct chance decreased by 4 to", punctualityChance);
+        //console.log("new punct chance:", punctualityChance);
         break;
       }
       case "burgertime": {
-        const ingredientBonus = (2 * recieved_order_copy.length);
-        punctualityStat+= ingredientBonus
-        //console.log("punct stat increased by",ingredientBonus)
-        //console.log("new punct stat:",punctualityStat)
+        const ingredientBonus = 2 * recieved_order_copy.length;
+        allActivatedMods.push("burgertime");
+        punctualityStat += ingredientBonus;
+        //console.log("punct stat increased by", ingredientBonus);
+        //console.log("new punct stat:", punctualityStat);
         break;
       }
       case "scentedbounce": {
-        const bouncyBallsInKitchen = game.registry.get("BouncyBallsInKitchen") || 0
-        presentationStat += (bouncyBallsInKitchen)
-        //console.log("presentation stat increased by",bouncyBallsInKitchen)
-        //console.log("new presentation stat:",presentationStat)
+        const bouncyBallsInKitchen =
+          game.registry.get("BouncyBallsInKitchen") || [];
+        if (bouncyBallsInKitchen.length > 0) {
+          allActivatedMods.push("scentedbounce");
+        }
+        presentationStat += bouncyBallsInKitchen.length;
+        //console.log( "presentation stat increased by", bouncyBallsInKitchen.length);
+        //console.log("new presentation stat:", presentationStat);
         break;
       }
       case "glumtrident": {
-        const glumDevilCount = game.registry.get("GlumDevilCount") || 0
-        precisionStat += (glumDevilCount)
-        //console.log("precision stat increased by",glumDevilCount)
-        //console.log("new precision stat:",precisionStat)
+        const glumDevilCount = game.registry.get("GlumDevilCount") || 0;
+        if (glumDevilCount > 0) {
+          allActivatedMods.push("glumtrident");
+        }
+        precisionStat += glumDevilCount;
+        //console.log("precision stat increased by", glumDevilCount);
+        //console.log("new precision stat:", precisionStat);
         break;
       }
       default:
@@ -278,169 +354,169 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
     }
   }
 
-  //console.log("pres",presentationStat,presentationChance)
-  //console.log("pleas",pleasantryStat,pleasantryChance)
+  //console.log("pres", presentationStat, presentationChance);
+  //console.log("pleas", pleasantryStat, pleasantryChance);
 
-  if (has_passed === true) {
-    // burger success
-    const index = Math.floor(Math.random() * dialog_dictionary.success.length);
-    let good_response = dialog_dictionary.success[index];
-    if (game.secretShopperCustomer){
-      const secretindex = Math.floor(Math.random()* dialog_dictionary.secret_success.length)
-      good_response = dialog_dictionary.secret_success[secretindex];
-    }
-    let glob_change =
-      Math.floor(
-        ((presentationStat + precisionStat + punctualityStat) / 4.6) * 10
-      ) / 100;
-    if (presentationStat < 10) {
-      glob_change = glob_change * (presentationStat / 100);
-    }
-    if (punctualityStat < 50) {
-      glob_change = glob_change * (punctualityStat / 100);
-    }
-    ////console.log("GLOBS EARNED:", glob_change);
-    if (npc_info.name.includes("Glorb")) {
-      tipMod += 1;
-    }
-    glob_change += parseFloat(glob_change) * tipMod;
-    glob_change += tipAdditions
-    let new_total_globs = parseFloat(
-      parseFloat(current_globs) + parseFloat(glob_change)
-    );
-    let new_total_points = parseFloat(
-      parseFloat(current_total_globs) + parseFloat(glob_change)
-    );
-    new_total_globs =
-      parseFloat(new_total_globs) + parseFloat((pleasantryStat / 100) * 20);
-    if (npc_info.sprite_sheet) {
-      // if its the glorb then make it smile
-      game.npc.play("glob_happy");
-    }
-    new_total_globs += moneyAddition;
-    game.registry.set("Globs", new_total_globs.toFixed(2));
-    game.registry.set("Total_Globs", new_total_points.toFixed(2));
-    const current_correct = parseInt(game.registry.get("Total_Correct")) || 0;
-    game.registry.set("Total_Correct", current_correct + 1);
+  // ORDERING RESULTS HANDLER
+  const orderResultsHandler = (game) => {
+    if (has_passed === true) {
+      // burger success
+      const index = Math.floor(
+        Math.random() * dialog_dictionary.success.length
+      );
+      let good_response = dialog_dictionary.success[index];
+      if (game.secretShopperCustomer) {
+        const secretindex = Math.floor(
+          Math.random() * dialog_dictionary.secret_success.length
+        );
+        good_response = dialog_dictionary.secret_success[secretindex];
+      }
+      let glob_change =
+        Math.floor(
+          ((presentationStat + precisionStat + punctualityStat) / 4.6) * 10
+        ) / 100;
+      if (presentationStat < 10) {
+        glob_change = glob_change * (presentationStat / 100);
+      }
+      if (punctualityStat < 50) {
+        glob_change = glob_change * (punctualityStat / 100);
+      }
+      ////console.log("GLOBS EARNED:", glob_change);
+      if (npc_info.name.includes("Glorb")) {
+        tipMod += 1;
+      }
+      glob_change += parseFloat(glob_change) * tipMod;
+      glob_change += tipAdditions;
+      let new_total_globs = parseFloat(
+        parseFloat(current_globs) + parseFloat(glob_change)
+      );
+      let new_total_points = parseFloat(
+        parseFloat(current_total_globs) + parseFloat(glob_change)
+      );
+      new_total_globs =
+        parseFloat(new_total_globs) + parseFloat((pleasantryStat / 100) * 20);
+      if (npc_info.sprite_sheet) {
+        // if its the glorb then make it smile
+        game.npc.play("glob_happy");
+      }
+      new_total_globs += moneyAddition;
+      game.registry.set("Globs", new_total_globs.toFixed(2));
+      game.registry.set("Total_Globs", new_total_points.toFixed(2));
+      const current_correct = parseInt(game.registry.get("Total_Correct")) || 0;
+      game.registry.set("Total_Correct", current_correct + 1);
 
-        // chance of winning a review/life
-    let chanceTotal = presentationChance + punctualityChance + precisionChance + pleasantryChance
-    let statsTotal = presentationStat + punctualityStat + precisionStat + pleasantryStat
+      // chance of winning a review/life
+      let chanceTotal =
+        presentationChance +
+        punctualityChance +
+        precisionChance +
+        pleasantryChance;
+      let statsTotal =
+        presentationStat + punctualityStat + precisionStat + pleasantryStat;
 
-    let ratio = statsTotal / chanceTotal;
-    const currentHealth = game.registry.get("Health");
-    const targetChance = 10; // chance of winning a life back
-    let chance = Math.floor(Math.random() * targetChance) + 1;
-    chance += (ratio/2);
-    if (ratio >= 1.5 && currentHealth < 5 && chance >=targetChance) {
+      let ratio = statsTotal / chanceTotal;
+      const currentHealth = game.registry.get("Health");
+      const targetChance = 10; // chance of winning a life back
+      let chance = Math.floor(Math.random() * targetChance) + 1;
+      chance += ratio / 2;
+      if (ratio >= 1.5 && currentHealth < 5 && chance >= targetChance) {
+        // good review
+        ////console.log("WE GOT A GOOD REVIEW!!!",ratio,chance);
+        good_response =
+          dialog_dictionary.goodreview[
+          Math.floor(Math.random() * dialog_dictionary.goodreview.length)
+          ];
+        let currentReviews = game.registry.get("Total_Good_Reviews") || 0;
+        game.registry.set("Total_Good_Reviews", currentReviews + 1);
+        game.registry.set("Health", currentHealth + 1);
+        game.good_review_sfx.play();
+      } else {
+        // normal success
+        game.success_sfx1.play();
+      }
 
-      // good review
-      ////console.log("WE GOT A GOOD REVIEW!!!",ratio,chance);
-      good_response = dialog_dictionary.goodreview[
-        Math.floor(Math.random() * dialog_dictionary.goodreview.length)
-      ];
-      let currentReviews = game.registry.get("Total_Good_Reviews") || 0;
-      game.registry.set("Total_Good_Reviews", currentReviews + 1);
-      game.registry.set("Health", currentHealth + 1);
-      game.good_review_sfx.play();
-    } else {
-      // normal success
-      game.success_sfx1.play();
-    }
+      // NOTE SECTION
+      const defaultStartDay = 5; // for notes
+      let selectedNote = null;
+      if (game.formattedNotes[game.npcName]) {
+        let notes_info = game.formattedNotes[game.npcName];
+        //console.log(notes_info.startday, CurrentDay);
+        if (
+          (notes_info.startday && CurrentDay >= notes_info.startday) ||
+          (CurrentDay >= defaultStartDay && !notes_info.startday)
+        ) {
+          let all_collected_notes = game.registry.get("Notes");
+          let npc_collected = all_collected_notes[game.npcName];
+          let notes = notes_info.notes;
+          let order = notes_info.order;
+          if (!(npc_collected && npc_collected.length >= notes.length)) {
+            let noteSuccess = Math.floor(
+              Math.random() * game.formattedNotes[game.npcName].chance
+            );
+            //console.log("note success:", noteSuccess);
+            if (noteSuccess === 0) {
+              if (order === "chrono") {
+                if (npc_collected === undefined) {
+                  all_collected_notes[game.npcName] = [0];
+                  selectedNote = notes[0];
+                } else {
+                  for (let i = 0; i < notes.length; i++) {
+                    if (npc_collected.includes(i) === false) {
+                      selectedNote = notes[i];
 
-    // NOTE SECTION
-    const defaultStartDay = 5; // for notes
-    let selectedNote = null;
-    if (notes_dictionary[game.npcName]) {
-      let notes_info = notes_dictionary[game.npcName];
-      //console.log(notes_info.startday, CurrentDay);
-      if (
-        (notes_info.startday && CurrentDay >= notes_info.startday) ||
-        (CurrentDay >= defaultStartDay && !notes_info.startday)
-      ) {
-        let all_collected_notes = game.registry.get("Notes");
-        let npc_collected = all_collected_notes[game.npcName];
-        let notes = notes_info.notes;
-        let order = notes_info.order;
-        if (!(npc_collected && npc_collected.length >= notes.length)) {
-          let noteSuccess = Math.floor(
-            Math.random() * notes_dictionary[game.npcName].chance
-          );
-          //console.log("note success:", noteSuccess);
-          if (noteSuccess === 0) {
-            if (order === "chrono") {
-              if (npc_collected === undefined) {
-                all_collected_notes[game.npcName] = [0];
-                selectedNote = notes[0];
-              } else {
-                for (let i = 0; i < notes.length; i++) {
-                  if (npc_collected.includes(i) === false) {
-                    selectedNote = notes[i];
+                      all_collected_notes[game.npcName].push(i);
+                      break;
+                    }
+                  }
+                }
+              } else if (order === "random") {
+                //console.log("not implemented");
+                if (npc_collected === undefined) {
+                  all_collected_notes[game.npcName] = [];
+                  npc_collected = [];
+                }
+                let foundNote = false;
+                while (foundNote == false) {
+                  const index = Math.floor(Math.random() * notes.length);
+                  if (npc_collected.includes(index) === false) {
+                    selectedNote = notes[index];
 
-                    all_collected_notes[game.npcName].push(i);
-                    break;
+                    all_collected_notes[game.npcName].push(index);
+                    foundNote = true;
                   }
                 }
               }
-            } else if (order === "random") {
-              //console.log("not implemented")
+              game.registry.set("Notes", all_collected_notes);
             }
-            game.registry.set("Notes", all_collected_notes);
           }
         }
       }
-    }
-    if (selectedNote !== null) {
-      game.selectedNote = selectedNote;
-      game.registry.set("NewNoteEvent", true);
-    }
-    dialogHandler(good_response, game);
-  } else {
-    //failed burger
-    const index = Math.floor(
-      Math.random() * dialog_dictionary.fail[failure_reason].length
-    );
-    const bad_response = dialog_dictionary.fail[failure_reason][index];
-    if (bad_response.includes("money") || bad_response.includes("refund")) {
-      let new_total_globs = current_globs - 9.99; // if response has money they lose money then
-      if (
-        npc_info.name.includes("Glorb") // if glorb then they lose more money
-      ) {
-        new_total_globs = current_globs - 19.99;
+      if (selectedNote !== null) {
+        game.selectedNote = selectedNote;
+        game.registry.set("NewNoteEvent", true);
       }
-      new_total_globs += moneyAddition;
+      dialogHandler(good_response, game);
+    } else {
+      //failed burger
+      const index = Math.floor(
+        Math.random() * dialog_dictionary.fail[failure_reason].length
+      );
+      const bad_response = dialog_dictionary.fail[failure_reason][index];
+      if (bad_response.includes("money") || bad_response.includes("refund")) {
+        let new_total_globs = current_globs - 9.99; // if response has money they lose money then
+        if (
+          npc_info.name.includes("Glorb") // if glorb then they lose more money
+        ) {
+          new_total_globs = current_globs - 19.99;
+        }
+        new_total_globs += moneyAddition;
 
-      game.registry.set("Globs", new_total_globs.toFixed(2));
-    }
-    const sound_num = Math.floor(Math.random() * 3) + 1;
-    game["spooky_sfx" + sound_num].play();
-    dialogHandler(bad_response, game);
-
-    let protectedHealth = 0;
-
-    let savedThisTime = false;
-
-    for (let i = 0; i < chanceOfNoLossLife; i++) {
-      protectedHealth = Math.floor(Math.random() * 100) + 1;
-      if (protectedHealth == 100) {
-        savedThisTime = true;
-        break
+        game.registry.set("Globs", new_total_globs.toFixed(2));
       }
-    }
-    let healthsToBeLost = 0;
-    if (!savedThisTime) {
-      healthsToBeLost += 1;
-      // const current_health = game.registry.get("Health");
-      // //console.log("current health:", current_health);
-      // game.registry.set("Health", current_health - 1);
-      //console.log("current health after first loss:", game.registry.get("Health"));
-    }
+      const sound_num = Math.floor(Math.random() * 3) + 1;
+      game["spooky_sfx" + sound_num].play();
+      dialogHandler(bad_response, game);
 
-    if (
-      game.secretShopperCustomer
-    ) {
-      // secret shopper fail
-      //console.log("secret shopper failed");
       let protectedHealth = 0;
 
       let savedThisTime = false;
@@ -449,69 +525,112 @@ const OrderSubmittedHandler = (game, dialogHandler) => {
         protectedHealth = Math.floor(Math.random() * 100) + 1;
         if (protectedHealth == 100) {
           savedThisTime = true;
-          break
+          break;
         }
       }
-
+      let healthsToBeLost = 0;
       if (!savedThisTime) {
         healthsToBeLost += 1;
-        //console.log("secret shopper lost life");
-        game.time.addEvent({
-          delay: 200,
-          callback: function () {
-            // const current_health = game.registry.get("Health");
-            // //console.log("current health:", current_health);
-            // game.registry.set("Health", current_health - 1);
-            // //console.log("current health after secret shopper loss:", game.registry.get("Health"));
-            const sound_num = Math.floor(Math.random() * 3) + 1;
-            game["spooky_sfx" + sound_num].play();
+        //console.log( "current health after first loss:",game.registry.get("Health"));
+      } else {
+        modifierAnimation(game, "aqualificprism", true);
+      }
+
+      if (game.secretShopperCustomer) {
+        // secret shopper fail
+        //console.log("secret shopper failed");
+        let protectedHealth = 0;
+
+        savedThisTime = false;
+
+        for (let i = 0; i < chanceOfNoLossLife; i++) {
+          protectedHealth = Math.floor(Math.random() * 100) + 1;
+          if (protectedHealth == 100) {
+            savedThisTime = true;
+            break;
           }
-        });
+        }
+
+        if (!savedThisTime) {
+          healthsToBeLost += 1;
+          //console.log("secret shopper lost life");
+          game.time.addEvent({
+            delay: 200,
+            callback: function () {
+              const sound_num = Math.floor(Math.random() * 3) + 1;
+              game["spooky_sfx" + sound_num].play();
+            },
+          });
+        } else {
+          modifierAnimation(game, "aqualificprism", true);
+        }
+      }
+      if (healthsToBeLost > 0) {
+        const current_health = game.registry.get("Health");
+        //console.log("current health:", current_health);
+        //console.log("healths to be lost:", healthsToBeLost);
+        game.registry.set("Health", current_health - healthsToBeLost);
+      }
+      //game.registry.set("ChangedHealth", true);
+      if (npc_info.sprite_sheet) {
+        game.npc.play("glob_angry");
       }
     }
-    if (healthsToBeLost > 0) {
-      const current_health = game.registry.get("Health");
-      //console.log("current health:", current_health);
-      //console.log("healths to be lost:", healthsToBeLost);
-      game.registry.set("Health", current_health - healthsToBeLost);
-    }
-    //game.registry.set("ChangedHealth", true);
-    if (npc_info.sprite_sheet) {
-      game.npc.play("glob_angry");
-    }
-  }
 
-  const currentPrecisionStat = parseInt(game.registry.get("Average_Precision"));
-  let precisionToSet = Math.floor(precisionStat);
-  if (currentPrecisionStat > 0) {
-    precisionToSet = Math.floor((currentPrecisionStat + precisionToSet) / 2);
-  }
-  game.registry.set("Average_Precision", precisionToSet);
-
-  const currentPresentationStat = parseInt(
-    game.registry.get("Average_Presentation")
-  );
-  let presentationToSet = Math.floor(presentationStat);
-  game.registry.set("Current_Presentation", presentationToSet);
-  if (currentPresentationStat > 0) {
-    presentationToSet = Math.floor(
-      (currentPresentationStat + presentationStat) / 2
+    const currentPrecisionStat = parseInt(
+      game.registry.get("Average_Precision")
     );
-  }
-  game.registry.set("Average_Presentation", presentationToSet);
+    let precisionToSet = Math.floor(precisionStat);
+    if (currentPrecisionStat > 0) {
+      precisionToSet = Math.floor((currentPrecisionStat + precisionToSet) / 2);
+    }
+    game.registry.set("Average_Precision", precisionToSet);
 
-  const currentPunctualityStat = game.registry.get("Average_Punctuality");
-  let punctualityToSet = Math.floor(punctualityStat);
-
-  if (currentPunctualityStat > 0) {
-    punctualityToSet = Math.floor(
-      (currentPunctualityStat + punctualityStat) / 2
+    const currentPresentationStat = parseInt(
+      game.registry.get("Average_Presentation")
     );
-  }
-  game.registry.set("Average_Punctuality", punctualityToSet);
+    let presentationToSet = Math.floor(presentationStat);
+    game.registry.set("Current_Presentation", presentationToSet);
+    if (currentPresentationStat > 0) {
+      presentationToSet = Math.floor(
+        (currentPresentationStat + presentationStat) / 2
+      );
+    }
+    game.registry.set("Average_Presentation", presentationToSet);
 
-  const current_orders = parseInt(game.registry.get("Total_Orders"));
-  game.registry.set("Total_Orders", current_orders + 1);
+    const currentPunctualityStat = game.registry.get("Average_Punctuality");
+    let punctualityToSet = Math.floor(punctualityStat);
+
+    if (currentPunctualityStat > 0) {
+      punctualityToSet = Math.floor(
+        (currentPunctualityStat + punctualityStat) / 2
+      );
+    }
+    game.registry.set("Average_Punctuality", punctualityToSet);
+
+    const current_orders = parseInt(game.registry.get("Total_Orders"));
+    game.registry.set("Total_Orders", current_orders + 1);
+  };
+
+  // MODIFIER VISUAL
+  if (event !== "skipEverything") {
+    for (let i = 0; i < Math.min(allActivatedMods.length, 100); i++) {
+      const modName = allActivatedMods[i];
+      modifierAnimation(game, modName);
+    }
+    game.time.addEvent({
+      delay: 3000,
+      callback: () => {
+        orderResultsHandler(game);
+      },
+    });
+  } else {
+    for (let i = 0; i < Math.min(allActivatedMods.length, 100); i++) {
+      const modName = allActivatedMods[i];
+      modifierAnimation(game, modName, true);
+    }
+    orderResultsHandler(game);
+  }
 };
 
 export default OrderSubmittedHandler;

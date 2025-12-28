@@ -28,7 +28,7 @@
             "sprite": "guy3",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "He smolders.",
+            "description": "The comfort of his smile is only rivaled with the warmth of his gaze. He smolders and we thank him.",
             "standards": {
                 "presentation": 30
             }
@@ -38,7 +38,7 @@
             "sprite": "guy4",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "Descends from a family of Flumish origins."
+            "description": "Grad student at Felnore University studying haikus. He really likes haikus."
         },
         {
             "name": "Glorbdon",
@@ -50,68 +50,70 @@
             },
             "start_scale": 0.05,
             "scale": 1,
-            "description": "Of wealth."
+            "description": "He's made of money sure, but he's also made of compassion, persistence, and bravery."
         },
         {
             "name": "Glorbina",
             "sprite": "glob_man2",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "Of wealth."
+            "description": "Many fortunes will come your way if you appease her."
         },
         {
             "name": "Glorbert",
             "sprite": "glob_man3",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "Of wealth."
+            "description": "Of wealth and joy."
         },
         {
             "name": "Grugory Hefert",
             "sprite": "cool_gruy",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "A father first and an assistant manager at the local GlobMart second."
         },
         {
             "name": "Mortimer Galf",
             "sprite": "mouf_galf",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Although Mortimer is known for the above average size of his mouth hole he consumes only when needed."
         },
         {
             "name": "Marmaduke Gloo",
             "sprite": "smorg_bloo",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "One of the Gloo brothers."
+            "description": "First born of the Gloo brothers."
         },
         {
             "name": "Alonzo Gloo",
             "sprite": "smorg_boo",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "One of the Gloo brothers."
+            "description": "Second born of the Gloo brothers."
         },
         {
             "name": "Ollie Gloo",
             "sprite": "smorg_gloo",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "One of the Gloo brothers."
+            "description": "Third born of the Gloo brothers."
         },
         {
             "name": "Bentley Gloo",
             "sprite": "smorg_groo",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "One of the Gloo brothers."
+            "description": "Fourth born of the Gloo brothers. Likes to argue with his twin Ollie that he is the third born but he is wrong."
         },
         {
             "name": "Torbino Gloo",
             "sprite": "smorg_moo",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "One of the Gloo brothers."
+            "description": "Youngest of the Gloo brothers."
         },
         {
             "name": "Random",
@@ -135,13 +137,15 @@
             "name": "The Green Maiden",
             "sprite": "greenmaiden",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Has a great elegance when entering the room."
         },
         {
-            "name": "Felippe Diaz",
+            "name": "Felippe Díaz",
             "sprite": "felip",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "A young veteran."
         },
         {
             "name": "Gorp Toppler",
@@ -154,13 +158,15 @@
             "name": "Reggie Larson",
             "sprite": "shorts_guy2",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Works at the laundromat."
         },
         {
             "name": "Marvin Blackburn",
             "sprite": "shorts_guy3",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "A loyal customer."
         },
         {
              "name": "Laura Hefert",
@@ -170,7 +176,7 @@
             "description": "Avid taxidermist."
         },
         {
-             "name": "Summer Saunders",
+             "name": "Irina Turner",
             "sprite": "gorl3",
             "start_scale": 0.05,
             "scale": 1,

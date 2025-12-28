@@ -45,7 +45,7 @@ import gorath from "../assets/game/special/gorath.png";
 import monrock from "../assets/game/special/morock.png";
 import rethnor from "../assets/game/special/rethnor.png";
 
-import rat_creature from "../assets/game/special/rat_creature.png"
+import rat_creature from "../assets/game/special/rat_creature.png";
 
 // SPRITESHEET ASSETS
 
@@ -101,8 +101,6 @@ import scentedbounce_box from "../assets/game/shop/scentedbounce_box.png";
 import glumtrident_box from "../assets/game/shop/glumtrident_box.png";
 import bouncezine_box from "../assets/game/shop/bouncezine_box.png";
 
-
-
 import blueball from "../assets/game/shop/bluebouncyball.png";
 import redball from "../assets/game/shop/redbouncyball.png";
 import greenball from "../assets/game/shop/greenbouncyball.png";
@@ -119,20 +117,17 @@ import thewhisk from "../assets/game/shop/thewhisk.png";
 import aqualificprism from "../assets/game/shop/aqualificprism.png";
 import killercheddar from "../assets/game/shop/killercheddar.png";
 import ratnip from "../assets/game/shop/ratnip.png";
-import glumdevil from "../assets/game/shop/glumdevil.png"
-import glumglum from "../assets/game/shop/glumglum.png"
-import glumgrin from "../assets/game/shop/glumgrin.png"
-import glumheart from "../assets/game/shop/glumheart.png"
-import glumpleased from "../assets/game/shop/glumpleased.png"
-import glumwhistle from "../assets/game/shop/glumwhistle.png"
-import cryochamber from "../assets/game/shop/cryochamber.png"
-import burgertime from "../assets/game/shop/burgertime.png"
-import scentedbounce from "../assets/game/shop/scentedbounce.png"
-import glumtrident from "../assets/game/shop/glumtrident.png"
-import bouncezine from "../assets/game/shop/bouncezine.png"
-
-
-
+import glumdevil from "../assets/game/shop/glumdevil.png";
+import glumglum from "../assets/game/shop/glumglum.png";
+import glumgrin from "../assets/game/shop/glumgrin.png";
+import glumheart from "../assets/game/shop/glumheart.png";
+import glumpleased from "../assets/game/shop/glumpleased.png";
+import glumwhistle from "../assets/game/shop/glumwhistle.png";
+import cryochamber from "../assets/game/shop/cryochamber.png";
+import burgertime from "../assets/game/shop/burgertime.png";
+import scentedbounce from "../assets/game/shop/scentedbounce.png";
+import glumtrident from "../assets/game/shop/glumtrident.png";
+import bouncezine from "../assets/game/shop/bouncezine.png";
 
 // UI ASSETS
 import chef_icon from "../assets/ui/chef_icon.png";
@@ -154,11 +149,11 @@ import yes_button from "../assets/ui/yes_button.png";
 import no_button from "../assets/ui/no_button.png";
 import yellow_hue from "../assets/ui/yellow_hue.png";
 import tab_frame from "../assets/ui/tab_frame.png";
-import no2_button from "../assets/ui/no2_button.png"
-import begin_button from "../assets/ui/begin_button.png"
-import reroll_button from "../assets/ui/reroll_button2.png"
-import arrow_indicator from "../assets/ui/arrow_indicator.png"
-import ratgame_bar from "../assets/ui/ratgame_bar.png"
+import no2_button from "../assets/ui/no2_button.png";
+import begin_button from "../assets/ui/begin_button.png";
+import reroll_button from "../assets/ui/reroll_button2.png";
+import arrow_indicator from "../assets/ui/arrow_indicator.png";
+import ratgame_bar from "../assets/ui/ratgame_bar.png";
 
 // SOUND ASSETS
 import door_open from "../assets/sounds/door_opening.mp3";
@@ -182,6 +177,7 @@ import rat_sfx2 from "../assets/sounds/rat_sfx2.mp3";
 import rat_click from "../assets/sounds/rat_click.mp3";
 
 import success_sfx1 from "../assets/sounds/success_sfx1.mp3";
+import success_sfx2 from "../assets/sounds/success_sfx2.mp3";
 
 import spooky_sfx1 from "../assets/sounds/spooky_sfx1.mp3";
 import spooky_sfx2 from "../assets/sounds/spooky_sfx2.mp3";
@@ -235,6 +231,7 @@ var LoadState = {
     this.load.audio("presentation_sfx1", presentation_sfx1);
 
     this.load.audio("success_sfx1", success_sfx1);
+    this.load.audio("success_sfx2",success_sfx2);
 
     this.load.audio("spooky_sfx1", spooky_sfx1);
     this.load.audio("spooky_sfx2", spooky_sfx2);
@@ -248,9 +245,9 @@ var LoadState = {
     this.load.audio("box_sfx", box_sfx);
     this.load.audio("game_over_sfx", game_over_sfx);
     this.load.audio("page_flip_sfx", page_flip_sfx);
-    this.load.audio("rat_sfx",rat_sfx);
-    this.load.audio("rat_sfx2",rat_sfx2);
-    this.load.audio("rat_click",rat_click);
+    this.load.audio("rat_sfx", rat_sfx);
+    this.load.audio("rat_sfx2", rat_sfx2);
+    this.load.audio("rat_click", rat_click);
 
     //this.load.audio("cluttered_ambience2", cluttered_ambience2);
     this.load.spritesheet("glob_man_sheet", glob_man_sheet, {
@@ -276,12 +273,12 @@ var LoadState = {
     this.load.image("yes_button", yes_button);
     this.load.image("no_button", no_button);
     this.load.image("yellow_hue", yellow_hue);
-    this.load.image("tab_frame",tab_frame);
-    this.load.image("no2_button",no2_button);
-    this.load.image("begin_button",begin_button);
-    this.load.image("reroll_button",reroll_button);
-    this.load.image("arrow_indicator",arrow_indicator);
-    this.load.image("ratgame_bar",ratgame_bar);
+    this.load.image("tab_frame", tab_frame);
+    this.load.image("no2_button", no2_button);
+    this.load.image("begin_button", begin_button);
+    this.load.image("reroll_button", reroll_button);
+    this.load.image("arrow_indicator", arrow_indicator);
+    this.load.image("ratgame_bar", ratgame_bar);
 
     this.load.image("sky", skyBg);
     this.load.image("room", roomBg);
@@ -320,7 +317,7 @@ var LoadState = {
     this.load.image("monrock", monrock);
     this.load.image("rethnor", rethnor);
 
-    this.load.image("rat_creature",rat_creature)
+    this.load.image("rat_creature", rat_creature);
 
     this.load.image("kitchen", jebsKitchen);
     this.load.image("trashcan", trash_can);
@@ -340,9 +337,9 @@ var LoadState = {
     this.load.image("mustardBottle", mustardBottle);
     this.load.image("bbqBottle", bbqBottle);
     this.load.image("ranchBottle", ranchBottle);
-    this.load.image("cheddar",cheddar);
-    this.load.image("pepperjack",pepperjack);
-    this.load.image("swisscheese",swisscheese);
+    this.load.image("cheddar", cheddar);
+    this.load.image("pepperjack", pepperjack);
+    this.load.image("swisscheese", swisscheese);
 
     this.load.image("shop_bg", purple_bg);
     this.load.image("rarebouncyball25", rarebouncyball25);
@@ -355,45 +352,44 @@ var LoadState = {
     this.load.image("table1", table1);
     this.load.image("slorgbanner", slorgbanner);
     this.load.image("slorgplush", slorgplush);
-    this.load.image("magicdirt",magicdirt);
-    this.load.image("stevenswish",stevenswish)
-    this.load.image("burgerpolish",burgerpolish)
-    this.load.image("pragmaticparty",pragmaticparty)
-    this.load.image("thewhisk",thewhisk)
-    this.load.image("aqualificprism",aqualificprism)
-    this.load.image("killercheddar",killercheddar)
-    this.load.image("ratnip",ratnip)
-    this.load.image("glumdevil",glumdevil)
-    this.load.image("glumglum",glumglum)
-    this.load.image("glumgrin",glumgrin)
-    this.load.image("glumheart",glumheart)
-    this.load.image("glumpleased",glumpleased)
-    this.load.image("glumwhistle",glumwhistle)
-    this.load.image("cryochamber",cryochamber)
-    this.load.image("burgertime",burgertime)
-    this.load.image("scentedbounce",scentedbounce)
-    this.load.image("glumtrident",glumtrident)
-    this.load.image("bouncezine",bouncezine)
+    this.load.image("magicdirt", magicdirt);
+    this.load.image("stevenswish", stevenswish);
+    this.load.image("burgerpolish", burgerpolish);
+    this.load.image("pragmaticparty", pragmaticparty);
+    this.load.image("thewhisk", thewhisk);
+    this.load.image("aqualificprism", aqualificprism);
+    this.load.image("killercheddar", killercheddar);
+    this.load.image("ratnip", ratnip);
+    this.load.image("glumdevil", glumdevil);
+    this.load.image("glumglum", glumglum);
+    this.load.image("glumgrin", glumgrin);
+    this.load.image("glumheart", glumheart);
+    this.load.image("glumpleased", glumpleased);
+    this.load.image("glumwhistle", glumwhistle);
+    this.load.image("cryochamber", cryochamber);
+    this.load.image("burgertime", burgertime);
+    this.load.image("scentedbounce", scentedbounce);
+    this.load.image("glumtrident", glumtrident);
+    this.load.image("bouncezine", bouncezine);
 
     this.load.image("chair1_box", chair1_box);
     this.load.image("table1_box", table1_box);
     this.load.image("slorgbanner_box", slorgbanner_box);
     this.load.image("slorgplush_box", slorgplush_box);
-    this.load.image("magicdirt_box",magicdirt_box);
-    this.load.image("stevenswish_box",stevenswish_box);
-    this.load.image("burgerpolish_box",burgerpolish_box);
-    this.load.image("pragmaticparty_box",pragmaticparty_box);
-    this.load.image("thewhisk_box",thewhisk_box);
-    this.load.image("aqualificprism_box",aqualificprism_box);
-    this.load.image("killercheddar_box",killercheddar_box);
-    this.load.image("ratnip_box",ratnip_box);
-    this.load.image("glumdevil_box",glumdevil_box);
-    this.load.image("cryochamber_box",cryochamber_box);
-    this.load.image("burgertime_box",burgertime_box);
-    this.load.image("scentedbounce_box",scentedbounce_box);
-    this.load.image("glumtrident_box",glumtrident_box);
-    this.load.image("bouncezine_box",bouncezine_box);
-
+    this.load.image("magicdirt_box", magicdirt_box);
+    this.load.image("stevenswish_box", stevenswish_box);
+    this.load.image("burgerpolish_box", burgerpolish_box);
+    this.load.image("pragmaticparty_box", pragmaticparty_box);
+    this.load.image("thewhisk_box", thewhisk_box);
+    this.load.image("aqualificprism_box", aqualificprism_box);
+    this.load.image("killercheddar_box", killercheddar_box);
+    this.load.image("ratnip_box", ratnip_box);
+    this.load.image("glumdevil_box", glumdevil_box);
+    this.load.image("cryochamber_box", cryochamber_box);
+    this.load.image("burgertime_box", burgertime_box);
+    this.load.image("scentedbounce_box", scentedbounce_box);
+    this.load.image("glumtrident_box", glumtrident_box);
+    this.load.image("bouncezine_box", bouncezine_box);
 
     this.load.spritesheet("penguin_sheet", penguinclap, {
       frameWidth: 64,
@@ -419,21 +415,73 @@ var LoadState = {
     const Globs = parseFloat(secureLocalStorage.getItem("Globs"));
     const Total_Orders = parseInt(secureLocalStorage.getItem("Total_Orders"));
     const Total_Correct = parseInt(secureLocalStorage.getItem("Total_Correct"));
-    const Average_Pleasantry = parseInt(secureLocalStorage.getItem("Average_Pleasantry"));
-    const Average_Precision = parseInt(secureLocalStorage.getItem("Average_Precision"));
-    const Average_Presentation = parseInt(secureLocalStorage.getItem("Average_Presentation"));
-    const Average_Punctuality = parseInt(secureLocalStorage.getItem("Average_Punctuality"));
+    const Average_Pleasantry = parseInt(
+      secureLocalStorage.getItem("Average_Pleasantry")
+    );
+    const Average_Precision = parseInt(
+      secureLocalStorage.getItem("Average_Precision")
+    );
+    const Average_Presentation = parseInt(
+      secureLocalStorage.getItem("Average_Presentation")
+    );
+    const Average_Punctuality = parseInt(
+      secureLocalStorage.getItem("Average_Punctuality")
+    );
     const DayCount = parseInt(secureLocalStorage.getItem("Day"));
     const Health = parseInt(secureLocalStorage.getItem("Health"));
     const Unlocked_Customers = secureLocalStorage.getItem("Unlocked_Customers");
     const Items = secureLocalStorage.getItem("Items");
     const IngredientMax = parseInt(secureLocalStorage.getItem("IngredientMax"));
-    const DailyCustomerMax = parseInt(secureLocalStorage.getItem("DailyCustomerMax"));
-    const DailyCustomerCount = parseInt(secureLocalStorage.getItem("DailyCustomerCount"));
+    const DailyCustomerMax = parseInt(
+      secureLocalStorage.getItem("DailyCustomerMax")
+    );
+    const DailyCustomerCount = parseInt(
+      secureLocalStorage.getItem("DailyCustomerCount")
+    );
     let furnitureList = [];
     let ingredientList = [];
 
-    if (true){ //(Health === null || Health === undefined || Health <= 0) {
+
+    function wipeData(game) {
+      for (const key in secureLocalStorage._localStorageItems) {
+        // loops through all keys
+        const newKey = key.replace("@secure.", "");
+        //console.log(key, secureLocalStorage.getItem(newKey));
+        secureLocalStorage.setItem(newKey, null);
+        //console.log(key, secureLocalStorage.getItem(newKey)); // should be wiped
+        game.registry.set(newKey, secureLocalStorage.getItem(newKey));
+      }
+    }
+
+    function isStringifiedArray(data){
+      try {
+        const parsed = JSON.parse(data);
+        return Array.isArray(parsed);
+    } catch (e) {
+        return false;
+    }
+    }
+
+    function setPreviousSave(game) {
+      for (const key in secureLocalStorage._localStorageItems) {
+        // loops through all keys
+        const newKey = key.replace("@secure.", "");
+        const data = secureLocalStorage.getItem(newKey);
+        //console.log(key, data);
+        const isArray = isStringifiedArray(data)
+        if (isArray) {
+          game.registry.set(newKey, JSON.parse(data));
+        } else {
+          game.registry.set(newKey, data);
+        }
+      }
+    }
+
+
+    const NO_SAVE = true;
+
+    if (NO_SAVE) {
+      //(Health === null || Health === undefined || Health <= 0) {
       // new save
       this.registry.set("Total_Globs", 0);
       this.registry.set("Globs", defaultGlobs);
@@ -444,25 +492,25 @@ var LoadState = {
       this.registry.set("Average_Presentation", 0);
       this.registry.set("Average_Punctuality", 0);
       this.registry.set("Day", 1);
-      this.registry.set("DayOver",false);
+      this.registry.set("DayOver", false);
 
       this.registry.set("IngredientMax", defaultIngredientMax);
       this.registry.set("Unlocked_Customers", defaultCustomers);
       this.registry.set("DailyCustomerMax", defaultDailyCustomerMax);
       this.registry.set("Health", defaultHealth);
       this.registry.set("Items", []);
-      this.registry.set("Notes",{})
-      this.registry.set("Modifiers",[])
-      this.registry.set("CheeseAdded",false)
-      this.registry.set("RatsAdded",false)
+      this.registry.set("Notes", {});
+      this.registry.set("Modifiers", []);
+      this.registry.set("CheeseAdded", false);
+      this.registry.set("RatsAdded", false);
 
       // modifier values
 
-      this.registry.set("Pleasantry_Mod",0);
-      this.registry.set("Precision_Mod",0);
-      this.registry.set("Presentation_Mod",0);
-      this.registry.set("Punctuality_Mod",0);
-      this.registry.set("Tip_Mod",0);
+      this.registry.set("Pleasantry_Mod", 0);
+      this.registry.set("Precision_Mod", 0);
+      this.registry.set("Presentation_Mod", 0);
+      this.registry.set("Punctuality_Mod", 0);
+      this.registry.set("Tip_Mod", 0);
 
       secureLocalStorage.setItem("Health", defaultHealth);
       secureLocalStorage.setItem("Total_Globs", 0);
@@ -478,49 +526,36 @@ var LoadState = {
       secureLocalStorage.setItem("DailyCustomerCount", 0);
     } else {
       // load save
-      this.registry.set("Total_Globs", Total_Globs || 0);
-      this.registry.set("Globs", Globs || defaultGlobs);
-      this.registry.set("Total_Orders", Total_Orders || 0);
-      this.registry.set("Total_Correct", Total_Correct || 0);
-      this.registry.set("Average_Pleasantry", Average_Pleasantry || 0);
-      this.registry.set("Average_Precision", Average_Precision || 0);
-      this.registry.set("Average_Presentation", Average_Presentation || 0);
-      this.registry.set("Average_Punctuality", Average_Punctuality || 0);
-      this.registry.set("Day", DayCount || 1);
-
-      this.registry.set("IngredientMax", IngredientMax || defaultIngredientMax);
-      this.registry.set(
-        "Unlocked_Customers",
-        Unlocked_Customers ? JSON.parse(Unlocked_Customers) : defaultCustomers
-      );
-      this.registry.set(
-        "DailyCustomerMax",
-        DailyCustomerMax || defaultDailyCustomerMax
-      );
-      this.registry.set("DailyCustomerCount", DailyCustomerCount || 0);
-
-      this.registry.set("Health", Health || defaultHealth);
-      this.registry.set("Items", Items ? JSON.parse(Items) : []);
-
-      let ItemList = JSON.parse(Items);
-      if (ItemList){
-        for (let i = 0; i < ItemList.length; i++) {
-        const itemInfo = shop_dictonary.purchasables[ItemList[i]];
-        if (itemInfo) {
-          if (itemInfo.type === "furniture") {
-            furnitureList.push(ItemList[i]);
-          } else if (itemInfo.type === "ingredient") {
-            ingredientList.push(ItemList[i]);
-          }
-        } else if (ItemList[i].includes("ball")) {
-          ingredientList.push(ItemList[i]);
+      //console.log("Loading Save Data...");
+      setPreviousSave(this);
+      const modifiers = this.registry.get("Modifiers") || [];
+      for (let i = 0; modifiers.length; i++) {
+        // furniture setup
+        let modName = modifiers[i];
+        let modInfo = shop_dictonary.purchasables[modName];
+        if (modInfo.type == "furniture") {
+          furnitureList.push(modName);
         }
       }
+
+      const bouncyballs = this.registry.get("BouncyBallsInKitchen") || [];
+      for (let i = 0; bouncyballs.length; i++) { // currently not accurate to what they actually had
+        let ball = bouncyballs[i]
+        ingredientList.push(ball)
       }
     }
 
     this.registry.set("FurnitureShopEvent", furnitureList);
-    this.registry.set("NewKitchenItemEvent", ingredientList);
+
+    // incase user didnt click on kitchen after purchasing ball before exiting last time
+    const kitchenItemEventList = this.registry.get("NewKitchenItemEvent") || []
+
+    const totalKitchenItems = [
+      ...kitchenItemEventList,
+      ...ingredientList,
+    ];
+    this.registry.set("NewKitchenItemEvent", totalKitchenItems);
+
     this.scene.launch("DataState");
     this.scene.launch("MenuState");
     this.scene.launch("ShakeState");

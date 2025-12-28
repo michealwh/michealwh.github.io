@@ -97,7 +97,26 @@ const confirmButtonHandler = (game, object) => {
       onComplete: function () {
         object.scale = 0.2;
         debounce = false;
+
         let current_globs = game.registry.get("Globs");
+        if (game.activeItemInfo == "reroll") {
+          let new_globs = current_globs - game.reRollCost;
+          game.registry.set("Globs", new_globs.toFixed(2));
+          game.rerollButton.input.enabled = false;
+          shuffleItems(game, true);
+          game.rerollButton.tint = "0x2E2E2E";
+          showPrompt(game, false);
+          game.tweens.add({
+            targets: game.rerollButton,
+            rotation: 360 * (Math.PI / 180),
+            ease: "Linear",
+            duration: 400,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {},
+          });
+          return;
+        }
         let new_globs = current_globs - game.activeItemInfo.cost;
         game.registry.set("Globs", new_globs.toFixed(2));
         if (!game.activeItemInfo.repeatable) {
@@ -365,18 +384,34 @@ const reRollButtonhandler = (game, object) => {
     game.infoText.scale = 0;
     if (game.promptOpen === false) {
       game.click_sfx.play();
-      rerollButton.input.enabled = false;
-      shuffleItems(game, true);
-      rerollButton.tint = "0x2E2E2E";
-      game.tweens.add({
-        targets: rerollButton,
-        rotation: 360 * (Math.PI / 180),
-        ease: "Linear",
-        duration: 400,
-        repeat: 0,
-        yoyo: false,
-        onComplete: function () {},
-      });
+      let currentGlobs = game.registry.get("Globs");
+      if (currentGlobs >= game.reRollCost) {
+        game.activeItemInfo = "reroll";
+        game.promptText.text = "Purchase: Reroll";
+        game.promptCostText.text = "$" + game.reRollCost;
+        showPrompt(game, true, true);
+      } else {
+        let dialog_options = [
+          "Your poverty is insufferable.",
+          "Come back when you have the funds.",
+          "It's not enough.",
+          "You don't have $" + game.reRollCost + ".",
+        ];
+        game.promptText.text =
+          dialog_options[Math.floor(Math.random() * dialog_options.length)];
+        showPrompt(game, true, false);
+        const hidePrompt = (game) => {
+          showPrompt(game, false, false);
+        };
+        game.time.addEvent({
+          delay: 1500,
+          callback: () => {
+            hidePrompt(game);
+          },
+          callbackScope: game,
+          loop: false,
+        });
+      }
     }
   });
   let mouseEnter = false;
@@ -398,7 +433,7 @@ const reRollButtonhandler = (game, object) => {
       }
       game.infoFrame.y = object.y - 5;
       game.infoText.y = object.y - 120;
-      game.infoText.text = "reroll today's shop items";
+      game.infoText.text = `C: $${game.reRollCost}\nD: reroll today's shop items`;
       game.tweens.add({
         targets: [game.infoFrame],
         scale: 1.5,
@@ -604,6 +639,8 @@ var ShopState = {
       });
     }
 
+    const totalMoney = this.registry.get("Globs") || 0;
+    this.reRollCost = Math.floor(Math.random() * Math.max(1, totalMoney / 2)) + 1.99;
     shuffleItems(this);
 
     this.infoFrame = this.add
@@ -666,6 +703,9 @@ var ShopState = {
       this.day = this.registry.get("Day");
       this.rerollButton.input.enabled = true;
       this.rerollButton.clearTint();
+      const totalMoney = this.registry.get("Globs") || 0;
+      this.reRollCost = Math.floor(Math.random() * Math.max(1, totalMoney / 2))+1.99;
+      //console.log("rerollcost", this.reRollCost, totalMoney);
       shuffleItems(this);
     }
   },

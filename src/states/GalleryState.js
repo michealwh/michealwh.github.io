@@ -110,14 +110,27 @@ const showModifierTab = (game, shouldShow) => {
 const showNoteTab = (game, shouldShow) => {
   if (shouldShow) {
     game.infoTitle.text = "Notes";
-
-     for (let i = 0; i < game.noteAssets.length; i++) {
-      game.noteAssets[i].visible = true;
+    // 5x4 is 20 then x2 for the note title
+    const count = (game.noteCurrentPage+1)*40
+     for (let i = count-40; i < count; i++) {
+      if(game.noteAssets[i]){
+        game.noteAssets[i].visible = true;
+      } else {
+        break
+      }
+    }
+    if(game.noteCurrentPage+1 < game.noteTotalPages){
+      game.noteNextPageBtn.visible=true
+    }
+    if(game.noteCurrentPage !== 0){
+      game.noteBackPageBtn.visible=true
     }
   } else {
     for (let i = 0; i < game.noteAssets.length; i++) {
       game.noteAssets[i].visible = false;
     }
+    game.noteNextPageBtn.visible=false
+    game.noteBackPageBtn.visible=false
   }
 };
 
@@ -242,21 +255,21 @@ const setupNPCTab = (game) => {
 
   game.npcInfoFrameAssets = infoFrameAssets;
   game.npc_assets = [];
-  const maxInRow = 6;
+  const maxCol = 6;
   const croppedX = 400;
   const croppedY = 95;
   const croppedWidth = 400;
   const croppedHeight = 500;
-  let currentRowCount = 0;
+  let currentColCount = 0;
   let currentRowY = 220;
   for (let i = 0; i < npc_list.length; i++) {
-    if (currentRowCount >= maxInRow) {
+    if (currentColCount >= maxCol) {
       currentRowY += 120;
-      currentRowCount = 0;
+      currentColCount = 0;
     }
-    currentRowCount += 1;
+    currentColCount += 1;
     let npcAsset = game.add
-      .image(currentRowCount * 100 + 25, currentRowY, npc_list[i].sprite)
+      .image(currentColCount * 100 + 25, currentRowY, npc_list[i].sprite)
       .setOrigin(0, 0)
       .setDepth(5);
     npcAsset.setCrop(croppedX, croppedY, croppedWidth, croppedHeight);
@@ -355,27 +368,32 @@ const ModUpdater = (game) => {
     }
   }
 
-  const maxInRow = 6;
-  let currentRowCount = 0;
+  const maxCol = 6;
+  let currentColCount = 0;
   let currentRowY = 350;
 
   Object.keys(modCountList).forEach((item) => {
-    if (currentRowCount >= maxInRow) {
+    if (currentColCount >= maxCol) {
       currentRowY += 140;
-      currentRowCount = 0;
+      currentColCount = 0;
     }
-    currentRowCount += 1;
+    currentColCount += 1;
     let modAssets = ModifierAsset(
       game,
       item,
-      currentRowCount * 120 + 87,
+      currentColCount * 120 + 87,
       currentRowY,
       modCountList[item]
     );
 
+    let showValue = false
+     if (game.currentTab === game.modifierTab){
+         showValue = true;
+      }
+
     for (let i = 0; i < modAssets.length; i++) {
       game.modifierAssets.push(modAssets[i]);
-      modAssets[i].visible = false;
+      modAssets[i].visible=showValue
     }
 
     function showModInfo(show, target) {
@@ -440,6 +458,14 @@ const setupNoteTab = (game) => {
       align: "left",
     }).setOrigin(0,0)
     .setDepth(7);
+  game.noteNextPageBtn = game.add.image(650, 250, "yes_button")
+    .setOrigin(.5, .5)
+    .setDepth(5).setInteractive();
+  game.noteNextPageBtn.scale=.2
+  game.noteBackPageBtn = game.add.image(350, 250, "no2_button")
+    .setOrigin(.5, .5)
+    .setDepth(5).setInteractive();
+  game.noteBackPageBtn.scale=.2
   game.note_background.visible = false;
   game.noteInfoTitle.visible=false;
   game.noteAuthorText.visible=false;
@@ -448,9 +474,30 @@ const setupNoteTab = (game) => {
   game.note_background.on("pointerdown", (pointer, gameObject) => {
     hideInfo(game);
   });
+
+  game.noteNextPageBtn.on("pointerdown", (pointer, gameObject) => {
+    //console.log("next page")
+    game.noteCurrentPage+=1
+    // if(game.noteCurrentPage+1>=game.noteTotalPages){
+    //   game.noteNextPageBtn.visible=false
+    // }
+    // game.noteBackPageBtn.visible=true;
+    showNoteTab(game,false)
+    showNoteTab(game,true)
+  });
+  game.noteBackPageBtn.on("pointerdown", (pointer, gameObject) => {
+    //console.log("back page")
+    game.noteCurrentPage-=1;
+    // if(game.noteCurrentPage==0){
+    //   game.noteBackPageBtn.visible=false
+    // }
+    // game.noteNextPageBtn.visible=true;
+    showNoteTab(game,false)
+    showNoteTab(game,true)
+  });
 };
 
-const NoteAsset = (game, image, title, x, y) => {
+const NoteAsset = (game, image, title, x, y,curPage) => {
   let noteAsset = game.add
     .image(x, y, image)
     .setOrigin(0.5, 0.5)
@@ -467,9 +514,13 @@ const NoteAsset = (game, image, title, x, y) => {
     })
     .setOrigin(0.5, 0.5)
     .setDepth(5);
-
-  noteAsset.visible=false
-  noteTitleText.visible=false
+    let showValue = false
+     if (game.currentTab === game.noteTab && curPage ===0){
+        //console.log("showing val")
+         showValue = true;
+      }
+  noteAsset.visible=showValue
+  noteTitleText.visible=showValue
 
   return [noteAsset, noteTitleText];
 };
@@ -479,9 +530,19 @@ const NoteUpdater = (game) => {
     game.noteAssets[i].destroy();
   }
   const newNotes = game.registry.get("Notes");
-  const maxInRow = 5;
+  const maxRow = 3;
+  const maxCol = 5;
+  const initialRowY = 350;
   let currentRowCount = 0;
-  let currentRowY = 350;
+  let currentColCount = 0;
+  let currentRowY = initialRowY;
+
+  let currentPage = 0;
+  game.noteCurrentPage=0;
+  game.noteTotalPages=1;
+
+  game.noteNextPageBtn.visible=false
+  game.noteBackPageBtn.visible=false
 
   Object.keys(note_dictionary).forEach((item) => {
     let npc_notes = note_dictionary[item].notes;
@@ -489,18 +550,28 @@ const NoteUpdater = (game) => {
     if (current_npc_notes) {
       for (let i = 0; i < npc_notes.length; i++) {
         if (current_npc_notes.includes(i)) {
-          if (currentRowCount >= maxInRow) {
+          if (currentColCount >= maxCol) {
             currentRowY += 140;
-            currentRowCount = 0;
+            if(currentRowCount>= maxRow) {
+              currentPage+=1;
+              game.noteTotalPages+=1;
+              if (game.currentTab === game.noteTab){
+                game.noteNextPageBtn.visible=true
+              }
+              currentRowY=initialRowY
+              currentRowCount=0;
+            }
+            currentRowCount+=1
+            currentColCount = 0;
           }
-          currentRowCount += 1;
+          currentColCount += 1;
           let noteInfo = note_dictionary[item].notes[i];
           let noteAssets = NoteAsset(
             game,
             "order_background",
             noteInfo.title,
-            currentRowCount * 150 + 55,
-            currentRowY
+            currentColCount * 150 + 55,
+            currentRowY,currentPage
           );
 
           game.noteAssets.push(noteAssets[0]);
@@ -543,6 +614,8 @@ var GalleryState = {
 
   create() {
     this.currentTab = null;
+
+    this.noteCurrentPage = 0;
 
     this.lastUnlockedCustomers = this.registry
       .get("Unlocked_Customers")
