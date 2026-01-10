@@ -562,7 +562,7 @@ const NoteUpdater = (game) => {
   for (let i = 0; i < game.noteAssets.length; i++) {
     game.noteAssets[i].destroy();
   }
-  const newNotes = game.registry.get("Notes");
+  const newNotes = game.registry.get("Notes") || {};
   const maxRow = 3;
   const maxCol = 5;
   const initialRowY = 350;
@@ -657,7 +657,8 @@ var GalleryState = {
       .slice();
 
     //console.log("SETTING LAST MODIFIER IN CREATE");
-    this.lastModifiers = this.registry.get("Modifiers").slice();
+    const modifiers = this.registry.get("Modifiers") || [];
+    this.lastModifiers = modifiers.slice();
 
     this.modifierAssets = [];
     this.noteAssets = [];
@@ -783,7 +784,7 @@ var GalleryState = {
         .slice();
       NPCUpdater(this);
     }
-    if (this.registry.get("Modifiers").length !== this.lastModifiers.length) {
+    if (this.registry.get("Modifiers") && this.registry.get("Modifiers").length !== this.lastModifiers.length) {
       this.lastModifiers = this.registry.get("Modifiers").slice();
       //console.log("just set last mod");
       ModUpdater(this);

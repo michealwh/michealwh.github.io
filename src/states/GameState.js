@@ -1,7 +1,9 @@
+import secureLocalStorage from "react-secure-storage";
 import dialog_dictionary from "../dictonaries/dialog.json";
 import ingredients_dictionary from "../dictonaries/ingredients.json";
 import npc_dictionary from "../dictonaries/npcs.json";
 import notes_dictionary from "../dictonaries/notes.jsx";
+import shop_dictionary from "../dictonaries/shop.json";
 import OrderSubmittedHandler from "../modules/OrderSubmittedHandler";
 import days_info from "../dictonaries/days";
 
@@ -231,7 +233,7 @@ const questionButtonHandler = (game) => {
   });
 };
 
-const customerHandler = (customer, game) => {
+const customerHandler = (customer, game, previousSave) => {
   //console.log("new customer", customer);
   game.registry.set("SwitchNotAllowed", true);
   if (game.npc !== undefined) {
@@ -285,7 +287,7 @@ const customerHandler = (customer, game) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [frame],
@@ -303,64 +305,98 @@ const customerHandler = (customer, game) => {
         const o_index = Math.floor(
           Math.random() * dialog_dictionary.ordering.length
         );
-        if (game.ingredientMax < 0) {
-          // incase of items that could break this
-          game.ingredientMax = 0;
-        }
-        const number_of_ingredients =
-          Math.floor(Math.random() * game.ingredientMax) + 1;
 
-        let order_list = "";
-        game.order = [];
-        for (let i = 0; i < number_of_ingredients; i++) {
-          const ingredient_index = Math.floor(
-            Math.random() * game.availableIngredients.length
-          );
-          order_list += " the ";
-          order_list += game.availableIngredients[ingredient_index];
-          if (i + 1 !== number_of_ingredients) {
-            order_list += " and";
+        let text = "";
+        if (!previousSave) {
+          if (game.ingredientMax < 0) {
+            // incase of items that could break this
+            game.ingredientMax = 0;
           }
-          game.order.push(game.availableIngredients[ingredient_index]);
-        }
-        game.order.unshift("beefpatty"),
-          game.order.unshift("bottomBun"),
-          game.order.unshift("topBun");
-        let bouncyStyled = false;
-        if (game.bouncyballsAllowed) {
-          let chance = Math.floor(Math.random() * 4); // 1/4 chance
-          if (game.currentDay >= 12) {
-            chance = Math.floor(Math.random() * 8); // 1/8 chance
+          const number_of_ingredients =
+            Math.floor(Math.random() * game.ingredientMax) + 1;
+
+          let order_list = "";
+          game.order = [];
+          for (let i = 0; i < number_of_ingredients; i++) {
+            const ingredient_index = Math.floor(
+              Math.random() * game.availableIngredients.length
+            );
+            order_list += " the ";
+            order_list += game.availableIngredients[ingredient_index];
+            if (i + 1 !== number_of_ingredients) {
+              order_list += " and";
+            }
+            game.order.push(game.availableIngredients[ingredient_index]);
           }
-          if (chance === 0) {
+          game.order.unshift("beefpatty"),
+            game.order.unshift("bottomBun"),
+            game.order.unshift("topBun");
+          let bouncyStyled = false;
+          if (game.bouncyballsAllowed) {
+            let chance = Math.floor(Math.random() * 4); // 1/4 chance
+            if (game.currentDay >= 12) {
+              chance = Math.floor(Math.random() * 8); // 1/8 chance
+            }
+            if (chance === 0) {
+              bouncyStyled = true;
+              order_list += " and a bouncy ball";
+              game.order.push("bouncy ball");
+            }
+          }
+          game.registry.set("Order_Text", order_list);
+          game.registry.set("Order", game.order);
+          ////console.log(order_list);
+          text =
+            dialog_dictionary.greetings[g_index] +
+            " " +
+            dialog_dictionary.ordering[o_index] +
+            " the burger with" +
+            order_list +
+            ".";
+          if (game.secretShopperCustomer) {
+            text = "i am customer. give me the burger with" + order_list + ".";
+          }
+          if (bouncyStyled) {
+            text = text.slice(0, text.length - 19);
+            let bounce_dialog = [
+              " and i'll have it the bouncy way please.",
+              " and can i get that the bouncy way?",
+              " and i'll get it the bouncy way.",
+            ];
+            let choice =
+              bounce_dialog[Math.floor(Math.random() * bounce_dialog.length)];
+            text += choice;
+          }
+        } else {
+          // previous save exists
+          //console.log("---Restoring previous customer state:", customer);
+          const order_list = game.registry.get("Order_Text");
+          const Order = game.registry.get("Order");
+          let bouncyStyled = false;
+          if (Order.includes("bouncy ball")) {
             bouncyStyled = true;
-            order_list += " and a bouncy ball";
-            game.order.push("bouncy ball");
           }
-        }
-        game.registry.set("Order_Text", order_list);
-        game.registry.set("Order", game.order);
-        ////console.log(order_list);
-        let text =
-          dialog_dictionary.greetings[g_index] +
-          " " +
-          dialog_dictionary.ordering[o_index] +
-          " the burger with" +
-          order_list +
-          ".";
-        if (game.secretShopperCustomer) {
-          text = "i am customer. give me the burger with" + order_list + ".";
-        }
-        if (bouncyStyled) {
-          text = text.slice(0, text.length - 19);
-          let bounce_dialog = [
-            " and i'll have it the bouncy way please.",
-            " and can i get that the bouncy way?",
-            " and i'll get it the bouncy way.",
-          ];
-          let choice =
-            bounce_dialog[Math.floor(Math.random() * bounce_dialog.length)];
-          text += choice;
+          text =
+            dialog_dictionary.greetings[g_index] +
+            " " +
+            dialog_dictionary.ordering[o_index] +
+            " the burger with" +
+            order_list +
+            ".";
+          if (game.secretShopperCustomer) {
+            text = "i am customer. give me the burger with" + order_list + ".";
+          }
+          if (bouncyStyled) {
+            text = text.slice(0, text.length - 19);
+            let bounce_dialog = [
+              " and i'll have it the bouncy way please.",
+              " and can i get that the bouncy way?",
+              " and i'll get it the bouncy way.",
+            ];
+            let choice =
+              bounce_dialog[Math.floor(Math.random() * bounce_dialog.length)];
+            text += choice;
+          }
         }
         if (
           npc_dictionary.npcs[game.current_customer_index].sprite_sheet &&
@@ -403,7 +439,7 @@ const showDayFrame = (game, show, islong) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [game.dayText],
@@ -412,7 +448,7 @@ const showDayFrame = (game, show, islong) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [game.dayUpdateText],
@@ -459,7 +495,7 @@ const showDayFrame = (game, show, islong) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [game.dayUpdateText],
@@ -494,7 +530,7 @@ const showDayFrame = (game, show, islong) => {
   }
 };
 
-const newCustomer = (game, just_launched) => {
+const newCustomer = (game, just_launched, previousSave) => {
   if (
     game.dailyCustomerCount == game.dailyCustomerMax &&
     game.secretShopperDay == true
@@ -545,7 +581,7 @@ const newCustomer = (game, just_launched) => {
           //console.log("secret shopper customer is", customer);
         }
         //console.log("customer index", game.current_customer_index);
-        customerHandler(customer, game);
+        customerHandler(customer, game, previousSave);
 
         game.door_open_sfx.play();
       },
@@ -560,6 +596,7 @@ const dayStartHandler = (game) => {
   game.registry.set("SwitchNotAllowed", true);
   game.registry.set("DayOver", false);
   game.currentDay = parseInt(game.currentDay) + 1;
+  //console.log("Setting Day reg to", game.currentDay);
   game.registry.set("Day", game.currentDay);
   game.dailyCustomerCount = 0;
   game.todays_customers = game.registry.get("Todays_Customer") || [];
@@ -631,6 +668,7 @@ const dayStartHandler = (game) => {
   //console.log("todays customers", game.todays_customers);
 
   game.registry.set("Todays_Customers", game.todays_customers);
+  //console.log("registry TC set to", game.registry.get("Todays_Customers"));
   game.registry.set("DailyCustomerCount", game.dailyCustomerCount);
   showDayFrame(game, false);
   game.time.addEvent({
@@ -643,160 +681,322 @@ const dayStartHandler = (game) => {
   });
 };
 
-const dayEndHandler = (game, just_launched) => {
+const dayEndHandler = (game, just_launched, previousSave) => {
   game.registry.set("SwitchNotAllowed", false);
   game.registry.set("DayOver", true);
   game.dailyCustomerCount = 0;
-  if (game.dailyCustomerMax < 8) {
-    const moreCustomersSuccess = (game.currentDay + 1) % 4;
-    if (moreCustomersSuccess == 0) {
-      let moreCustomers = Math.floor(Math.random() * 2) + 1;
-      if (game.dailyCustomerMax + moreCustomers > 8) {
-        moreCustomers = 1;
-      }
-      game.dailyCustomerMax += moreCustomers;
-      game.registry.set("DailyCustomerMax", game.dailyCustomerMax);
-    }
-  }
-  const unlockedCustomerSuccess = (game.currentDay + 1) % 2;
-
-  if (game.currentDay + 1 === 2) {
-    game.ingredientMax += 1; // 3
-  } else if (game.currentDay + 1 == 4) {
-    game.ingredientMax += 1; // 4
-  } else if (game.currentDay + 1 == 6) {
-    game.ingredientMax += 1; // 5
-  } else if (game.currentDay + 1 == 8) {
-    game.ingredientMax += 1; // 6
-  } else if (game.currentDay + 1 == 16) {
-    game.ingredientMax += 2; // 8
-  } else if (game.currentDay + 1 == 64) {
-    game.ingredientMax += 4; // 12
-  }
-  game.registry.set("IngredientMax", parseInt(game.ingredientMax));
-
-  game.dayText.text = "Day " + game.currentDay + " Complete!";
-  game.dayUpdateText.text = "";
-  game.dayUpdateSprite = null;
-  ////console.log("unlocked customer", unlockedCustomerSuccess);
-  if (unlockedCustomerSuccess == 1 && game.currentLockedCustomers.length > 0) {
-    let newCustomerIndex = Math.floor(
-      Math.random() * game.currentLockedCustomers.length
-    );
-    ////console.log("unlocked customers and locked customers before",game.currentUnlockedCustomers,game.currentLockedCustomers);
-
-    game.currentUnlockedCustomers.push(
-      game.currentLockedCustomers[newCustomerIndex]
-    );
-    game.currentLockedCustomers = game.currentLockedCustomers.filter(
-      (item) => item !== game.currentLockedCustomers[newCustomerIndex]
-    );
-    // //console.log("unlocked customers and locked customers after",game.currentUnlockedCustomers,game.currentLockedCustomers);
-
-    game.newUnlockedCustomer =
-      game.currentUnlockedCustomers[game.currentUnlockedCustomers.length - 1];
-    game.registry.set("Unlocked_Customers", game.currentUnlockedCustomers);
-    if (game.currentLockedCustomers.length <= 0) {
-      game.dayUpdateText.text += "You have now unlocked all customers!";
-      game.dayUpdateSprite = "penguin_sheet";
-    } else {
-      game.dayUpdateText.text += "You have unlocked a new customer!";
-    }
-  }
-
-  game.thisDaysInfo = days_info.actual_days[game.currentDay + 1];
-  const lastDayNum = Object.keys(days_info.actual_days)[
-    Object.keys(days_info.actual_days).length - 1
-  ];
-  //console.log("last day info", lastDayNum);
-  if (!game.thisDaysInfo) {
-    let dayText = "";
-    if ((game.currentDay + 1) % 5 == 0) {
-      // every fifth day have a secret shopper
-      dayText += "There will be a Secret Shopper arriving tomorrow.";
-      let alottedPoints = Math.floor(Math.pow(1.1, game.currentDay + 1)); // this is expo progression
-
-      while (alottedPoints > 0) {
-        let statToIncrease = Math.floor(Math.random() * 4);
-        if (statToIncrease == 0) {
-          game.secretshopperPresentationStandard += 1;
-        } else if (statToIncrease == 1) {
-          game.secretshopperPunctualityStandard += 1;
-        } else if (statToIncrease == 2) {
-          game.secretshopperPrecisionStandard += 1;
-        } else if (statToIncrease == 3) {
-          game.secretshopperPleasantryStandard += 1;
+  if (!previousSave) {
+    if (game.dailyCustomerMax < 8) {
+      const moreCustomersSuccess = (game.currentDay + 1) % 4;
+      if (moreCustomersSuccess == 0) {
+        let moreCustomers = Math.floor(Math.random() * 2) + 1;
+        if (game.dailyCustomerMax + moreCustomers > 8) {
+          moreCustomers = 1;
         }
-        alottedPoints -= 1;
+        game.dailyCustomerMax += moreCustomers;
+        game.registry.set("DailyCustomerMax", game.dailyCustomerMax);
       }
-      game.defaultPresentationStandard += 2;
-      game.defaultPunctualityStandard += 2;
-      game.defaultPrecisionStandard += 2;
-      game.defaultPleasantryStandard += 2;
-      dayText += ` By end of day HR requests your standards are as follows:\nPresentation: ${game.secretshopperPresentationStandard}% Punctuality: ${game.secretshopperPunctualityStandard}%\nPrecision: ${game.secretshopperPrecisionStandard}%  Pleasantry: ${game.secretshopperPleasantryStandard}%`;
-    } else if (game.currentDay + 1 > lastDayNum) {
-      // has to be after the last recorded day
-      game.defaultPresentationStandard =
-        game.secretshopperPresentationStandard + 2;
-      game.defaultPunctualityStandard =
-        game.secretshopperPunctualityStandard + 2;
-      game.defaultPrecisionStandard = game.secretshopperPrecisionStandard + 2;
-      game.defaultPleasantryStandard = game.secretshopperPleasantryStandard + 2;
     }
-    game.dayUpdateText.text += "\n" + dayText;
-    //console.log("adding", game.dayUpdateText.text, "to update text");
+    const unlockedCustomerSuccess = (game.currentDay + 1) % 2;
+
+    if (game.currentDay + 1 === 2) {
+      game.ingredientMax += 1; // 3
+    } else if (game.currentDay + 1 == 4) {
+      game.ingredientMax += 1; // 4
+    } else if (game.currentDay + 1 == 6) {
+      game.ingredientMax += 1; // 5
+    } else if (game.currentDay + 1 == 8) {
+      game.ingredientMax += 1; // 6
+    } else if (game.currentDay + 1 == 16) {
+      game.ingredientMax += 2; // 8
+    } else if (game.currentDay + 1 == 64) {
+      game.ingredientMax += 4; // 12
+    }
+    game.registry.set("IngredientMax", parseInt(game.ingredientMax));
+
+    game.dayText.text = "Day " + game.currentDay + " Complete!";
+    game.dayUpdateText.text = "";
+    game.dayUpdateSprite = null;
+    ////console.log("unlocked customer", unlockedCustomerSuccess);
+    if (
+      unlockedCustomerSuccess == 1 &&
+      game.currentLockedCustomers.length > 0
+    ) {
+      let newCustomerIndex = Math.floor(
+        Math.random() * game.currentLockedCustomers.length
+      );
+      ////console.log("unlocked customers and locked customers before",game.currentUnlockedCustomers,game.currentLockedCustomers);
+
+      game.currentUnlockedCustomers.push(
+        game.currentLockedCustomers[newCustomerIndex]
+      );
+      game.currentLockedCustomers = game.currentLockedCustomers.filter(
+        (item) => item !== game.currentLockedCustomers[newCustomerIndex]
+      );
+      // //console.log("unlocked customers and locked customers after",game.currentUnlockedCustomers,game.currentLockedCustomers);
+
+      game.newUnlockedCustomer =
+        game.currentUnlockedCustomers[game.currentUnlockedCustomers.length - 1];
+      game.registry.set("Unlocked_Customers", game.currentUnlockedCustomers);
+      if (game.currentLockedCustomers.length <= 0) {
+        game.dayUpdateText.text += "You have now unlocked all customers!";
+        game.dayUpdateSprite = "penguin_sheet";
+      } else {
+        game.dayUpdateText.text += "You have unlocked a new customer!";
+      }
+    }
+
+    game.thisDaysInfo = days_info.actual_days[game.currentDay + 1];
+    const lastDayNum = Object.keys(days_info.actual_days)[
+      Object.keys(days_info.actual_days).length - 1
+    ];
+    //console.log("last day info", lastDayNum);
+    if (!game.thisDaysInfo) {
+      let dayText = "";
+      if ((game.currentDay + 1) % 5 == 0) {
+        // every fifth day have a secret shopper
+        dayText += "There will be a Secret Shopper arriving tomorrow.";
+        let alottedPoints = Math.floor(Math.pow(1.1, game.currentDay + 1)); // this is expo progression
+
+        while (alottedPoints > 0) {
+          let statToIncrease = Math.floor(Math.random() * 4);
+          if (statToIncrease == 0) {
+            game.secretshopperPresentationStandard += 1;
+          } else if (statToIncrease == 1) {
+            game.secretshopperPunctualityStandard += 1;
+          } else if (statToIncrease == 2) {
+            game.secretshopperPrecisionStandard += 1;
+          } else if (statToIncrease == 3) {
+            game.secretshopperPleasantryStandard += 1;
+          }
+          alottedPoints -= 1;
+        }
+        game.defaultPresentationStandard += 2;
+        game.defaultPunctualityStandard += 2;
+        game.defaultPrecisionStandard += 2;
+        game.defaultPleasantryStandard += 2;
+        dayText += ` By end of day HR requests your standards are as follows:\nPresentation: ${game.secretshopperPresentationStandard}% Punctuality: ${game.secretshopperPunctualityStandard}%\nPrecision: ${game.secretshopperPrecisionStandard}%  Pleasantry: ${game.secretshopperPleasantryStandard}%`;
+
+        game.registry.set("CustomerStandards", [
+          game.defaultPresentationStandard,
+          game.defaultPunctualityStandard,
+          game.defaultPrecisionStandard,
+          game.defaultPleasantryStandard,
+        ]);
+        game.registry.set("SecretShopperStandards", [
+          game.secretshopperPresentationStandard,
+          game.secretshopperPunctualityStandard,
+          game.secretshopperPrecisionStandard,
+          game.secretshopperPleasantryStandard,
+        ]);
+      } else if (game.currentDay + 1 > lastDayNum) {
+        // has to be after the last recorded day
+        game.defaultPresentationStandard =
+          game.secretshopperPresentationStandard + 2;
+        game.defaultPunctualityStandard =
+          game.secretshopperPunctualityStandard + 2;
+        game.defaultPrecisionStandard = game.secretshopperPrecisionStandard + 2;
+        game.defaultPleasantryStandard =
+          game.secretshopperPleasantryStandard + 2;
+
+        game.registry.set("CustomerStandards", [
+          game.defaultPresentationStandard,
+          game.defaultPunctualityStandard,
+          game.defaultPrecisionStandard,
+          game.defaultPleasantryStandard,
+        ]);
+      }
+      game.dayUpdateText.text += "\n" + dayText;
+      //console.log("adding", game.dayUpdateText.text, "to update text");
+    } else {
+      //console.log("adding", game.thisDaysInfo.description, "to update text");
+      if (game.thisDaysInfo.description) {
+        game.dayUpdateText.text += "\n" + game.thisDaysInfo.description;
+      }
+      if (game.thisDaysInfo.c_standards) {
+        game.defaultPresentationStandard = game.thisDaysInfo.c_standards[0];
+        game.defaultPunctualityStandard = game.thisDaysInfo.c_standards[1];
+        game.defaultPrecisionStandard = game.thisDaysInfo.c_standards[2];
+        game.defaultPleasantryStandard = game.thisDaysInfo.c_standards[3];
+
+        game.registry.set("CustomerStandards", [
+          game.defaultPresentationStandard,
+          game.defaultPunctualityStandard,
+          game.defaultPrecisionStandard,
+          game.defaultPleasantryStandard,
+        ]);
+      }
+      if (game.thisDaysInfo.s_standards) {
+        game.secretshopperPresentationStandard =
+          game.thisDaysInfo.s_standards[0];
+        game.secretshopperPunctualityStandard =
+          game.thisDaysInfo.s_standards[1];
+        game.secretshopperPrecisionStandard = game.thisDaysInfo.s_standards[2];
+        game.secretshopperPleasantryStandard = game.thisDaysInfo.s_standards[3];
+        game.registry.set("SecretShopperStandards", [
+          game.secretshopperPresentationStandard,
+          game.secretshopperPunctualityStandard,
+          game.secretshopperPrecisionStandard,
+          game.secretshopperPleasantryStandard,
+        ]);
+      }
+
+      if (game.thisDaysInfo.events.includes("bouncyball")) {
+        game.bouncyballsAllowed = true;
+        game.registry.set("BouncyBallsAllowed", true);
+      }
+    }
+
+    //console.log(game.thisDaysInfo || "nothing");
+
+    if (
+      (game.thisDaysInfo &&
+        game.thisDaysInfo.events.includes("secretshopper")) ||
+      (game.currentDay + 1) % 5 == 0
+    ) {
+      game.secretShopperDay = true;
+    } else {
+      game.secretShopperDay = false;
+    }
+    game.registry.set("SecretShopperDay", game.secretShopperDay)
+
+
+    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("cheese")) {
+      game.registry.set("CheeseAdded", true);
+      if (!game.availableIngredients.includes("cheddar")) {
+        game.availableIngredients.push("cheddar");
+        game.availableIngredients.push("pepperjack");
+        game.availableIngredients.push("swisscheese");
+      }
+    }
+
+    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rats")) {
+      //console.log("setting rats added to true");
+      game.registry.set("RatsAdded", true);
+    }
+
+    if (game.secretShopperDay === true) {
+      game.dayUpdateText.text +=
+        "\n Tomorrow you will have " +
+        (game.dailyCustomerMax + 1) +
+        " visitors.";
+    } else {
+      game.dayUpdateText.text +=
+        "\n Tomorrow you will have " + game.dailyCustomerMax + " visitors.";
+    }
   } else {
-    //console.log("adding", game.thisDaysInfo.description, "to update text");
-    if (game.thisDaysInfo.description) {
-      game.dayUpdateText.text += "\n" + game.thisDaysInfo.description;
+    // loading previous save
+
+    const unlockedCustomerSuccess = (game.currentDay + 1) % 2;
+
+    game.dayText.text = "Day " + game.currentDay + " Complete!";
+    game.dayUpdateText.text = "";
+    game.dayUpdateSprite = null;
+    ////console.log("unlocked customer", unlockedCustomerSuccess);
+    if (
+      unlockedCustomerSuccess == 1 &&
+      game.currentLockedCustomers.length > 0
+    ) {
+      if (game.currentLockedCustomers.length <= 0) {
+        game.dayUpdateText.text += "You have now unlocked all customers!";
+        game.dayUpdateSprite = "penguin_sheet";
+      } else {
+        game.dayUpdateText.text += "You have unlocked a new customer!";
+      }
     }
-    if (game.thisDaysInfo.c_standards) {
-      game.defaultPresentationStandard = game.thisDaysInfo.c_standards[0];
-      game.defaultPunctualityStandard = game.thisDaysInfo.c_standards[1];
-      game.defaultPrecisionStandard = game.thisDaysInfo.c_standards[2];
-      game.defaultPleasantryStandard = game.thisDaysInfo.c_standards[3];
+
+    game.thisDaysInfo = days_info.actual_days[game.currentDay + 1];
+    const lastDayNum = Object.keys(days_info.actual_days)[
+      Object.keys(days_info.actual_days).length - 1
+    ];
+    //console.log("last day info", lastDayNum);
+    if (!game.thisDaysInfo) {
+      let dayText = "";
+      if ((game.currentDay + 1) % 5 == 0) {
+        // every fifth day have a secret shopper
+        dayText += "There will be a Secret Shopper arriving tomorrow.";
+        dayText += ` By end of day HR requests your standards are as follows:\nPresentation: ${game.secretshopperPresentationStandard}% Punctuality: ${game.secretshopperPunctualityStandard}%\nPrecision: ${game.secretshopperPrecisionStandard}%  Pleasantry: ${game.secretshopperPleasantryStandard}%`;
+      } else if (game.currentDay + 1 > lastDayNum) {
+        // has to be after the last recorded day
+      }
+      game.dayUpdateText.text += "\n" + dayText;
+      //console.log("adding", game.dayUpdateText.text, "to update text");
+    } else {
+      //console.log("adding", game.thisDaysInfo.description, "to update text");
+      if (game.thisDaysInfo.description) {
+        game.dayUpdateText.text += "\n" + game.thisDaysInfo.description;
+      }
+      if (game.thisDaysInfo.c_standards) {
+        game.defaultPresentationStandard = game.thisDaysInfo.c_standards[0];
+        game.defaultPunctualityStandard = game.thisDaysInfo.c_standards[1];
+        game.defaultPrecisionStandard = game.thisDaysInfo.c_standards[2];
+        game.defaultPleasantryStandard = game.thisDaysInfo.c_standards[3];
+        game.registry.set("CustomerStandards", [
+          game.defaultPresentationStandard,
+          game.defaultPunctualityStandard,
+          game.defaultPrecisionStandard,
+          game.defaultPleasantryStandard,
+        ]);
+      }
+      if (game.thisDaysInfo.s_standards) {
+        game.secretshopperPresentationStandard =
+          game.thisDaysInfo.s_standards[0];
+        game.secretshopperPunctualityStandard =
+          game.thisDaysInfo.s_standards[1];
+        game.secretshopperPrecisionStandard = game.thisDaysInfo.s_standards[2];
+        game.secretshopperPleasantryStandard = game.thisDaysInfo.s_standards[3];
+        game.registry.set("SecretShopperStandards", [
+          game.secretshopperPresentationStandard,
+          game.secretshopperPunctualityStandard,
+          game.secretshopperPrecisionStandard,
+          game.secretshopperPleasantryStandard,
+        ]);
+      }
+
+      if (game.thisDaysInfo.events.includes("bouncyball")) {
+        game.bouncyballsAllowed = true;
+      }
     }
-    if (game.thisDaysInfo.s_standards) {
-      game.secretshopperPresentationStandard = game.thisDaysInfo.s_standards[0];
-      game.secretshopperPunctualityStandard = game.thisDaysInfo.s_standards[1];
-      game.secretshopperPrecisionStandard = game.thisDaysInfo.s_standards[2];
-      game.secretshopperPleasantryStandard = game.thisDaysInfo.s_standards[3];
+
+    //console.log(game.thisDaysInfo || "nothing");
+
+    if (
+      (game.thisDaysInfo &&
+        game.thisDaysInfo.events.includes("secretshopper")) ||
+      (game.currentDay + 1) % 5 == 0
+    ) {
+      game.secretShopperDay = true;
+    } else {
+      game.secretShopperDay = false;
     }
 
-    if (game.thisDaysInfo.events.includes("bouncyball")) {
-      game.bouncyballsAllowed = true;
+    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("cheese")) {
+      game.registry.set("CheeseAdded", true);
+      if (!game.availableIngredients.includes("cheddar")) {
+        game.availableIngredients.push("cheddar");
+      }
+      if (!game.availableIngredients.includes("pepperjack")) {
+        game.availableIngredients.push("pepperjack");
+      }
+      if (!game.availableIngredients.includes("swisscheese")) {
+        game.availableIngredients.push("swisscheese");
+      }
     }
-  }
 
-  //console.log(game.thisDaysInfo || "nothing");
+    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rats")) {
+      //console.log("setting rats added to true");
+      game.registry.set("RatsAdded", true);
+    }
 
-  if (
-    (game.thisDaysInfo && game.thisDaysInfo.events.includes("secretshopper")) ||
-    (game.currentDay + 1) % 5 == 0
-  ) {
-    game.secretShopperDay = true;
-  } else {
-    game.secretShopperDay = false;
-  }
-
-  if (game.thisDaysInfo && game.thisDaysInfo.events.includes("cheese")) {
-    game.registry.set("CheeseAdded", true);
-    game.availableIngredients.push("cheddar");
-    game.availableIngredients.push("pepperjack");
-    game.availableIngredients.push("swisscheese");
-  }
-
-  if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rats")) {
-    //console.log("setting rats added to true");
-    game.registry.set("RatsAdded", true);
-  }
-
-  if (game.secretShopperDay === true) {
-    game.dayUpdateText.text +=
-      "\n Tomorrow you will have " + (game.dailyCustomerMax + 1) + " visitors.";
-  } else {
-    game.dayUpdateText.text +=
-      "\n Tomorrow you will have " + game.dailyCustomerMax + " visitors.";
+    if (game.secretShopperDay === true) {
+      game.dayUpdateText.text +=
+        "\n Tomorrow you will have " +
+        (game.dailyCustomerMax + 1) +
+        " visitors.";
+    } else {
+      game.dayUpdateText.text +=
+        "\n Tomorrow you will have " + game.dailyCustomerMax + " visitors.";
+    }
   }
 
   showDayFrame(game, true);
@@ -853,7 +1053,7 @@ const endOfOrderReviewHandler = (game) => {
           "Ended on Day: " +
           game.registry.get("Day") +
           "\nRemaining Globs: " +
-          game.registry.get("Globs") +
+          game.registry.get("Globble") +
           "\nTotal Earnings: " +
           game.registry.get("Total_Globs") +
           "\nPresentation: " +
@@ -892,7 +1092,7 @@ const endOfOrderReviewHandler = (game) => {
     duration: 1000,
     repeat: 0,
     yoyo: false,
-    onComplete: function () {},
+    onComplete: function () { },
   });
 };
 
@@ -956,7 +1156,7 @@ const orderCompleteHandler = (game) => {
         duration: 500,
         repeat: 0,
         yoyo: false,
-        onComplete: function () {},
+        onComplete: function () { },
       });
       game.tweens.add({
         targets: game.text,
@@ -965,7 +1165,7 @@ const orderCompleteHandler = (game) => {
         duration: 500,
         repeat: 0,
         yoyo: false,
-        onComplete: function () {},
+        onComplete: function () { },
       });
     },
     callbackScope: game,
@@ -977,57 +1177,86 @@ const orderCompleteHandler = (game) => {
     callback: () => {
       OrderSubmittedHandler(game, dialogHandler);
       game.time.addEvent({
-    delay: (3000 + 5500 -2700),
-    callback: function () {
-      if (game.selectedNote === undefined) {
-        endOfOrderReviewHandler(game);
-      } else {
-        game.time.addEvent({
-          delay: 200,
-          callback: () => {
-            questionHandler(
-              game,
-              "note",
-              "The customer hands you a note. Read it?"
-            );
-          },
-          callbackScope: game,
-          loop: false,
-        });
-      }
-    },
-    callbackScope: game,
-    loop: false,
-  });
+        delay: 3000 + 5500 - 2700,
+        callback: function () {
+          if (game.selectedNote === undefined) {
+            endOfOrderReviewHandler(game);
+          } else {
+            game.time.addEvent({
+              delay: 200,
+              callback: () => {
+                questionHandler(
+                  game,
+                  "note",
+                  "The customer hands you a note. Read it?"
+                );
+              },
+              callbackScope: game,
+              loop: false,
+            });
+          }
+        },
+        callbackScope: game,
+        loop: false,
+      });
     },
     callbackScope: game,
     loop: false,
   });
 };
+
+const restartGameFunction = (game) => {
+
+  game.registry.reset();
+  //location.reload();
+  game.scene.stop("MenuState");
+  game.scene.stop("GameState");
+  game.scene.stop("ShakeState");
+  game.scene.stop("KitchenState");
+  game.scene.stop("SettingsState");
+  game.scene.stop("OrderState");
+  game.scene.stop("ShopState");
+  game.scene.stop("DataState");
+  game.scene.stop("LoadState");
+  game.scene.stop("GalleryState");
+  //console.log(game.anims);
+  game.registry.destroy();
+  game.events.off();
+
+  // wipe save data
+  function wipeData(game) {
+    for (const key in secureLocalStorage._localStorageItems) {
+      // loops through all keys
+      const newKey = key.replace("@secure.", "");
+      secureLocalStorage.setItem(newKey, null);
+      game.registry.set(newKey, secureLocalStorage.getItem(newKey));
+    }
+  }
+
+  wipeData(game);
+  game.scene.start("BootState");
+  //window.location.reload();
+
+}
 
 // restart the game handler after game over
 const restartGameHandler = (game, button) => {
   button.on("pointerdown", (pointer, gameObject) => {
     game.click_sfx.play();
-    game.registry.reset();
-    //location.reload();
-    game.scene.stop("MenuState");
-    game.scene.stop("GameState");
-    game.scene.stop("ShakeState");
-    game.scene.stop("KitchenState");
-    game.scene.stop("SettingsState");
-    game.scene.stop("OrderState");
-    game.scene.stop("ShopState");
-    game.scene.stop("DataState");
-    game.scene.stop("LoadState");
-    game.scene.stop("GalleryState");
 
-    game.scene.start("BootState");
+    game.cameras.main.fadeOut(300, 0, 0, 0);
+
+    game.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        restartGameFunction(game);
+      },
+    });
   });
 };
 
 // furniture handler
-const furnitureHandler = (game, furnitureList) => {
+const furnitureHandler = (game, furnitureList,previousSave) => {
   for (const i in furnitureList) {
     const object = furnitureList[i];
     if (object === "chair1" && game.availableChairs.length > 0) {
@@ -1061,6 +1290,11 @@ const furnitureHandler = (game, furnitureList) => {
         .setOrigin(1, 0)
         .setDepth(yPos - 668);
       glum.scale = 1;
+    }
+    if (!previousSave) {
+      const addedFurniture = game.registry.get("Added_Furniture") || [];
+      addedFurniture.push(object);
+      game.registry.set("Added_Furniture", addedFurniture);
     }
   }
 };
@@ -1185,8 +1419,187 @@ const introFrameHandler = (game) => {
   });
 };
 
+
+const showLoadFrame = (game,show) => {
+  if (show === true) {
+    game.loadFrame.visible = true;
+    game.loadTitle.visible = true;
+    game.loadDescription.visible = true;
+    game.loadYesButton.visible = true;
+    game.loadNoButton.visible = true;
+
+    game.tweens.add({
+      targets: [game.loadFrame,game.loadDescription],
+      y: 500,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+    game.tweens.add({
+      targets: [game.loadYesButton,game.loadNoButton],
+      y: 650,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+    game.tweens.add({
+      targets: [game.loadTitle],
+      y: 350,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+  } else {
+    game.tweens.add({
+      targets: [game.loadFrame,game.loadDescription],
+      y: 500-1000,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+    game.tweens.add({
+      targets: [game.loadYesButton,game.loadNoButton],
+      y: 650-1000,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+    game.tweens.add({
+      targets: [game.loadTitle],
+      y: 350-1000,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+    
+  }
+}
+
+const loadGameButtonsHandler = (game) => {
+  game.loadYesButton.on("pointerdown", (pointer, gameObject) => {
+    game.click_sfx.play();
+
+    game.tweens.add({
+      targets: game.loadYesButton,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        showLoadFrame(game, false);
+
+      //console.log("--LOADED SAVE HANDLING--");
+      // handle saved games
+      //console.log("not at start skipping intro frame");
+      //console.log("todays customers", game.todays_customers);
+
+      if (game.registry.get("Added_Furniture") && game.registry.get("Added_Furniture").length > 0) {
+        let addedFurniture = game.registry.get("Added_Furniture");
+        const furnitureList = game.registry.get("FurnitureShopEvent") || [];
+
+        // furniture shop event is causing problems with glumdevils loading in
+        if ((Array.isArray(furnitureList) && furnitureList.length>0)  && game.registry.get("FurnitureShopEvent") !== undefined) {
+          addedFurniture.push(...game.registry.get("FurnitureShopEvent"));
+          //console.log("added furn shop event to prev loaded furniture")
+          game.registry.set("FurnitureShopEvent", []);
+          game.registry.set("Added_Furniture", addedFurniture);
+        }
+        furnitureHandler(game, addedFurniture,true);
+      }
+
+      if (game.registry.get("RatsAdded") === true) {
+        let totalRats = 0;
+        totalRats = game.registry.get("RatsToAdd") || 0;
+        totalRats += game.registry.get("KitchenRatCount") || 0;
+        game.registry.set("KitchenRatCount", 0);
+        game.registry.set("RatsToAdd", totalRats);
+      }
+      // bouncyballs in kitchen from previous save
+      // already handled in load state
+      // if (game.registry.get("BouncyBallsInKitchen") !== undefined && game.registry.get("BouncyBallsInKitchen").length > 0) {
+      //   let ingredientToAddList = game.registry.get("NewKitchenItemEvent") || [];
+      //   const bouncyballsInKitchen = game.registry.get("BouncyBallsInKitchen");
+      //   for (const i in bouncyballsInKitchen) {
+      //     ingredientToAddList.push(bouncyballsInKitchen[i]);
+      //   }
+      //   game.registry.set("NewKitchenItemEvent", ingredientToAddList);
+      // }
+      if (game.todays_customers.length == 0) {
+        game.todays_customers = game.registry.get("Todays_Customers") || [];
+        //console.log(
+        
+      }
+      if (game.registry.get("SecretShopperDay") && game.registry.get("SecretShopperDay") == true) {
+        game.secretShopperDay = true;
+      }
+      if (
+        game.registry.get("DayOver") == undefined ||
+        game.registry.get("DayOver") == false
+      ) {
+        //console.log("DAY OVER IS FALSE");
+        game.registry.set("DayOver", false);
+
+        //console.log("CALLING NEW CUSTOMER FROM LOAD");
+        //console.log("todays customers", game.todays_customers);
+        //console.log("daily customer count", game.dailyCustomerCount);
+        //console.log("daily customer max", game.dailyCustomerMax);
+        newCustomer(game, true, true); // continuing the day will need to add handling for secret shopper other assigned customers
+      } else if (game.registry.get("DayOver") == true) {
+        //console.log("END OF DAY SHOWDAYFRAME");
+        game.registry.set("SwitchNotAllowed", false);
+        dayEndHandler(game, false, true);
+      }
+      game.registry.set("Paused", false);
+      game.registry.set("Day", game.currentDay);
+      },
+    });
+  })
+
+  game.loadNoButton.on("pointerdown", (pointer, gameObject) => {
+    game.click_sfx.play();
+
+    game.tweens.add({
+      targets: game.loadNoButton,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        restartGameFunction(game);
+      },
+    });
+  })
+}
+
 var GameState = {
-  preload() {},
+  preload() { },
 
   create() {
     // this.bgMusic = this.sound.add("cluttered_ambience2");
@@ -1211,40 +1624,48 @@ var GameState = {
     this.page_flip_sfx = this.sound.add("page_flip_sfx").setVolume(0.8);
 
     // animation creation
-    this.anims.create({
-      key: "clap",
-      frames: this.anims.generateFrameNumbers("penguin_sheet", {
-        frames: [0, 1, 2, 3, 4, 5],
-      }),
-      frameRate: 14,
-      repeat: -1,
-    });
-    this.anims.create({
-      key: "glob_talk",
-      frames: this.anims.generateFrameNumbers("glob_man_sheet", {
-        frames: [1, 0],
-      }),
-      frameRate: 8,
-      repeat: 2,
-    });
+    if (!this.anims.get("clap")) {
+      this.anims.create({
+        key: "clap",
+        frames: this.anims.generateFrameNumbers("penguin_sheet", {
+          frames: [0, 1, 2, 3, 4, 5],
+        }),
+        frameRate: 14,
+        repeat: -1,
+      });
+    }
+    if (!this.anims.get("glob_talk")) {
+      this.anims.create({
+        key: "glob_talk",
+        frames: this.anims.generateFrameNumbers("glob_man_sheet", {
+          frames: [1, 0],
+        }),
+        frameRate: 8,
+        repeat: 2,
+      });
+    }
 
-    this.anims.create({
-      key: "glob_happy",
-      frames: this.anims.generateFrameNumbers("glob_man_sheet", {
-        frames: [2],
-      }),
-      frameRate: 1,
-      repeat: 0,
-    });
+    if (!this.anims.get("glob_happy")) {
+      this.anims.create({
+        key: "glob_happy",
+        frames: this.anims.generateFrameNumbers("glob_man_sheet", {
+          frames: [2],
+        }),
+        frameRate: 1,
+        repeat: 0,
+      });
+    }
 
-    this.anims.create({
-      key: "glob_angry",
-      frames: this.anims.generateFrameNumbers("glob_man_sheet", {
-        frames: [3],
-      }),
-      frameRate: 1,
-      repeat: 0,
-    });
+    if (!this.anims.get("glob_angry")) {
+      this.anims.create({
+        key: "glob_angry",
+        frames: this.anims.generateFrameNumbers("glob_man_sheet", {
+          frames: [3],
+        }),
+        frameRate: 1,
+        repeat: 0,
+      });
+    }
 
     // base creation
 
@@ -1271,18 +1692,6 @@ var GameState = {
       })
       .setOrigin(0, 0)
       .setDepth(4 + uiDepth);
-
-    if (this.registry.get("Total_Orders") >= 1) {
-      //console.log("not at start skipping intro frame");
-      this.todays_customers = this.registry.get("Todays_Customer") || [];
-      if (this.registry.get("DayOver") == undefined) {
-        this.registry.set("DayOver", false);
-      }
-      newCustomer(this, true); // continuing the day will need to add handling for secret shopper other assigned customers
-    } else {
-      //console.log("orders was norders");
-      introFrameHandler(this);
-    }
 
     // dayFrame creation
     this.dayFrame = this.add
@@ -1402,6 +1811,26 @@ var GameState = {
     this.availablePlushes = [slorgplush];
     this.addedPlushes = [];
 
+    // previous save frame setup
+    const loadFrame = this.add.image(500, 500-1000, "order_background").setOrigin(0.5, 0.5).setDepth(9 + uiDepth);
+    loadFrame.scale = 1.2;
+    loadFrame.setTint(0x6a329f);
+    const loadTitle = this.add.text(500, 350-1000, "Ready to Earn?", { fontFamily: "unifrakturcook", fontSize: "80px", fill: "#fdff58", wordWrap: { width: 600 }, align: "center" }).setOrigin(0.5, 0.5).setDepth(10 + uiDepth);
+    const loadDescription = this.add.text(500, 500-1000, `Return to your previous save with 'indeed' or start over by pressing 'cancel'.`, { fontFamily: "unifrakturcook", fontSize: "50px", fill: "#fdff58", wordWrap: { width: 600 }, align: "center" }).setOrigin(0.5, 0.5).setDepth(10 + uiDepth);
+
+    const loadYesButton = this.add.image(400, 650-1000, "yes_button").setOrigin(0.5, 0.5).setDepth(10 + uiDepth).setInteractive();
+    loadYesButton.scale = .2;
+    const loadNoButton = this.add.image(600, 650-1000, "no_button").setOrigin(0.5, 0.5).setDepth(10 + uiDepth).setInteractive();
+    loadNoButton.scale = .2;
+
+    this.loadYesButton = loadYesButton;
+    this.loadNoButton = loadNoButton;
+    this.loadFrame = loadFrame;
+    this.loadTitle = loadTitle;
+    this.loadDescription = loadDescription;
+
+    loadGameButtonsHandler(this);
+
     setupNoteFrame(this);
 
     // variable setup
@@ -1409,7 +1838,8 @@ var GameState = {
     this.dayUpdateSprite = null;
     this.dayUpdateSprite2 = null;
     this.ingredientMax = parseInt(this.registry.get("IngredientMax")) || 2;
-    this.currentDay = parseInt(this.registry.get("Day")) || 0;
+    this.currentDay = parseInt(this.registry.get("Day")) || 1;
+    //console.log("current day set to", this.currentDay);
     this.dailyCustomerCount = this.registry.get("DailyCustomerCount") || 0;
     this.newUnlockedCustomer = null;
 
@@ -1423,32 +1853,68 @@ var GameState = {
         this.currentLockedCustomers.push(i);
       }
     }
-    this.todays_customers = [];
+    //console.log(
+    this.todays_customers = this.registry.get("Todays_Customers") || [];
 
-    const unlockedMaxRatio = Math.floor(
-      this.dailyCustomerMax / this.currentUnlockedCustomers.length + 0.5
-    );
-    ////console.log("unlocked max ratio", unlockedMaxRatio);
-    for (let i = 0; i < unlockedMaxRatio; i++) {
-      this.todays_customers = this.todays_customers.concat(
-        this.currentUnlockedCustomers
+    if (this.todays_customers.length == 0) { // no previous save
+      // first day set up
+      const unlockedMaxRatio = Math.floor(
+        this.dailyCustomerMax / this.currentUnlockedCustomers.length + 0.5
       );
+      ////console.log("unlocked max ratio", unlockedMaxRatio);
+      for (let i = 0; i < unlockedMaxRatio; i++) {
+        this.todays_customers = this.todays_customers.concat(
+          this.currentUnlockedCustomers
+        );
+      }
+      shuffleArray(this.todays_customers);
+      this.todays_customers = this.todays_customers.slice(
+        0,
+        this.dailyCustomerMax
+      );
+      this.registry.set("Todays_Customers", this.todays_customers);
+      //console.log("registry TC set to", this.registry.get("Todays_Customers"));
+      this.registry.set("DailyCustomerCount", this.dailyCustomerCount);
     }
-    shuffleArray(this.todays_customers);
-    this.todays_customers = this.todays_customers.slice(
-      0,
-      this.dailyCustomerMax
-    );
+
+    if (this.registry.get("CheeseAdded") === true) { // if cheese event happened previously
+      this.availableIngredients.push("cheddar");
+      this.availableIngredients.push("pepperjack");
+      this.availableIngredients.push("swisscheese");
+    }
     this.current_customer_index = 0;
 
-    this.defaultPunctualityStandard = 70;
-    this.defaultPresentationStandard = 70;
-    this.defaultPrecisionStandard = 70;
-    this.defaultPleasantryStandard = 0;
+    const loadedStandards = this.registry.get("CustomerStandards");
 
-    this.currentDay = 1;
+    const loadedSecretStandards = this.registry.get("SecretShopperStandards");
+
+    if (loadedStandards && loadedStandards.length == 4) {
+      this.defaultPresentationStandard = loadedStandards[0];
+      this.defaultPunctualityStandard = loadedStandards[1];
+      this.defaultPrecisionStandard = loadedStandards[2];
+      this.defaultPleasantryStandard = loadedStandards[3];
+    } else {
+      this.defaultPresentationStandard = 70;
+      this.defaultPunctualityStandard = 70;
+      this.defaultPrecisionStandard = 70;
+      this.defaultPleasantryStandard = 0;
+      this.registry.set("CustomerStandards", [
+        this.defaultPresentationStandard,
+        this.defaultPunctualityStandard,
+        this.defaultPrecisionStandard,
+        this.defaultPleasantryStandard,
+      ]);
+    }
+
+    if (loadedSecretStandards && loadedSecretStandards.length == 4) {
+      this.secretshopperPresentationStandard = loadedSecretStandards[0];
+      this.secretshopperPunctualityStandard = loadedSecretStandards[1];
+      this.secretshopperPrecisionStandard = loadedSecretStandards[2];
+      this.secretshopperPleasantryStandard = loadedSecretStandards[3];
+    }
+
     this.secretShopperDay = false;
-    this.bouncyballsAllowed = false;
+    this.bouncyballsAllowed = this.registry.get("BouncyBallsAllowed") || false;
     // this.secretShopperDay = true
     this.thisDaysInfo = days_info.actual_days[this.currentDay];
 
@@ -1470,22 +1936,37 @@ var GameState = {
     }
 
     this.formattedNotes = formattedNotes;
+    if (this.thisDaysInfo) {
+      if (this.thisDaysInfo.c_standards) {
+        this.defaultPresentationStandard = this.thisDaysInfo.c_standards[0];
+        this.defaultPunctualityStandard = this.thisDaysInfo.c_standards[1];
+        this.defaultPrecisionStandard = this.thisDaysInfo.c_standards[2];
+        this.defaultPleasantryStandard = this.thisDaysInfo.c_standards[3];
+      }
+      if (this.thisDaysInfo.s_standards) {
+        this.secretshopperPresentationStandard =
+          this.thisDaysInfo.s_standards[0];
+        this.secretshopperPunctualityStandard =
+          this.thisDaysInfo.s_standards[1];
+        this.secretshopperPrecisionStandard = this.thisDaysInfo.s_standards[2];
+        this.secretshopperPleasantryStandard = this.thisDaysInfo.s_standards[3];
+      }
+    }
 
-    if (this.thisDaysInfo.c_standards) {
-      this.defaultPresentationStandard = this.thisDaysInfo.c_standards[0];
-      this.defaultPunctualityStandard = this.thisDaysInfo.c_standards[1];
-      this.defaultPrecisionStandard = this.thisDaysInfo.c_standards[2];
-      this.defaultPleasantryStandard = this.thisDaysInfo.c_standards[3];
+    this.registry.set("SwitchNotAllowed", true);
+
+    if (this.registry.get("Total_Orders") > 0) {
+
+
+      this.registry.set("Paused", true);
+      showLoadFrame(this, true);
+    } else {
+      //console.log("orders was norders");
+      introFrameHandler(this);
     }
-    if (this.thisDaysInfo.s_standards) {
-      this.secretshopperPresentationStandard = this.thisDaysInfo.s_standards[0];
-      this.secretshopperPunctualityStandard = this.thisDaysInfo.s_standards[1];
-      this.secretshopperPrecisionStandard = this.thisDaysInfo.s_standards[2];
-      this.secretshopperPleasantryStandard = this.thisDaysInfo.s_standards[3];
-    }
+    //console.log("Setting Day reg to", this.currentDay);
     this.registry.set("Day", this.currentDay);
     //this.registry.set("Health", 5);
-    this.registry.set("SwitchNotAllowed", true);
 
     this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
   },
@@ -1531,9 +2012,12 @@ var GameState = {
       this.registry.set("Order_Complete", false);
       orderCompleteHandler(this);
     }
-    if (this.registry.get("FurnitureShopEvent") !== undefined) {
+    const furnitureList = this.registry.get("FurnitureShopEvent") || [];
+    if (this.registry.get("Paused") !== true && (Array.isArray(furnitureList) && furnitureList.length > 0) && this.registry.get("FurnitureShopEvent") !== undefined) {
+      //console.log("furniture handler event")
       furnitureHandler(this, this.registry.get("FurnitureShopEvent"));
-      this.registry.set("FurnitureShopEvent", undefined);
+      this.registry.set("FurnitureShopEvent", []);
+
     }
   },
 };

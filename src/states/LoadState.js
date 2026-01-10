@@ -200,23 +200,30 @@ var LoadState = {
     this.logo.anchorX = 0.5;
     this.logo.anchorY = 0.5;
 
-    this.anims.create({
-      key: "rotate_earth",
-      frames: this.anims.generateFrameNumbers("earth", {
-        frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
-      }),
-      frameRate: 18,
-      repeat: -1,
-    });
+    if (!this.anims.get("rotate_earth")) {
+      this.anims.create({
+        key: "rotate_earth",
+        frames: this.anims.generateFrameNumbers("earth", {
+          frames: [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+          ],
+        }),
+        frameRate: 18,
+        repeat: -1,
+      });
+    }
 
-    this.anims.create({
-      key: "smile_anim",
-      frames: this.anims.generateFrameNumbers("loadingSmile", {
-        frames: [0, 1, 2],
-      }),
-      frameRate: 1,
-      repeat: -1,
-    });
+    if (!this.anims.get("smile_anim")) {
+      this.anims.create({
+        key: "smile_anim",
+        frames: this.anims.generateFrameNumbers("loadingSmile", {
+          frames: [0, 1, 2],
+        }),
+        frameRate: 1,
+        repeat: -1,
+      });
+    }
+
     this.smile = this.add.sprite(500, 500, "loadingSmile");
     this.smile.play("smile_anim");
 
@@ -233,7 +240,7 @@ var LoadState = {
     this.load.audio("presentation_sfx1", presentation_sfx1);
 
     this.load.audio("success_sfx1", success_sfx1);
-    this.load.audio("success_sfx2",success_sfx2);
+    this.load.audio("success_sfx2", success_sfx2);
 
     this.load.audio("spooky_sfx1", spooky_sfx1);
     this.load.audio("spooky_sfx2", spooky_sfx2);
@@ -408,6 +415,7 @@ var LoadState = {
     //   callbackScope: this,
     //   loop: false,
     // });
+    this.scene.launch("DataState");
 
     const defaultGlobs = 0;
     const defaultHealth = 5;
@@ -416,7 +424,8 @@ var LoadState = {
     const defaultDailyCustomerMax = 2;
 
     const Total_Globs = parseFloat(secureLocalStorage.getItem("Total_Globs"));
-    const Globs = parseFloat(secureLocalStorage.getItem("Globs"));
+    const Globs = parseFloat(secureLocalStorage.getItem("Globble"));
+    //console.log("Globs from save:", Globs);
     const Total_Orders = parseInt(secureLocalStorage.getItem("Total_Orders"));
     const Total_Correct = parseInt(secureLocalStorage.getItem("Total_Correct"));
     const Average_Pleasantry = parseInt(
@@ -445,50 +454,60 @@ var LoadState = {
     let furnitureList = [];
     let ingredientList = [];
 
-
     function wipeData(game) {
       for (const key in secureLocalStorage._localStorageItems) {
         // loops through all keys
         const newKey = key.replace("@secure.", "");
-        //console.log(key, secureLocalStorage.getItem(newKey));
+        ////console.log(key, secureLocalStorage.getItem(newKey));
         secureLocalStorage.setItem(newKey, null);
-        //console.log(key, secureLocalStorage.getItem(newKey)); // should be wiped
+        ////console.log(key, secureLocalStorage.getItem(newKey)); // should be wiped
         game.registry.set(newKey, secureLocalStorage.getItem(newKey));
       }
     }
 
-    function isStringifiedArray(data){
+    function isStringifiedArray(data) {
       try {
         const parsed = JSON.parse(data);
         return Array.isArray(parsed);
-    } catch (e) {
+      } catch (e) {
         return false;
-    }
+      }
     }
 
     function setPreviousSave(game) {
+      //console.log("BEGIN LOADING SAVE DATA");
       for (const key in secureLocalStorage._localStorageItems) {
         // loops through all keys
         const newKey = key.replace("@secure.", "");
         const data = secureLocalStorage.getItem(newKey);
-        //console.log(key, data);
-        const isArray = isStringifiedArray(data)
+        //console.log("--- Loaded",newKey,"as:", data);
+        const isArray = isStringifiedArray(data);
+        if (newKey == "Todays_Customers") {
+          //console.log("loading todays customers from save", data);
+        }
         if (isArray) {
+          if (newKey == "Todays_Customers") {
+            //console.log("is array");
+          }
           game.registry.set(newKey, JSON.parse(data));
+          //console.log("parsed as array", game.registry.get(newKey));
         } else {
           game.registry.set(newKey, data);
         }
       }
+      //console.log("FINISHED LOADING SAVE DATA");
+      //console.log("-----------")
     }
 
+    this.sound.add("food_sfx", { volume: 0.5 }).play();
 
-    const NO_SAVE = true;
-
-    if (NO_SAVE) {
-      //(Health === null || Health === undefined || Health <= 0) {
+    const NO_SAVE = false;
+    //wipeData(this);
+    if (NO_SAVE || (isNaN(Health) || Health === null || Health === undefined || Health <= 0) || Total_Orders<=0) {
       // new save
+      wipeData(this);
       this.registry.set("Total_Globs", 0);
-      this.registry.set("Globs", defaultGlobs);
+      this.registry.set("Globble", defaultGlobs);
       this.registry.set("Total_Orders", 0);
       this.registry.set("Total_Correct", 0);
       this.registry.set("Average_Pleasantry", 0);
@@ -501,6 +520,8 @@ var LoadState = {
       this.registry.set("IngredientMax", defaultIngredientMax);
       this.registry.set("Unlocked_Customers", defaultCustomers);
       this.registry.set("DailyCustomerMax", defaultDailyCustomerMax);
+      this.registry.set("Todays_Customers", []);
+      this.registry.set("DailyCustomerCount", 0);
       this.registry.set("Health", defaultHealth);
       this.registry.set("Items", []);
       this.registry.set("Notes", {});
@@ -520,7 +541,7 @@ var LoadState = {
       secureLocalStorage.setItem("Total_Globs", 0);
       secureLocalStorage.setItem("Total_Orders", 0);
       secureLocalStorage.setItem("Total_Correct", 0);
-      secureLocalStorage.setItem("Globs", defaultGlobs);
+      secureLocalStorage.setItem("Globble", defaultGlobs);
       secureLocalStorage.setItem("IngredientMax", defaultIngredientMax);
       secureLocalStorage.setItem(
         "Unlocked_Customers",
@@ -532,35 +553,33 @@ var LoadState = {
       // load save
       //console.log("Loading Save Data...");
       setPreviousSave(this);
-      const modifiers = this.registry.get("Modifiers") || [];
-      for (let i = 0; modifiers.length; i++) {
-        // furniture setup
-        let modName = modifiers[i];
-        let modInfo = shop_dictonary.purchasables[modName];
-        if (modInfo.type == "furniture") {
-          furnitureList.push(modName);
-        }
-      }
+      //const modifiers = this.registry.get("Modifiers") || [];
+      // for (let i = 0; modifiers.length; i++) {
+      //   // furniture setup
+      //   let modName = modifiers[i];
+      //   let modInfo = shop_dictonary.purchasables[modName];
+      //   if (modInfo.type == "furniture") {
+      //     furnitureList.push(modName);
+      //   }
+      // }
 
       const bouncyballs = this.registry.get("BouncyBallsInKitchen") || [];
-      for (let i = 0; bouncyballs.length; i++) { // currently not accurate to what they actually had
-        let ball = bouncyballs[i]
-        ingredientList.push(ball)
+      //console.log("bouncyballs from save:", bouncyballs);
+      for (let i = 0; i < bouncyballs.length; i++) {
+        let ball = bouncyballs[i];
+        //console.log("loading ball into kitchen from save:", ball);
+        ingredientList.push(ball);
       }
+      this.registry.set("BouncyBallsInKitchen", []);
     }
-
-    this.registry.set("FurnitureShopEvent", furnitureList);
+    //this.registry.set("FurnitureShopEvent", undefined);
 
     // incase user didnt click on kitchen after purchasing ball before exiting last time
-    const kitchenItemEventList = this.registry.get("NewKitchenItemEvent") || []
+    const kitchenItemEventList = this.registry.get("NewKitchenItemEvent") || [];
 
-    const totalKitchenItems = [
-      ...kitchenItemEventList,
-      ...ingredientList,
-    ];
+    const totalKitchenItems = [...kitchenItemEventList, ...ingredientList];
     this.registry.set("NewKitchenItemEvent", totalKitchenItems);
 
-    this.scene.launch("DataState");
     this.scene.launch("MenuState");
     this.scene.launch("ShakeState");
     //this.scene.launch("ShopState");

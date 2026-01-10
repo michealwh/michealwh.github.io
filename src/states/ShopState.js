@@ -12,7 +12,7 @@ const showPrompt = (game, show, showBtns) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [game.promptText],
@@ -21,7 +21,7 @@ const showPrompt = (game, show, showBtns) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     if (showBtns == true) {
       game.tweens.add({
@@ -31,7 +31,7 @@ const showPrompt = (game, show, showBtns) => {
         duration: 500,
         repeat: 0,
         yoyo: false,
-        onComplete: function () {},
+        onComplete: function () { },
       });
       game.tweens.add({
         targets: [game.confirmBtn, game.cancelBtn],
@@ -40,7 +40,7 @@ const showPrompt = (game, show, showBtns) => {
         duration: 500,
         repeat: 0,
         yoyo: false,
-        onComplete: function () {},
+        onComplete: function () { },
       });
     }
   } else {
@@ -52,7 +52,7 @@ const showPrompt = (game, show, showBtns) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [game.promptCostText],
@@ -61,7 +61,7 @@ const showPrompt = (game, show, showBtns) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
     game.tweens.add({
       targets: [game.confirmBtn, game.cancelBtn],
@@ -70,7 +70,7 @@ const showPrompt = (game, show, showBtns) => {
       duration: 500,
       repeat: 0,
       yoyo: false,
-      onComplete: function () {},
+      onComplete: function () { },
     });
   }
 };
@@ -98,14 +98,16 @@ const confirmButtonHandler = (game, object) => {
         object.scale = 0.2;
         debounce = false;
 
-        let current_globs = game.registry.get("Globs");
+        let current_globs = game.registry.get("Globble");
         if (game.activeItemInfo == "reroll") {
           let new_globs = current_globs - game.reRollCost;
-          game.registry.set("Globs", new_globs.toFixed(2));
+          game.registry.set("Globble", new_globs.toFixed(2));
+          //console.log("Set Globs to:", game.registry.get("Globble"));
           game.rerollButton.input.enabled = false;
           shuffleItems(game, true);
           game.rerollButton.tint = "0x2E2E2E";
           showPrompt(game, false);
+          game.registry.set("Reroll_Info", [game.reRollCost, false]);
           game.tweens.add({
             targets: game.rerollButton,
             rotation: 360 * (Math.PI / 180),
@@ -113,12 +115,13 @@ const confirmButtonHandler = (game, object) => {
             duration: 400,
             repeat: 0,
             yoyo: false,
-            onComplete: function () {},
+            onComplete: function () { },
           });
           return;
         }
         let new_globs = current_globs - game.activeItemInfo.cost;
-        game.registry.set("Globs", new_globs.toFixed(2));
+        game.registry.set("Globble", new_globs.toFixed(2));
+        //console.log("Set Globs to:", game.registry.get("Globble"));
         if (!game.activeItemInfo.repeatable) {
           game.activeButton.tint = "0x2E2E2E";
           game.activeButton.input.enabled = false;
@@ -142,7 +145,7 @@ const confirmButtonHandler = (game, object) => {
           !game.activeItemInfo.key.includes("ball") &&
           game.activeItemInfo.type != "ingredient"
         ) {
-          let currentItemList = game.registry.get("Items");
+          let currentItemList = game.registry.get("Items") || [];
           currentItemList.push(game.activeItemInfo.key);
           game.registry.set("Items", currentItemList);
         }
@@ -179,7 +182,34 @@ const cancelButtonHandler = (game, object) => {
   });
 };
 
-const shuffleItems = (game, animate) => {
+const shuffleItems = (game, animate, previousSave) => {
+
+
+  if (previousSave == true) {
+    //console.log("LOADING PREVIOUS SAVE RAAAAH")
+    const shopItems = game.registry.get("Daily_Shop_Items");
+    game.dailyItems = shopItems;
+    game.shopItem1.setTexture(game.dailyItems[0] + "_box");
+    game.shopItem2.setTexture(game.dailyItems[1] + "_box");
+    game.shopItem3.setTexture(game.dailyItems[2] + "_box");
+
+    if ( !game.allItemKeys.includes(game.dailyItems[0])){
+      game.shopButton1.tint = "0x2E2E2E";
+      game.shopButton1.input.enabled = false;
+    }
+     if ( !game.allItemKeys.includes(game.dailyItems[1])){
+      game.shopButton2.tint = "0x2E2E2E";
+      game.shopButton2.input.enabled = false;
+    }
+     if ( !game.allItemKeys.includes(game.dailyItems[2])){
+      game.shopButton3.tint = "0x2E2E2E";
+      game.shopButton3.input.enabled = false;
+    }
+    return
+  } else {
+    //console.log("NORMAL ITS NORMAL WE ARE SHUFFLING WHY GOD OH WHY")
+  }
+
   const shuffleArray = (array) => {
     let currentIndex = array.length;
     while (currentIndex != 0) {
@@ -192,7 +222,7 @@ const shuffleItems = (game, animate) => {
     }
   };
 
-  const currentMoney = game.registry.get("Globs");
+  const currentMoney = game.registry.get("Globble");
   const currentDay = game.registry.get("Day");
 
   if (currentDay > 20) {
@@ -224,6 +254,7 @@ const shuffleItems = (game, animate) => {
     game.dailyItems = [itemList[0], itemList[1], itemList[2], "bouncyball"];
   }
 
+  game.registry.set("Daily_Shop_Items", game.dailyItems);
   game.shopItem1.setTexture(game.dailyItems[0] + "_box");
   game.shopItem2.setTexture(game.dailyItems[1] + "_box");
   game.shopItem3.setTexture(game.dailyItems[2] + "_box");
@@ -290,7 +321,7 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
       onComplete: function () {
         object.scale = 0.2;
         debounce = false;
-        let currentGlobs = game.registry.get("Globs");
+        let currentGlobs = game.registry.get("Globble");
         if (currentGlobs >= shopItemInfo.cost) {
           game.promptText.text = "Purchase: " + shopItemInfo.title;
           game.promptCostText.text = "$" + shopItemInfo.cost;
@@ -384,12 +415,13 @@ const reRollButtonhandler = (game, object) => {
     game.infoText.scale = 0;
     if (game.promptOpen === false) {
       game.click_sfx.play();
-      let currentGlobs = game.registry.get("Globs");
+      let currentGlobs = game.registry.get("Globble");
       if (currentGlobs >= game.reRollCost) {
         game.activeItemInfo = "reroll";
         game.promptText.text = "Purchase: Reroll";
         game.promptCostText.text = "$" + game.reRollCost;
         showPrompt(game, true, true);
+        game.registry.set("Rerolled_Today", true);
       } else {
         let dialog_options = [
           "Your poverty is insufferable.",
@@ -468,7 +500,7 @@ const reRollButtonhandler = (game, object) => {
 };
 
 var ShopState = {
-  preload() {},
+  preload() { },
 
   create() {
     // this.bgMusic = this.sound.add("bgMusic")
@@ -495,7 +527,7 @@ var ShopState = {
         item === "pragmaticparty"
       ) {
         this.allPleasantryKeys.push(item);
-        //console.log(this.allPleasantryKeys);
+        ////console.log(this.allPleasantryKeys);
       }
       if (itemInfo.cost < 100) {
         this.allCheapItemKeys.push(item);
@@ -601,47 +633,80 @@ var ShopState = {
     //this.rerollButton.rotation=35*(Math.PI/180);
     reRollButtonhandler(this, this.rerollButton);
 
-    const AlreadyOwnedItems = localStorage.getItem("Items");
-    if (AlreadyOwnedItems) {
+    const AlreadyOwnedItems = this.registry.get("Modifiers") || [];
+    if (AlreadyOwnedItems.length > 0) {
       //console.log("found owned items");
-      let itemList = JSON.parse(AlreadyOwnedItems);
-      itemList.forEach((item) => {
+      AlreadyOwnedItems.forEach((item) => {
         let itemInfo = shop_dictionary.purchasables[item];
         if (itemInfo === undefined) {
+          //console.log("item info undefined for", item);
           return;
         }
         if (!itemInfo.repeatable) {
-          this[item + "Button"].tint = "0x2E2E2E";
-          this[item + "Button"].input.enabled = false;
-          let newKeys = this.allItemKeys.filter((item) => item !== item);
+          //console.log("removing non repeatable item:", item);
+          //this[item + "Button"].tint = "0x2E2E2E";
+          //this[item + "Button"].input.enabled = false;
+          let newKeys = this.allItemKeys.filter((otheritem) => otheritem !== item);
           this.allItemKeys = newKeys;
+          ////console.log("new all item keys:",this.allItemKeys);
         } else if (itemInfo.repeatable > 0) {
           this[item + "Left"] -= 1;
+          //console.log("reducing repeatable item:", item, "left:", this[item + "Left"]);
           if (this[item + "Left"] <= 0) {
-            this[item + "Button"].tint = "0x2E2E2E";
-            this[item + "Button"].input.enabled = false;
-            let newKeys = this.allItemKeys.filter((item) => item !== item);
+            ////console.log("removing repeatable item:", item);
+            //this[item + "Button"].tint = "0x2E2E2E";
+            //this[item + "Button"].input.enabled = false;
+            let newKeys = this.allItemKeys.filter((otheritem) => otheritem !== item);
             this.allItemKeys = newKeys;
+            ////console.log("new all item keys:",this.allItemKeys);
             let newPlesKeys = this.allPleasantryKeys.filter(
-              (item) => item !== item
+              (otheritem) => otheritem !== item
             );
             this.allPleasantryKeys = newPlesKeys;
+            ////console.log("new all pleasantry keys:",this.allPleasantryKeys);
             let newCheapKeys = this.allCheapItemKeys.filter(
-              (item) => item !== item
+              (otheritem) => otheritem !== item
             );
             this.allCheapItemKeys = newCheapKeys;
+            ////console.log("new all cheap keys:",this.allCheapItemKeys);
             let newExpensiveKeys = this.allExpensiveItemKeys.filter(
-              (item) => item !== item
+              (otheritem) => otheritem !== item
             );
             this.allExpensiveItemKeys = newExpensiveKeys;
+            ////console.log("new all expensive keys:",this.allExpensiveItemKeys);
           }
         }
       });
     }
 
-    const totalMoney = this.registry.get("Globs") || 0;
-    this.reRollCost = Math.floor(Math.random() * Math.max(1, totalMoney / 2)) + 1.99;
-    shuffleItems(this);
+    const totalMoney = this.registry.get("Globble") || 0;
+    if (this.registry.get("Reroll_Info") === undefined || this.registry.get("Reroll_Info") === null) {
+      //console.log("no reroll info found, generating new");
+      this.reRollCost = Math.floor(Math.random() * Math.max(1, totalMoney / 2)) + 1.99;
+      this.registry.set("Reroll_Info", [this.reRollCost, true]);
+    } else {
+      //console.log("found reroll info in registry:");
+      //console.log(this.registry.get("Reroll_Info"))
+      this.reRollCost = this.registry.get("Reroll_Info")[0];
+      if (this.registry.get("Reroll_Info")[1] === false) {
+        this.rerollButton.input.enabled = false;
+        this.rerollButton.tint = "0x2E2E2E";
+      }
+    }
+
+
+    if (this.registry.get("ShopDay") !== undefined) { // previous save detected
+      this.day = this.registry.get("ShopDay");
+      if (this.day >= this.registry.get("Day")) {
+        shuffleItems(this, false, true);
+      } else {
+        //console.log("should auto shuffle items")
+      }
+    } else {
+      this.day = this.registry.get("Day");
+      this.registry.set("ShopDay", this.day);
+      shuffleItems(this);
+    }
 
     this.infoFrame = this.add
       .image(100, 100, "info_frame")
@@ -701,10 +766,13 @@ var ShopState = {
     if (this.registry.get("Day") !== this.day) {
       //console.log("day changed in shop");
       this.day = this.registry.get("Day");
+      this.registry.set("ShopDay", this.day);
+      this.registry.set("Rerolled_Today", false);
       this.rerollButton.input.enabled = true;
       this.rerollButton.clearTint();
-      const totalMoney = this.registry.get("Globs") || 0;
-      this.reRollCost = Math.floor(Math.random() * Math.max(1, totalMoney / 2))+1.99;
+      const totalMoney = this.registry.get("Globble") || 0;
+      this.reRollCost = Math.floor(Math.random() * Math.max(1, totalMoney / 2)) + 1.99;
+      this.registry.set("Reroll_Info", [this.reRollCost, true]);
       //console.log("rerollcost", this.reRollCost, totalMoney);
       shuffleItems(this);
     }

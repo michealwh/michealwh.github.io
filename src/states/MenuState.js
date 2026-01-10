@@ -3,7 +3,7 @@
 
 const globUpdateHandler = (game) => {
   const currentAmount = parseFloat(game.globText.text);
-  const newAmount = parseFloat(game.registry.get("Globs")).toFixed(2);
+  const newAmount = parseFloat(game.registry.get("Globble")).toFixed(2);
   const difference = (newAmount - currentAmount).toFixed(2);
   //console.log("difference added to the glob",difference);
   game.globText.setText(newAmount.toString());
@@ -141,9 +141,10 @@ const ratHandler = (game) => {
       //console.log("increasing rat count")
       let ratCount = game.registry.get("RatsToAdd") || 0
       let kitchenCount = game.registry.get("KitchenRatCount") || 0
-      if (game.registry.get("DayOver") === true){
+      if (game.registry.get("DayOver") === true || game.registry.get("Paused")===true){
         return
       }
+      
       if (game.registry.get("currentRatChance")){
         let chanceCount = game.registry.get("currentRatChance")
         let ratInfestationFailed = false;
@@ -219,7 +220,7 @@ var MenuState = {
     const globText = this.add.text(
       915,
       60,
-      this.registry.get("Globs").toString() || 0,
+      this.registry.get("Globble").toString() || 0,
       {
         fontFamily: "font1",
         fontSize: "50px",
@@ -343,10 +344,12 @@ var MenuState = {
         }
         click_sfx.play();
         this.time_paused_start = this.time.now;
+        this.registry.set("Paused", true);
         ////console.log("setting start of paused time", this.time_paused_start);
       } else {
         click_sfx.play();
         this.time_paused += this.time.now - this.time_paused_start;
+        this.registry.set("Paused", false);
         ////console.log(this.time_paused, this.time_paused_start, this.time.now);
       }
 
@@ -568,14 +571,21 @@ var MenuState = {
         this.scene.bringToTop();
       }
     });
+
+
+    if (this.registry.get("RatsAdded") === true) {
+      //console.log("initializing rat handler menu state");
+      ratHandler(this);
+    }
+
     const game = this;
     this.registry.events.on("changedata", function (parent, key, data) {
-      if (key === "Globs") {
+      if (key === "Globble") {
         globUpdateHandler(game);
       } else if (key === "Health") {
         healthHandler(game);
-      } else if (key === "RatsAdded"){
-        //console.log("rats added menu state")
+      } else if (key === "RatsAdded") {
+        //console.log("rats added menu state");
         // let ratCount = game.registry.get("RatsToAdd") || 0
         // game.registry.set("RatsToAdd",ratCount+1)
         ratHandler(game);

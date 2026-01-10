@@ -227,8 +227,8 @@ const purchaseActions = {
   },
   chair1: function (game) {
     itemReveal(game, "chair1");
-    let furnitureList = game.registry.get("FurnitureShopEvent");
-    if (furnitureList === undefined) {
+    let furnitureList = game.registry.get("FurnitureShopEvent") || [];
+    if ((Array.isArray(furnitureList) && furnitureList.length===0)  || furnitureList === undefined) {
       furnitureList = [];
     }
     furnitureList.push("chair1");
@@ -239,14 +239,14 @@ const purchaseActions = {
     //console.log(currentModList)
     game.registry.set("Modifiers", currentModList)
 
-    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
+    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry")) || 0;
     pleasantryScore += 5;
     game.registry.set("Average_Pleasantry", pleasantryScore);
   },
   table1: function (game) {
     itemReveal(game, "table1");
-    let furnitureList = game.registry.get("FurnitureShopEvent");
-    if (furnitureList === undefined) {
+    let furnitureList = game.registry.get("FurnitureShopEvent") || [];
+    if ((Array.isArray(furnitureList) && furnitureList.length===0)  || furnitureList === undefined) {
       furnitureList = [];
     }
     furnitureList.push("table1");
@@ -254,14 +254,14 @@ const purchaseActions = {
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("table1")
     game.registry.set("Modifiers", currentModList)
-    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
+    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry")) || 0;
     pleasantryScore += 10;
     game.registry.set("Average_Pleasantry", pleasantryScore);
   },
   slorgplush: function (game) {
     itemReveal(game, "slorgplush");
-    let furnitureList = game.registry.get("FurnitureShopEvent");
-    if (furnitureList === undefined) {
+    let furnitureList = game.registry.get("FurnitureShopEvent") || [];
+    if ((Array.isArray(furnitureList) && furnitureList.length===0)  || furnitureList === undefined) {
       furnitureList = [];
     }
     furnitureList.push("slorgplush");
@@ -269,14 +269,14 @@ const purchaseActions = {
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("slorgplush")
     game.registry.set("Modifiers", currentModList)
-    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
+    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry")) || 0;
     pleasantryScore += 20;
     game.registry.set("Average_Pleasantry", pleasantryScore);
   },
   slorgbanner: function (game) {
     itemReveal(game, "slorgbanner");
-    let furnitureList = game.registry.get("FurnitureShopEvent");
-    if (furnitureList === undefined) {
+    let furnitureList = game.registry.get("FurnitureShopEvent") || [];
+    if ((Array.isArray(furnitureList) && furnitureList.length===0)  || furnitureList === undefined) {
       furnitureList = [];
     }
     furnitureList.push("slorgbanner");
@@ -284,7 +284,7 @@ const purchaseActions = {
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("slorgbanner")
     game.registry.set("Modifiers", currentModList)
-    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
+    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry")) || 0;
     pleasantryScore += 40;
     game.registry.set("Average_Pleasantry", pleasantryScore);
   },
@@ -311,7 +311,7 @@ const purchaseActions = {
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("pragmaticparty")
     game.registry.set("Modifiers", currentModList)
-    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
+    let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry")) || 0;
     pleasantryScore += 1;
     game.registry.set("Average_Pleasantry", pleasantryScore);
   },
@@ -502,8 +502,8 @@ const purchaseActions = {
                               reveal_background.destroy();
                               boxView.destroy();
                               
-                                let furnitureList = game.registry.get("FurnitureShopEvent");
-                                if (furnitureList === undefined) {
+                                let furnitureList = game.registry.get("FurnitureShopEvent") || [];
+                                if ((Array.isArray(furnitureList) && furnitureList.length===0)  || furnitureList === undefined) {
                                   furnitureList = [];
                                 }
                                 
@@ -514,7 +514,7 @@ const purchaseActions = {
                                 game.registry.set("Modifiers", currentModList)
                                 const currentGlumCount = game.registry.get("GlumDevilCount") || 0;
                                 game.registry.set("GlumDevilCount", currentGlumCount + 1);
-                                let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry"));
+                                let pleasantryScore = parseInt(game.registry.get("Average_Pleasantry")) || 0;
                                 if (chosenglum == "glumheart") {
                                   pleasantryScore+=10;
                                 } else {

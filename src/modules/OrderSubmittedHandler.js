@@ -94,7 +94,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
   let punctualityStat = parseInt(game.registry.get("Current_Punctuality"));
   let pleasantryStat = parseInt(game.registry.get("Average_Pleasantry")) || 0;
 
-  const current_globs = game.registry.get("Globs");
+  const current_globs = game.registry.get("Globble");
   const current_total_globs = game.registry.get("Total_Globs");
 
   let npc_info = npc_dictionary.npcs[game.current_customer_index];
@@ -400,7 +400,8 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
         game.npc.play("glob_happy");
       }
       new_total_globs += moneyAddition;
-      game.registry.set("Globs", new_total_globs.toFixed(2));
+      game.registry.set("Globble", new_total_globs.toFixed(2));
+      //console.log("Set Globs to:", game.registry.get("Globble"));
       game.registry.set("Total_Globs", new_total_points.toFixed(2));
       const current_correct = parseInt(game.registry.get("Total_Correct")) || 0;
       game.registry.set("Total_Correct", current_correct + 1);
@@ -445,7 +446,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
           (notes_info.startday && CurrentDay >= notes_info.startday) ||
           (CurrentDay >= defaultStartDay && !notes_info.startday)
         ) {
-          let all_collected_notes = game.registry.get("Notes");
+          let all_collected_notes = game.registry.get("Notes") || {};
           let npc_collected = all_collected_notes[game.npcName];
           let notes = notes_info.notes;
           let order = notes_info.order;
@@ -511,7 +512,8 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
         }
         new_total_globs += moneyAddition;
 
-        game.registry.set("Globs", new_total_globs.toFixed(2));
+        game.registry.set("Globble", new_total_globs.toFixed(2));
+        //console.log("Set Globs to:", game.registry.get("Globble"));
       }
       const sound_num = Math.floor(Math.random() * 3) + 1;
       game["spooky_sfx" + sound_num].play();
