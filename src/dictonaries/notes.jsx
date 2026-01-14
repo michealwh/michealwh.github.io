@@ -94,6 +94,24 @@ var notes = {
       },
     ],
   },
+  "Glorbina":{
+    key: "Glorbina",
+    order: "random",
+    chance: 8,
+    startday: 5,
+    notes: [
+      {
+        title: "Untitled",
+        description: "I was made to endure.",
+        image: false,
+      },
+      {
+        title: "Untitled",
+        description: "The TV is loud.",
+        image: false,
+      },
+    ],
+  },
   "Grugory Hefert": {
     key: "Grugory Hefert",
     order: "random",
@@ -113,7 +131,7 @@ var notes = {
       {
         title: "Untitled",
         description:
-          "I think as you get older you learn to appreciate the moments alone. Just you. It's really nice actually.",
+          "I think as you get older you learn to appreciate the moments alone. Just you.\nIt's really nice actually.",
       },
       {
         title: "Untitled",
@@ -150,7 +168,11 @@ var notes = {
       },
       {
         title: "Untitled",
-        description: "I get so worried about our problems I forget our kids are growing up. I hope they aren't like us."
+        description: "I get so worried about our problems I forget our kids are growing up.\nI hope they aren't like us."
+      },
+      {
+        title: "Untitled",
+        description: "Do you feel listened to?"
       }
     ],
   },
@@ -236,6 +258,45 @@ var notes = {
     ],
   },
 
+  "Janiyah Brooks": {
+    key: "Janiyah Brooks",
+    order: "random",
+    chance: 4,
+    startday: 5,
+    notes: [
+      {
+        title: "Untitled",
+        description: "No one can effect me.\nI am effectless."
+      },
+      {
+        title: "Untitled",
+        description: "I wish people saw my vulnerability as an opportunity to be friends not hurt me."
+      },
+      {
+        title: "Untitled",
+        description: "You should come by Grettle Park Cafe sometime.\nI work there on weekends."
+      },
+      {
+        title: "Untitled",
+        description: "I remember when this place had mustard yellow wallpaper.\nIt's good they changed it."
+      }
+    ]
+  },
+
+  "Krandle Hempher": {
+    key: "Krandle Hempher",
+    order: "random",
+    chance: 5,
+    startday: 8,
+    notes: [
+      {
+        title: "Untitled",
+        description: "STOP STOP STOP STOP STOP STOP STOP."
+      }
+    ]
+  },
+
+
   "Irina Turner": {
     key: "Irina Turner",
     order: "random",
@@ -266,9 +327,34 @@ var notes = {
       }
     ],
   },
+  "Orville Braswell" : {
+    key: "Orville Braswell",
+    order: "random",
+    chance: 5,
+    startday: 3,
+    notes: [
+      {
+        title: "Untitled",
+        description:
+          "My wealth is immeasurable and my joy is infinite.",
+      },
+      {
+        title: "Untitled",
+        description: "Do not ask me how I garnered this power."
+      },
+      {
+        title: "Untitled",
+        description: "When two people love each other very much they may produce a child.\nThat is what happened with my money."
+      },
+      {
+        title: "Untitled",
+        description: "The offspring I've created seem to gain pleasure here."
+      }
+    ],
+  },
   "Melf Proglog": {
     key: "Melf Proglog",
-    order: "chrono",
+    order: "random",
     chance: 3,
     startday: 4,
     notes: [
@@ -277,6 +363,10 @@ var notes = {
         description:
           "Leaves turned brown.\nThe world goes round.\nIt's autumn now and I'm numb.",
       },
+      {
+        title: "Withdrawn",
+        description: "Stretched out.\nThreads sewn with doubt.\nJeans outgrown.\nI reap what they have sown.\nI've learned to hate this home.\nNow it is not my own."
+      }
     ],
   },
 };

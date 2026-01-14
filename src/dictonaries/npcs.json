@@ -116,16 +116,18 @@
             "description": "Youngest of the Gloo brothers."
         },
         {
-            "name": "Random",
-            "sprite": "guy4.1",
+            "name": "Janiyah Brooks",
+            "sprite": "gorl4",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Part-time artist. Full-time rollerskating enthusiast."
         },
         {
-            "name": "Random",
-            "sprite": "guy4.2",
+            "name": "Krandle Hempher",
+            "sprite": "hempher",
             "start_scale": 0.05,
-            "scale": 1
+            "scale": 1,
+            "description": "Krandle is what Krandle does."
         },
         {
             "name": "Random",
@@ -188,6 +190,13 @@
             "start_scale": 0.05,
             "scale": 1,
             "description": "Menace on the rollerskates."
+        },
+        {
+            "name": "Orville Braswell",
+            "sprite": "wealthorol",
+            "start_scale": 0.05,
+            "scale": 1,
+            "description": "Obsessive over something that only has merit because we grant it."
         }
 
     ],

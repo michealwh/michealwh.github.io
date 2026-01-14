@@ -40,6 +40,9 @@ import shorts_guy3 from "../assets/game/npcs/shorts_guy3.png";
 import gorl2 from "../assets/game/npcs/gorl2.png";
 import gorl3 from "../assets/game/npcs/gorl3.png";
 import proglog from "../assets/game/npcs/proglog.png";
+import hempher from "../assets/game/npcs/hempher.png";
+import gorl4 from "../assets/game/npcs/gorl4.png";
+import wealthorol from "../assets/game/npcs/wealthorol.png";
 
 import gorath from "../assets/game/special/gorath.png";
 import monrock from "../assets/game/special/morock.png";
@@ -323,6 +326,9 @@ var LoadState = {
     this.load.image("gorl2", gorl2);
     this.load.image("gorl3", gorl3);
     this.load.image("proglog", proglog);
+    this.load.image("hempher", hempher);
+    this.load.image("gorl4", gorl4);
+    this.load.image("wealthorol",wealthorol);
 
     this.load.image("gorath", gorath);
     this.load.image("monrock", monrock);

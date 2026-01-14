@@ -316,7 +316,7 @@ const ratMinigameShow = (game, rat) => {
     scale: ratFrameScale,
     duration: 200,
     onComplete: function () {
-      game.ratTitle.text = rat.ratName;
+      game.ratTitle.text = rat.ratName + " the Rat";
       game.ratYesBtn.visible = true;
       game.ratNoBtn.visible = true;
       game.ratTitle.visible = true;
