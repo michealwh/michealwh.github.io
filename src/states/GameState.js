@@ -1256,7 +1256,7 @@ const restartGameHandler = (game, button) => {
 };
 
 // furniture handler
-const furnitureHandler = (game, furnitureList,previousSave) => {
+const furnitureHandler = (game, furnitureList, previousSave) => {
   for (const i in furnitureList) {
     const object = furnitureList[i];
     if (object === "chair1" && game.availableChairs.length > 0) {
@@ -1420,16 +1420,21 @@ const introFrameHandler = (game) => {
 };
 
 
-const showLoadFrame = (game,show) => {
+const showLoadFrame = (game, show) => {
   if (show === true) {
     game.loadFrame.visible = true;
     game.loadTitle.visible = true;
     game.loadDescription.visible = true;
     game.loadYesButton.visible = true;
     game.loadNoButton.visible = true;
+    game.loadFrame.y = 500 - 1000
+    game.loadDescription.y = 550 - 1000
+    game.loadYesButton.y = 650 - 1000
+    game.loadNoButton.y = 650 - 1000
+    game.loadTitle.y = 300 - 1000
 
     game.tweens.add({
-      targets: [game.loadFrame,game.loadDescription],
+      targets: [game.loadFrame, game.loadDescription],
       y: 500,
       ease: "Power1",
       duration: 200,
@@ -1440,7 +1445,7 @@ const showLoadFrame = (game,show) => {
     });
 
     game.tweens.add({
-      targets: [game.loadYesButton,game.loadNoButton],
+      targets: [game.loadYesButton, game.loadNoButton],
       y: 650,
       ease: "Power1",
       duration: 200,
@@ -1452,7 +1457,7 @@ const showLoadFrame = (game,show) => {
 
     game.tweens.add({
       targets: [game.loadTitle],
-      y: 350,
+      y: 300,
       ease: "Power1",
       duration: 200,
       repeat: 0,
@@ -1463,8 +1468,8 @@ const showLoadFrame = (game,show) => {
 
   } else {
     game.tweens.add({
-      targets: [game.loadFrame,game.loadDescription],
-      y: 500-1000,
+      targets: [game.loadFrame, game.loadDescription],
+      y: 500 - 1000,
       ease: "Power1",
       duration: 200,
       repeat: 0,
@@ -1474,8 +1479,8 @@ const showLoadFrame = (game,show) => {
     });
 
     game.tweens.add({
-      targets: [game.loadYesButton,game.loadNoButton],
-      y: 650-1000,
+      targets: [game.loadYesButton, game.loadNoButton],
+      y: 650 - 1000,
       ease: "Power1",
       duration: 200,
       repeat: 0,
@@ -1486,7 +1491,7 @@ const showLoadFrame = (game,show) => {
 
     game.tweens.add({
       targets: [game.loadTitle],
-      y: 350-1000,
+      y: 300 - 1000,
       ease: "Power1",
       duration: 200,
       repeat: 0,
@@ -1494,7 +1499,7 @@ const showLoadFrame = (game,show) => {
       onComplete: function () {
       },
     });
-    
+
   }
 }
 
@@ -1511,71 +1516,99 @@ const loadGameButtonsHandler = (game) => {
       repeat: 0,
       yoyo: true,
       onComplete: function () {
-        showLoadFrame(game, false);
 
-      //console.log("--LOADED SAVE HANDLING--");
-      // handle saved games
-      //console.log("not at start skipping intro frame");
-      //console.log("todays customers", game.todays_customers);
 
-      if (game.registry.get("Added_Furniture") && game.registry.get("Added_Furniture").length > 0) {
-        let addedFurniture = game.registry.get("Added_Furniture");
-        const furnitureList = game.registry.get("FurnitureShopEvent") || [];
+        if (!game.targetTimesConfirmed || game.targetTimesConfirmed <= 0) { // loading previous game
+          showLoadFrame(game, false);
 
-        // furniture shop event is causing problems with glumdevils loading in
-        if ((Array.isArray(furnitureList) && furnitureList.length>0)  && game.registry.get("FurnitureShopEvent") !== undefined) {
-          addedFurniture.push(...game.registry.get("FurnitureShopEvent"));
-          //console.log("added furn shop event to prev loaded furniture")
-          game.registry.set("FurnitureShopEvent", []);
-          game.registry.set("Added_Furniture", addedFurniture);
+          //console.log("--LOADED SAVE HANDLING--");
+          // handle saved games
+          //console.log("not at start skipping intro frame");
+          //console.log("todays customers", game.todays_customers);
+
+          if (game.registry.get("Added_Furniture") && game.registry.get("Added_Furniture").length > 0) {
+            let addedFurniture = game.registry.get("Added_Furniture");
+            const furnitureList = game.registry.get("FurnitureShopEvent") || [];
+
+            // furniture shop event is causing problems with glumdevils loading in
+            if ((Array.isArray(furnitureList) && furnitureList.length > 0) && game.registry.get("FurnitureShopEvent") !== undefined) {
+              addedFurniture.push(...game.registry.get("FurnitureShopEvent"));
+              //console.log("added furn shop event to prev loaded furniture")
+              game.registry.set("FurnitureShopEvent", []);
+              game.registry.set("Added_Furniture", addedFurniture);
+            }
+            furnitureHandler(game, addedFurniture, true);
+          }
+
+          if (game.registry.get("RatsAdded") === true) {
+            let totalRats = 0;
+            totalRats = game.registry.get("RatsToAdd") || 0;
+            totalRats += game.registry.get("KitchenRatCount") || 0;
+            game.registry.set("KitchenRatCount", 0);
+            game.registry.set("RatsToAdd", totalRats);
+          }
+          // bouncyballs in kitchen from previous save
+          // already handled in load state
+          // if (game.registry.get("BouncyBallsInKitchen") !== undefined && game.registry.get("BouncyBallsInKitchen").length > 0) {
+          //   let ingredientToAddList = game.registry.get("NewKitchenItemEvent") || [];
+          //   const bouncyballsInKitchen = game.registry.get("BouncyBallsInKitchen");
+          //   for (const i in bouncyballsInKitchen) {
+          //     ingredientToAddList.push(bouncyballsInKitchen[i]);
+          //   }
+          //   game.registry.set("NewKitchenItemEvent", ingredientToAddList);
+          // }
+          if (game.todays_customers.length == 0) {
+            game.todays_customers = game.registry.get("Todays_Customers") || [];
+            //console.log(
+          }
+          if (game.registry.get("SecretShopperDay") && game.registry.get("SecretShopperDay") == true) {
+            game.secretShopperDay = true;
+          }
+          if (
+            game.registry.get("DayOver") == undefined ||
+            game.registry.get("DayOver") == false
+          ) {
+            //console.log("DAY OVER IS FALSE");
+            game.registry.set("DayOver", false);
+
+            //console.log("CALLING NEW CUSTOMER FROM LOAD");
+            //console.log("todays customers", game.todays_customers);
+            //console.log("daily customer count", game.dailyCustomerCount);
+            //console.log("daily customer max", game.dailyCustomerMax);
+            newCustomer(game, true, true); // continuing the day will need to add handling for secret shopper other assigned customers
+          } else if (game.registry.get("DayOver") == true) {
+            //console.log("END OF DAY SHOWDAYFRAME");
+            game.registry.set("SwitchNotAllowed", false);
+            dayEndHandler(game, false, true);
+          }
+          game.registry.set("Paused", false);
+          game.registry.set("Day", game.currentDay);
+        } else { // confirming game reset
+          ////console.log("Target Times Confirmed", game.targetTimesConfirmed)
+          ////console.log("Curr Times Confirmed",game.currTimesConfirmed)
+          if (game.currTimesConfirmed < game.targetTimesConfirmed) {
+            game.currTimesConfirmed += 1
+            let questionText = "Are you"
+            for (let i = 0; i < game.currTimesConfirmed; i++) {
+              questionText += " really"
+            }
+            questionText += " sure?"
+            game.loadDescription.text=questionText
+            showLoadFrame(game,true)
+          } else {
+            game.loadDescription.text = "Alright."
+            game.loadYesButton.visible = false
+            game.loadNoButton.visible = false
+            game.time.addEvent({
+              delay: 1500,
+              callback: () => {
+                showLoadFrame(game, false)
+                ////console.log("gonna restart the game but not fr")
+                restartGameFunction(game);
+              }
+            })
+          }
         }
-        furnitureHandler(game, addedFurniture,true);
-      }
-
-      if (game.registry.get("RatsAdded") === true) {
-        let totalRats = 0;
-        totalRats = game.registry.get("RatsToAdd") || 0;
-        totalRats += game.registry.get("KitchenRatCount") || 0;
-        game.registry.set("KitchenRatCount", 0);
-        game.registry.set("RatsToAdd", totalRats);
-      }
-      // bouncyballs in kitchen from previous save
-      // already handled in load state
-      // if (game.registry.get("BouncyBallsInKitchen") !== undefined && game.registry.get("BouncyBallsInKitchen").length > 0) {
-      //   let ingredientToAddList = game.registry.get("NewKitchenItemEvent") || [];
-      //   const bouncyballsInKitchen = game.registry.get("BouncyBallsInKitchen");
-      //   for (const i in bouncyballsInKitchen) {
-      //     ingredientToAddList.push(bouncyballsInKitchen[i]);
-      //   }
-      //   game.registry.set("NewKitchenItemEvent", ingredientToAddList);
-      // }
-      if (game.todays_customers.length == 0) {
-        game.todays_customers = game.registry.get("Todays_Customers") || [];
-        //console.log(
-        
-      }
-      if (game.registry.get("SecretShopperDay") && game.registry.get("SecretShopperDay") == true) {
-        game.secretShopperDay = true;
-      }
-      if (
-        game.registry.get("DayOver") == undefined ||
-        game.registry.get("DayOver") == false
-      ) {
-        //console.log("DAY OVER IS FALSE");
-        game.registry.set("DayOver", false);
-
-        //console.log("CALLING NEW CUSTOMER FROM LOAD");
-        //console.log("todays customers", game.todays_customers);
-        //console.log("daily customer count", game.dailyCustomerCount);
-        //console.log("daily customer max", game.dailyCustomerMax);
-        newCustomer(game, true, true); // continuing the day will need to add handling for secret shopper other assigned customers
-      } else if (game.registry.get("DayOver") == true) {
-        //console.log("END OF DAY SHOWDAYFRAME");
-        game.registry.set("SwitchNotAllowed", false);
-        dayEndHandler(game, false, true);
-      }
-      game.registry.set("Paused", false);
-      game.registry.set("Day", game.currentDay);
       },
     });
   })
@@ -1583,18 +1616,36 @@ const loadGameButtonsHandler = (game) => {
   game.loadNoButton.on("pointerdown", (pointer, gameObject) => {
     game.click_sfx.play();
 
-    game.tweens.add({
-      targets: game.loadNoButton,
-      scale: 0.15,
-      rotation: 0,
-      ease: "Linear",
-      duration: 100,
-      repeat: 0,
-      yoyo: true,
-      onComplete: function () {
-        restartGameFunction(game);
-      },
-    });
+    if (game.targetTimesConfirmed) { // player cancelling game reset
+      ////console.log(game.targetTimesConfirmed)
+      game.targetTimesConfirmed = null
+      game.loadTitle.text = "Doubt is Unproductive."
+      game.loadDescription.text = `Return to your previous save with 'indeed' or start over by pressing 'cancel'.`
+      showLoadFrame(game, true)
+    } else { // player wants to start game reset
+      game.tweens.add({
+        targets: game.loadNoButton,
+        scale: 0.15,
+        rotation: 0,
+        ease: "Linear",
+        duration: 100,
+        repeat: 0,
+        yoyo: true,
+        onComplete: function () {
+          const timesToConfirm = Math.floor(game.registry.get("Day") / 5) +1 || 1
+          ////console.log("times to confirm",timesToConfirm)
+          if (timesToConfirm <= 0) { // less than 5 days in so no confirmation needed
+            restartGameFunction(game);
+          } else {
+            game.targetTimesConfirmed = timesToConfirm;
+            game.currTimesConfirmed = 1
+            game.loadTitle.text = ""
+            game.loadDescription.text = "Are you sure?"
+            showLoadFrame(game, true)
+          }
+        },
+      });
+    }
   })
 }
 
@@ -1812,22 +1863,16 @@ var GameState = {
     this.addedPlushes = [];
 
     // previous save frame setup
-    const loadFrame = this.add.image(500, 500-1000, "order_background").setOrigin(0.5, 0.5).setDepth(9 + uiDepth);
-    loadFrame.scale = 1.2;
-    loadFrame.setTint(0x6a329f);
-    const loadTitle = this.add.text(500, 350-1000, "Ready to Earn?", { fontFamily: "unifrakturcook", fontSize: "80px", fill: "#fdff58", wordWrap: { width: 600 }, align: "center" }).setOrigin(0.5, 0.5).setDepth(10 + uiDepth);
-    const loadDescription = this.add.text(500, 500-1000, `Return to your previous save with 'indeed' or start over by pressing 'cancel'.`, { fontFamily: "unifrakturcook", fontSize: "50px", fill: "#fdff58", wordWrap: { width: 600 }, align: "center" }).setOrigin(0.5, 0.5).setDepth(10 + uiDepth);
+    this.loadFrame = this.add.image(500, 500 - 1000, "order_background").setOrigin(0.5, 0.5).setDepth(9 + uiDepth);
+    //loadFrame.scale = 1.2;
+    //loadFrame.setTint(0x6a329f);
+    this.loadTitle = this.add.text(500, 300 - 1000, "Ready to Earn?", { fontFamily: "unifrakturcook", fontSize: "70px", fill: "black", wordWrap: { width: 800 }, align: "center" }).setOrigin(0.5, 0.5).setDepth(10 + uiDepth);
+    this.loadDescription = this.add.text(500, 500 - 1000, `Return to your previous save with 'indeed' or start over by pressing 'cancel'.`, { fontFamily: "font1", fontSize: "30px", fill: "black", wordWrap: { width: 600 }, align: "center" }).setOrigin(0.5, 0.5).setDepth(10 + uiDepth);
 
-    const loadYesButton = this.add.image(400, 650-1000, "yes_button").setOrigin(0.5, 0.5).setDepth(10 + uiDepth).setInteractive();
-    loadYesButton.scale = .2;
-    const loadNoButton = this.add.image(600, 650-1000, "no_button").setOrigin(0.5, 0.5).setDepth(10 + uiDepth).setInteractive();
-    loadNoButton.scale = .2;
-
-    this.loadYesButton = loadYesButton;
-    this.loadNoButton = loadNoButton;
-    this.loadFrame = loadFrame;
-    this.loadTitle = loadTitle;
-    this.loadDescription = loadDescription;
+    this.loadYesButton = this.add.image(400, 650 - 1000, "yes_button").setOrigin(0.5, 0.5).setDepth(10 + uiDepth).setInteractive();
+    this.loadYesButton.scale = .2;
+    this.loadNoButton = this.add.image(600, 650 - 1000, "no_button").setOrigin(0.5, 0.5).setDepth(10 + uiDepth).setInteractive();
+    this.loadNoButton.scale = .2;
 
     loadGameButtonsHandler(this);
 
