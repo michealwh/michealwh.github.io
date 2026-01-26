@@ -1559,10 +1559,6 @@ const loadGameButtonsHandler = (game) => {
           // }
           if (game.todays_customers.length == 0) {
             game.todays_customers = game.registry.get("Todays_Customers") || [];
-            //console.log(
-              "registry TC set to",
-              game.registry.get("Todays_Customers")
-            );
           }
           if (game.registry.get("SecretShopperDay") && game.registry.get("SecretShopperDay") == true) {
             game.secretShopperDay = true;
@@ -1902,9 +1898,6 @@ var GameState = {
       }
     }
     //console.log(
-      "first reg todays customers",
-      this.registry.get("Todays_Customers")
-    );
     this.todays_customers = this.registry.get("Todays_Customers") || [];
 
     if (this.todays_customers.length == 0) { // no previous save
