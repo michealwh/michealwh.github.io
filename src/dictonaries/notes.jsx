@@ -306,7 +306,12 @@ var notes = {
       {
         title: "Untitled",
         description: "I had a dream last night. It was normal. Isn't that weird?"
-      }
+      },
+      {
+        title: "Untitled",
+        description: "Have you noticed how Slorg always wears sunglasses in public now? I wonder why."
+      },
+
     ]
   },
 

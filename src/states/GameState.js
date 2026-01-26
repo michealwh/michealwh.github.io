@@ -1340,7 +1340,7 @@ const introFrameHandler = (game) => {
     .text(
       500,
       550,
-      "You got a job at a nearby burger place. Your goal is to appease the customers. Precision, Punctuality and Presentation matter. Pleasantry will matter later. Spend tips you make in the shop. You can make 5 mistakes before they fire you. The rest is up to you.\n\nGood luck.",
+      "You got a job at a nearby burger place. Your goal is to appease the customers. Precision, Punctuality and Presentation matter. Pleasantry will matter later. The higher your ratings the more you earn. Spend tips you make in the shop. You can make 5 mistakes before they fire you. The rest is up to you.\n\nGood luck.",
       {
         fontFamily: "font1",
         fontSize: "30px",
@@ -1560,6 +1560,9 @@ const loadGameButtonsHandler = (game) => {
           if (game.todays_customers.length == 0) {
             game.todays_customers = game.registry.get("Todays_Customers") || [];
             //console.log(
+              "registry TC set to",
+              game.registry.get("Todays_Customers")
+            );
           }
           if (game.registry.get("SecretShopperDay") && game.registry.get("SecretShopperDay") == true) {
             game.secretShopperDay = true;
@@ -1587,13 +1590,13 @@ const loadGameButtonsHandler = (game) => {
           ////console.log("Target Times Confirmed", game.targetTimesConfirmed)
           ////console.log("Curr Times Confirmed",game.currTimesConfirmed)
           if (game.currTimesConfirmed < game.targetTimesConfirmed) {
-            game.currTimesConfirmed += 1
             let questionText = "Are you"
             for (let i = 0; i < game.currTimesConfirmed; i++) {
               questionText += " really"
             }
             questionText += " sure?"
             game.loadDescription.text=questionText
+            game.currTimesConfirmed += 1
             showLoadFrame(game,true)
           } else {
             game.loadDescription.text = "Alright."
@@ -1638,7 +1641,7 @@ const loadGameButtonsHandler = (game) => {
             restartGameFunction(game);
           } else {
             game.targetTimesConfirmed = timesToConfirm;
-            game.currTimesConfirmed = 1
+            game.currTimesConfirmed = 1;
             game.loadTitle.text = ""
             game.loadDescription.text = "Are you sure?"
             showLoadFrame(game, true)
@@ -1899,6 +1902,9 @@ var GameState = {
       }
     }
     //console.log(
+      "first reg todays customers",
+      this.registry.get("Todays_Customers")
+    );
     this.todays_customers = this.registry.get("Todays_Customers") || [];
 
     if (this.todays_customers.length == 0) { // no previous save

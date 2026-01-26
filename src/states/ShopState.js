@@ -138,6 +138,18 @@ const confirmButtonHandler = (game, object) => {
               (item) => item !== game.activeItemInfo.key
             );
             game.allItemKeys = newKeys;
+            let newPlesKeys = game.allPleasantryKeys.filter(
+              (item) => item !== game.activeItemInfo.key
+            );
+            game.allPleasantryKeys = newPlesKeys;
+            let newCheapKeys = game.allCheapItemKeys.filter(
+              (item) => item !== game.activeItemInfo.key
+            );
+            game.allCheapItemKeys = newCheapKeys;
+            let newExpensiveKeys = game.allExpensiveItemKeys.filter(
+              (item) => item !== game.activeItemInfo.key
+            );
+            game.allExpensiveItemKeys = newExpensiveKeys;
           }
         }
         showPrompt(game, false);
