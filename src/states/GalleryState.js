@@ -140,6 +140,9 @@ const hideInfo = (game) => {
     game.npcInfoFrameAssets[i].visible = false;
   }
   game.modInfoImage.visible = false;
+  game.modSellOneBtn.visible = false;
+  game.modSellTenBtn.visible = false;
+  game.modSellAllBtn.visible = false;
   game.note_background.visible = false;
   game.noteInfoTitle.visible = false;
   game.noteInfoText.visible = false;
@@ -211,7 +214,9 @@ const setupNPCTab = (game) => {
     .setScale(0.95)
     .setInteractive();
   game.npcInfoFrame.on("pointerdown", (pointer, gameObject) => {
-    hideInfo(game);
+    if(game.modSellFrameVisible !== true){
+      hideInfo(game);
+    }
   });
   game.npcInfoTitle = game.add
     .text(500, 280, "Name", {
@@ -399,8 +404,9 @@ const ModUpdater = (game) => {
     function showModInfo(show, target) {
       if (show) {
         game.click_sfx.play();
-
         let mod_info = shop_dictionary.purchasables[target];
+
+        game.currModInfo = mod_info;
         game.npcInfoTitle.text = mod_info.title;
         game.modInfoImage.setTexture(mod_info.key);
         let infotext = "Desciption: ";
@@ -411,6 +417,12 @@ const ModUpdater = (game) => {
         }
         game.npcInfoText.text = infotext;
         game.modInfoImage.visible = true;
+
+        if (!game.currModInfo.description.includes("pleasantry") && game.currModInfo.type !== "furniture") {
+          game.modSellOneBtn.visible = true;
+          game.modSellTenBtn.visible = true;
+          game.modSellAllBtn.visible = true;
+        }
 
         for (let i = 0; i < game.npcInfoFrameAssets.length; i++) {
           if (game.npcInfoFrameAssets[i] !== game.npcInfoImage) {
@@ -423,6 +435,211 @@ const ModUpdater = (game) => {
     modAssets[0].on("pointerdown", (pointer, gameObject) => {
       showModInfo(true, item);
     });
+  });
+};
+
+const showModSellFrame = (game, show) => {
+  if (show === true) {
+    game.modSellFrameVisible=true;
+    game.sellFrame.y = 500 - 1000
+    game.sellYesButton.y = 640 - 1000
+    game.sellNoButton.y = 640 - 1000
+    game.sellTitle.y = 450 - 1000
+
+    game.tweens.add({
+      targets: [game.sellFrame],
+      y: 500,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+    game.tweens.add({
+      targets: [game.sellYesButton, game.sellNoButton],
+      y: 640,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+    game.tweens.add({
+      targets: [game.sellTitle],
+      y: 450,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+  } else {
+    game.modSellFrameVisible=false;
+    game.tweens.add({
+      targets: [game.sellFrame],
+      y: 500 - 1000,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+    game.tweens.add({
+      targets: [game.sellYesButton, game.sellNoButton],
+      y: 640 - 1000,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+    game.tweens.add({
+      targets: [game.sellTitle],
+      y: 450 - 1000,
+      ease: "Power1",
+      duration: 200,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () {
+      },
+    });
+
+  }
+}
+
+const ModSellHandler = (game) => {
+  game.modSellOneBtn.on("pointerdown", (pointer, gameObject) => {
+    game.tweens.add({
+      targets: game.modSellOneBtn,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        const amount = 1;
+        //console.log(game.currModInfo)
+        const cost = (game.currModInfo.cost/2)*amount || 1.99;
+        const name = game.currModInfo.title;
+        game.sellModAmount = amount;
+        game.sellModCost = cost.toFixed(2);
+        game.sellModName = name;
+        game.sellTitle.text = `Sell ${amount}x ${name} for $${(cost).toFixed(2)}?`;
+        showModSellFrame(game, true);
+      }
+    });
+  });
+  game.modSellTenBtn.on("pointerdown", (pointer, gameObject) => {
+    let modifiers = game.registry.get("Modifiers") || [];
+    let modCount = 0;
+    for(let i=0;i<modifiers.length;i++){
+      if(modifiers[i] === game.currModInfo.key){
+        modCount++;
+      }
+    }
+    if(modCount <10){
+      return;
+    }
+    game.tweens.add({
+      targets: game.modSellTenBtn,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        const amount = 10;
+        //console.log(game.currModInfo)
+        const cost = (game.currModInfo.cost/2)*amount || 1.99;
+        const name = game.currModInfo.title;
+        game.sellModAmount = amount;
+        game.sellModCost = cost.toFixed(2);
+        game.sellModName = name;
+        game.sellTitle.text = `Sell ${amount}x ${name} for $${(cost).toFixed(2)}?`;
+        showModSellFrame(game, true);
+      }
+    });
+  });
+  game.modSellAllBtn.on("pointerdown", (pointer, gameObject) => {
+    let modifiers = game.registry.get("Modifiers") || [];
+    let modCount = 0;
+    for(let i=0;i<modifiers.length;i++){
+      if(modifiers[i] === game.currModInfo.key){
+        modCount++;
+      }
+    }
+    game.tweens.add({
+      targets: game.modSellAllBtn,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        const amount = modCount;
+        //console.log("selling all:", amount);
+        //console.log(game.currModInfo)
+        const cost = (game.currModInfo.cost/2)*amount || 1.99;
+        const name = game.currModInfo.title;
+        game.sellModAmount = amount;
+        game.sellModCost = cost.toFixed(2);
+        game.sellModName = name;
+        game.sellTitle.text = `Sell ${amount}x ${name} for $${(cost).toFixed(2)}?`;
+        showModSellFrame(game, true);
+      }
+    });
+  });
+  game.sellNoButton.on("pointerdown", (pointer, gameObject) => {
+    showModSellFrame(game, false);
+  });
+
+  game.sellYesButton.on("pointerdown", (pointer, gameObject) => {
+    //console.log("selling mod");
+    let modifiers = game.registry.get("Modifiers") || [];
+    let newModifiers = [...modifiers];
+    let soldCount = 0;
+    let amountRemaining = 0;
+    for (let i=0; i<modifiers.length;i++){
+      if (modifiers[i] === game.currModInfo.key){
+        if(soldCount < game.sellModAmount){
+          //console.log("sold mod at index:",i)
+          newModifiers.splice(i-soldCount,1);
+          soldCount +=1;
+        } else {
+          amountRemaining +=1;
+        }
+      }
+    }
+    game.registry.set("Modifiers", newModifiers);
+    let globs = parseFloat(game.registry.get("Globble")) || 0;
+    globs += (Number(game.sellModCost) || 0);
+    game.registry.set("Globble", globs);
+    showModSellFrame(game, false);
+    if(amountRemaining <= 0){
+      hideInfo(game);
+    }
+
+    //handle loss of modifier consequences
+    if (game.currModInfo.key === "pragmaticparty"){
+      const currentPleasantry = game.registry.get("Average_Pleasantry") || 0;
+      game.registry.set("Average_Pleasantry", currentPleasantry - 1);
+    } else if (game.currModInfo.key === "killercheddar"){
+      let currentRatChance = game.registry.get("currentRatChance") || 0
+      game.registry.set("currentRatChance", (currentRatChance - 1))
+    }
   });
 };
 
@@ -645,7 +862,7 @@ const NoteUpdater = (game) => {
 };
 
 var GalleryState = {
-  preload() {},
+  preload() { },
 
   create() {
     this.currentTab = null;
@@ -757,12 +974,45 @@ var GalleryState = {
     this.modInfoImage.scale = 0.8;
     this.modInfoImage.visible = false;
 
+    this.modSellOneBtn = this.add
+      .image(350, 700, "sell_one_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(7)
+      .setInteractive();
+    this.modSellOneBtn.scale = 0.2;
+    this.modSellOneBtn.visible = false
+    this.modSellTenBtn = this.add
+      .image(500, 700, "sell_ten_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(7)
+      .setInteractive();
+    this.modSellTenBtn.scale = 0.2;
+    this.modSellTenBtn.visible = false
+    this.modSellAllBtn = this.add
+      .image(650, 700, "sell_all_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(7)
+      .setInteractive();
+    this.modSellAllBtn.scale = 0.2;
+    this.modSellAllBtn.visible = false
+
+    this.sellFrame = this.add.image(500, 500-1000, "order_background").setOrigin(0.5, 0.5).setDepth(9).setTint(0x076b22);
+    this.sellFrame.scale = 0.7;
+    this.sellTitle = this.add.text(500, 450-1000, "Sell 1200x Magic Dirt for $12.39?", { fontFamily: "font1", fontSize: "50px", fill: "black", wordWrap: { width: 450 }, align: "center" }).setOrigin(0.5, 0.5).setDepth(10);
+    this.sellYesButton = this.add.image(410, 640-1000, "yes_button").setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+    this.sellYesButton.scale = .2;
+    this.sellNoButton = this.add.image(590, 640-1000, "no_button").setOrigin(0.5, 0.5).setDepth(10).setInteractive();
+    this.sellNoButton.scale = .2;
+
+    this.modSellFrameVisible=false;
     setupNPCTab(this);
     setupNoteTab(this);
     ModUpdater(this);
     inputHandler(this, this.npcTab, this.npcTitle);
     inputHandler(this, this.modifierTab, this.modifierTitle);
     inputHandler(this, this.noteTab, this.noteTitle);
+
+    ModSellHandler(this);
 
     this.currentTab = this.npcTab;
     this.currentTitle = this.npcTitle;

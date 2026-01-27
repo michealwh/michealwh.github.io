@@ -159,6 +159,9 @@ import arrow_indicator from "../assets/ui/arrow_indicator.png";
 import ratgame_bar from "../assets/ui/ratgame_bar.png";
 import prev_button from "../assets/ui/prev_button.png";
 import next_button from "../assets/ui/next_button.png";
+import sell_one_button from "../assets/ui/sell_one_button.png";
+import sell_ten_button from "../assets/ui/sell_ten_button.png";
+import sell_all_button from "../assets/ui/sell_all_button.png";
 
 // SOUND ASSETS
 import door_open from "../assets/sounds/door_opening.mp3";
@@ -293,6 +296,9 @@ var LoadState = {
     this.load.image("ratgame_bar", ratgame_bar);
     this.load.image("prev_button", prev_button);
     this.load.image("next_button", next_button);
+    this.load.image("sell_one_button", sell_one_button);
+    this.load.image("sell_ten_button", sell_ten_button);
+    this.load.image("sell_all_button", sell_all_button);
 
     this.load.image("sky", skyBg);
     this.load.image("room", roomBg);
