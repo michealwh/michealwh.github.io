@@ -34,6 +34,11 @@ class Example extends Phaser.Scene {
     this.bgMusic.play()
     this.add.image(0, 0, "sky").setOrigin(0, 0);
 
+    this.credit_text = this.add.text(500, 500, "milkloaf - toad", {
+      font: "16px font1",
+      fill: "#5376DA",
+    }).setOrigin(1,1);
+    
     const particles = this.add.particles(0, 0, "star", {
       speed: 100,
       scale: { start: .5, end: 0 },
