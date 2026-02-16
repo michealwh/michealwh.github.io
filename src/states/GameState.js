@@ -312,9 +312,12 @@ const customerHandler = (customer, game, previousSave) => {
             // incase of items that could break this
             game.ingredientMax = 0;
           }
+
+          let condiment_count = 0;
+
           const number_of_ingredients =
             Math.floor(Math.random() * game.ingredientMax) + 1;
-
+          
           let order_list = "";
           game.order = [];
           for (let i = 0; i < number_of_ingredients; i++) {
@@ -327,6 +330,14 @@ const customerHandler = (customer, game, previousSave) => {
               order_list += " and";
             }
             game.order.push(game.availableIngredients[ingredient_index]);
+
+            if (game.availableIngredients[ingredient_index] == "ketchup" || game.availableIngredients[ingredient_index] == "mustard" || game.availableIngredients[ingredient_index] == "ranch" || game.availableIngredients[ingredient_index] == "bbq"){
+              //console.log("adding to condiment count")
+              condiment_count+=1;
+            }
+          }
+          if (condiment_count>0 && game.registry.get("CondimentCarolerAdded") === true){
+            condimentCarolHandler(game,condiment_count)
           }
           game.order.unshift("beefpatty"),
             game.order.unshift("bottomBun"),
@@ -1255,6 +1266,68 @@ const restartGameHandler = (game, button) => {
   });
 };
 
+// condiment handler
+const condimentCarolHandler = (game, count) => {
+
+  const oX = 10
+  const oY = 450
+  const currPles = game.registry.get("Average_Pleasantry")
+  game.registry.set("Average_Pleasantry",currPles+count);
+  game.tweens.add({
+    targets: [game.condimentcaroler],
+    x: oX + 40,
+    y: oY - 20,
+    rotation: -15 * (Math.PI / 180),
+    ease: "Power1",
+    duration: 1000,
+    repeat: 0,
+    yoyo: false,
+    onComplete: function () {
+      game.carol_sfx.play()
+      game.carolerText.visible=true
+      game.carolerText.y=450
+      game.carolerText.alpha=1;
+      game.carolerText.setText("+" + count)
+      game.tweens.add({
+        targets: [game.carolerText],
+        y: 350,
+        alpha: 0,
+        ease: "Power1",
+        duration: 2000,
+        repeat: 0,
+        yoyo: false,
+      })
+      game.tweens.add({
+        targets: [game.condimentcaroler],
+        y: oY - 25,
+        x: oX + 42,
+        rotation: -15 * (Math.PI / 180),
+        ease: "Power1",
+        duration: 200,
+        repeat: 2,
+        yoyo: true,
+        onComplete: function () {
+          game.time.addEvent({
+            delay: 550,
+            callback: () => {
+              game.tweens.add({
+                targets: [game.condimentcaroler],
+                x: oX,
+                y: oY,
+                rotation: 0 * (Math.PI / 180),
+                ease: "Power1",
+                duration: 500,
+                repeat: 0,
+                yoyo: false,
+              })
+            }
+          })
+        }
+      })
+    }
+  })
+}
+
 // furniture handler
 const furnitureHandler = (game, furnitureList, previousSave) => {
   for (const i in furnitureList) {
@@ -1281,6 +1354,11 @@ const furnitureHandler = (game, furnitureList, previousSave) => {
       game.availablePlushes.splice(targetIndex, 1);
     } else if (object === "slorgbanner") {
       game.slorgbanner.visible = true;
+    } else if (object === "condimentcaroler") {
+      game.condimentcaroler.visible = true;
+
+
+
     } else if (object.includes("glum")) {
       let xPos = Math.floor(Math.random() * 850) + 100;
       let yPos = Math.floor(Math.random() * 200) + 670;
@@ -1591,9 +1669,9 @@ const loadGameButtonsHandler = (game) => {
               questionText += " really"
             }
             questionText += " sure?"
-            game.loadDescription.text=questionText
+            game.loadDescription.text = questionText
             game.currTimesConfirmed += 1
-            showLoadFrame(game,true)
+            showLoadFrame(game, true)
           } else {
             game.loadDescription.text = "Alright."
             game.loadYesButton.visible = false
@@ -1631,7 +1709,7 @@ const loadGameButtonsHandler = (game) => {
         repeat: 0,
         yoyo: true,
         onComplete: function () {
-          const timesToConfirm = Math.floor(game.registry.get("Day") / 5) +1 || 1
+          const timesToConfirm = Math.floor(game.registry.get("Day") / 5) + 1 || 1
           ////console.log("times to confirm",timesToConfirm)
           if (timesToConfirm <= 0) { // less than 5 days in so no confirmation needed
             restartGameFunction(game);
@@ -1672,6 +1750,7 @@ var GameState = {
     this.door_open_sfx = this.sound.add("door_open").setVolume(1);
     this.door_rattle_sfx = this.sound.add("door_rattling").setVolume(0.2);
     this.page_flip_sfx = this.sound.add("page_flip_sfx").setVolume(0.8);
+    this.carol_sfx = this.sound.add("trumpet_synth").setVolume(.5);
 
     // animation creation
     if (!this.anims.get("clap")) {
@@ -1860,6 +1939,21 @@ var GameState = {
     slorgplush.visible = false;
     this.availablePlushes = [slorgplush];
     this.addedPlushes = [];
+    const condimentcaroler = this.add.image(10, 450, "condimentcaroler").setOrigin(0, 0).setDepth(3);
+    this.condimentcaroler = condimentcaroler
+
+    const carolerText = this.add.text(240, 450, "+2", {
+      font: "40px font1",
+      fill: "rgb(255, 211, 16)",
+    }).setOrigin(0, 0).setDepth(2);
+    carolerText.visible = false;
+    this.carolerText = carolerText
+
+    if (this.registry.get("CondimentCarolerAdded") === true){
+      condimentcaroler.visible=true;
+    } else {
+      condimentcaroler.visible=false;
+    }
 
     // previous save frame setup
     this.loadFrame = this.add.image(500, 500 - 1000, "order_background").setOrigin(0.5, 0.5).setDepth(9 + uiDepth);
@@ -1897,7 +1991,6 @@ var GameState = {
         this.currentLockedCustomers.push(i);
       }
     }
-    //console.log(
     this.todays_customers = this.registry.get("Todays_Customers") || [];
 
     if (this.todays_customers.length == 0) { // no previous save

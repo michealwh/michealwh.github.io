@@ -288,6 +288,21 @@ const purchaseActions = {
     pleasantryScore += 40;
     game.registry.set("Average_Pleasantry", pleasantryScore);
   },
+  condimentcaroler: function (game) {
+    itemReveal(game, "condimentcaroler");
+    let furnitureList = game.registry.get("FurnitureShopEvent") || [];
+    if ((Array.isArray(furnitureList) && furnitureList.length===0)  || furnitureList === undefined) {
+      furnitureList = [];
+    }
+    furnitureList.push("condimentcaroler");
+    game.registry.set("FurnitureShopEvent", furnitureList);
+
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("condimentcaroler")
+    //console.log(currentModList)
+    game.registry.set("Modifiers", currentModList)
+    game.registry.set("CondimentCarolerAdded",true)
+  },
   magicdirt: function (game) {
     itemReveal(game, "magicdirt")
     let currentModList = game.registry.get("Modifiers") || [];

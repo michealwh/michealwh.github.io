@@ -103,6 +103,7 @@ import burgertime_box from "../assets/game/shop/burgertime_box.png";
 import scentedbounce_box from "../assets/game/shop/scentedbounce_box.png";
 import glumtrident_box from "../assets/game/shop/glumtrident_box.png";
 import bouncezine_box from "../assets/game/shop/bouncezine_box.png";
+import condimentcaroler_box from "../assets/game/shop/condimentcaroler_box.png";
 
 import blueball from "../assets/game/shop/bluebouncyball.png";
 import redball from "../assets/game/shop/redbouncyball.png";
@@ -131,6 +132,7 @@ import burgertime from "../assets/game/shop/burgertime.png";
 import scentedbounce from "../assets/game/shop/scentedbounce.png";
 import glumtrident from "../assets/game/shop/glumtrident.png";
 import bouncezine from "../assets/game/shop/bouncezine.png";
+import condimentcaroler from "../assets/game/shop/condimentcaroler.png";
 
 // UI ASSETS
 import chef_icon from "../assets/ui/chef_icon.png";
@@ -183,6 +185,8 @@ import page_flip_sfx from "../assets/sounds/page_flip_sfx.mp3";
 import rat_sfx from "../assets/sounds/rat_sfx.mp3";
 import rat_sfx2 from "../assets/sounds/rat_sfx2.mp3";
 import rat_click from "../assets/sounds/rat_click.mp3";
+import trumpet_synth from "../assets/sounds/trumpetsynth3.mp3"
+import ambient_synth from "../assets/sounds/ambientsynth.mp3"
 
 import success_sfx1 from "../assets/sounds/success_sfx1.mp3";
 import success_sfx2 from "../assets/sounds/success_sfx2.mp3";
@@ -244,6 +248,8 @@ var LoadState = {
     this.load.audio("trash_sfx", trash_sfx);
     this.load.audio("eat_sfx1", eat_sfx1);
     this.load.audio("presentation_sfx1", presentation_sfx1);
+    this.load.audio("trumpet_synth",trumpet_synth);
+    this.load.audio("ambient_synth",ambient_synth);
 
     this.load.audio("success_sfx1", success_sfx1);
     this.load.audio("success_sfx2", success_sfx2);
@@ -394,6 +400,7 @@ var LoadState = {
     this.load.image("scentedbounce", scentedbounce);
     this.load.image("glumtrident", glumtrident);
     this.load.image("bouncezine", bouncezine);
+    this.load.image("condimentcaroler", condimentcaroler);
 
     this.load.image("chair1_box", chair1_box);
     this.load.image("table1_box", table1_box);
@@ -413,6 +420,7 @@ var LoadState = {
     this.load.image("scentedbounce_box", scentedbounce_box);
     this.load.image("glumtrident_box", glumtrident_box);
     this.load.image("bouncezine_box", bouncezine_box);
+    this.load.image("condimentcaroler_box", condimentcaroler_box);
 
     this.load.spritesheet("penguin_sheet", penguinclap, {
       frameWidth: 64,

@@ -141,6 +141,16 @@
       "repeatable": true
     },
 
+    "condimentcaroler": {
+      "key": "condimentcaroler",
+      "title": "Condiment Caroler",
+      "description": "increases pleasantry by +1% for every condiment ordered.",
+      "type": "furniture",
+      "scale": 1.4,
+      "cost": 123.45,
+      "repeatable": false
+    },
+
     "glumdevil": {
       "key": "glumdevil",
       "title": "Glorp Mart's Glum Devils",

@@ -38,7 +38,7 @@ class Example extends Phaser.Scene {
       font: "16px font1",
       fill: "#5376DA",
     }).setOrigin(1,1);
-    
+
     const particles = this.add.particles(0, 0, "star", {
       speed: 100,
       scale: { start: .5, end: 0 },
@@ -120,7 +120,6 @@ const config = {
       },
     },
   };
-  const [isPlaying, setIsPlaying] = useState(false);
 
   let backgroundMusic = new Audio(toad_milkloaf);
   backgroundMusic.muted = false;
