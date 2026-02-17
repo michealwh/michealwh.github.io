@@ -14,6 +14,8 @@ import { deepOrange, yellow } from "@mui/material/colors";
 import greenGif from "../assets/website/greenlo.gif";
 import oceanGif from "../assets/website/OceanCraban.gif";
 import blinkieGif from "../assets/website/blinkiesCafe_Rats.gif";
+import fishspin from "../assets/website/fishspin.gif"
+import treeGif from "../assets/website/water.gif"
 
 function Home() {
   const [count, setCount] = useState(0);
@@ -63,6 +65,7 @@ function Home() {
     },
   });
 
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -77,12 +80,15 @@ function Home() {
           textAlign: "center",
         }}
       >
-        <Grid container spacing={2} direction="column" alignItems="center">
+        <Paper sx={{ p: 4,  backgroundImage: `url(${treeGif})`}}>
+          <Grid container spacing={2} direction="column" alignItems="center">
+                     <Container sx={{ p: 5,  backgroundImage: `url(${oceanGif})`, backgroundSize: '20%'}}></Container>
+
 <h2>This page is empty you overgrown granite-head!</h2>
          <Container sx={{ p: 5,  backgroundImage: `url(${oceanGif})`, backgroundSize: '20%'}}></Container>
-         
-          <Container sx={{ p: 1.75,  backgroundImage: `url(${blinkieGif})`, backgroundSize: 'contain', width:"200px"}}></Container>
+
         </Grid>
+        </Paper>
 
       </Box>
     </ThemeProvider>
