@@ -390,6 +390,33 @@ const purchaseActions = {
     game.registry.set("Modifiers", currentModList)
   },
 
+  toddsrequest: function (game) {
+    itemReveal(game, "toddsrequest")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("toddsrequest")
+    game.registry.set("Modifiers", currentModList)
+  },
+
+  bottomfeeder: function (game) {
+    itemReveal(game, "bottomfeeder")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("bottomfeeder")
+    game.registry.set("Modifiers", currentModList)
+  },
+
+  bofoundation: function (game) {
+    itemReveal(game, "bofoundation")
+    game.time.addEvent({
+      delay: 1800,
+      callback: () => {
+        game.bitspooky_sfx.play();
+      }
+    })
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("bofoundation")
+    game.registry.set("Modifiers", currentModList)
+  },
+
   glumdevil: function (game) {
     game.registry.set("SwitchNotAllowed", true);
     game.promptOpen = true;

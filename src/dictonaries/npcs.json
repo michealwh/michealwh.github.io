@@ -38,7 +38,10 @@
             "sprite": "guy4",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "Grad student at Felnore University studying haikus. He really likes haikus."
+            "description": "Grad student at Felnore University studying haikus. He really likes haikus.",
+            "standards": {
+                "punctuality": 60
+            }
         },
         {
             "name": "Glorbdon",
@@ -140,7 +143,7 @@
             "sprite": "greenmaiden",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "Has a great elegance when entering the room."
+            "description": "Would it suprise you to know her favorite color is burgundy?"
         },
         {
             "name": "Felippe Díaz",

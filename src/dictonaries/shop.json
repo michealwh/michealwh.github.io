@@ -19,10 +19,19 @@
       "scale": 2,
       "repeatable": true
     },
+    "toddsrequest": {
+      "key": "toddsrequest",
+      "title": "Todd's Request",
+      "description": "+5% precision boost on odd days.",
+      "type": "modifier",
+      "cost": 22.99,
+      "scale": 1.5,
+      "repeatable": true
+    },
     "burgerpolish": {
       "key": "burgerpolish",
       "title": "Burger Polish",
-      "description": "3% increase in presentation on all orders.",
+      "description": "+3% increase in presentation on all orders.",
       "type": "modifier",
       "cost": 34.99,
       "scale": 2,
@@ -32,7 +41,7 @@
     "pragmaticparty": {
       "key": "pragmaticparty",
       "title": "Pragmatic Party",
-      "description": "1% increase in all P stats.",
+      "description": "+1% increase in all P stats.",
       "type": "modifier",
       "cost": 54.99,
       "scale": 2,
@@ -49,12 +58,22 @@
       "repeatable": true
     },
 
+    "bofoundation": {
+      "key": "bofoundation",
+      "title": "The Bo Foundation",
+      "description": " tips get +$800/(the number of letters in a customer's name).",
+      "type": "modifier",
+      "cost": 319.99,
+      "scale": 1.2,
+      "repeatable": false
+    },
+
     "aqualificprism": {
       "key": "aqualificprism",
       "title": "Aqualific Prism",
       "description": "1% chance you don't lose a life from a failed order.",
       "type": "modifier",
-      "cost": 64.99,
+      "cost": 124.99,
       "scale": 2,
       "repeatable": true
     },
@@ -94,7 +113,7 @@
     "burgertime": {
       "key": "burgertime",
       "title": "Burger Time",
-      "description": "2% added to punctuality for each ingredient on the burger.",
+      "description": "+2% punctuality for each ingredient on the burger.",
       "type": "modifier",
       "cost": 99.99,
       "scale": 1.2,
@@ -108,6 +127,16 @@
       "type": "modifier",
       "cost": 69.99,
       "scale": 1.2,
+      "repeatable": true
+    },
+
+    "bottomfeeder": {
+      "key": "bottomfeeder",
+      "title": "Bottom Feeder",
+      "description": "placing produce on the bottom of the burger will give x1.2 precision.",
+      "type": "modifier",
+      "cost": 108.99,
+      "scale": 1,
       "repeatable": true
     },
 

@@ -149,6 +149,12 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
 
   const Modifiers = game.registry.get("Modifiers") || [];
 
+
+  let presentationMod = 1;
+  let punctualityMod = 1;
+  let pleasantryMod = 1;
+  let precisionMod = 1;
+
   let tipMod = 0;
 
   let tipAdditions = 0;
@@ -159,7 +165,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
 
   for (let i = 0; i < Modifiers.length; i++) {
     switch (Modifiers[i]) {
-      case "magicdirt":
+      case "magicdirt": {
         if ((Total_Orders + 1) % 5 == 0) {
           let chance = Math.floor(Math.random() * 2) + 1;
           if (chance == 1) {
@@ -171,24 +177,59 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
           }
         }
         break;
-      case "stevenswish":
+      }
+      case "toddsrequest": {
+        if (CurrentDay % 2 == 1) {
+          precisionStat += 5;
+          allActivatedMods.push("toddsrequest");
+        }
+        break
+      }
+      case "bottomfeeder":
+          { let produceCount = 0;
+          let passed=true;
+          for (let i=0; i< recieved_order_copy.length;i++){
+            if (recieved_order_copy[i] === "lettuce" || recieved_order_copy[i] === "tomato" || recieved_order_copy[i] === "onion"){
+              produceCount++;
+              if (produceCount !== i){
+                passed=false;
+                break;
+              }
+              //console.log("found produce", recieved_order_copy[i], "at",i);
+            }
+          }
+          if (passed){
+            precisionMod+=.2
+            allActivatedMods.push("bottomfeeder");
+          }
+        break; }
+      case "stevenswish": {
         if (CurrentDay % 2 == 0) {
           tipMod += 0.4;
           allActivatedMods.push("stevenswish");
         }
         break;
-      case "burgerpolish":
+      }
+      case "burgerpolish": {
         //console.log("incrementing burgerpolish");
         presentationStat += 3;
         allActivatedMods.push("burgerpolish");
         break;
-      case "pragmaticparty":
+      }
+      case "pragmaticparty": {
         presentationStat += 1;
         punctualityStat += 1;
         precisionStat += 1;
         //pleasantryStat += 1;
         allActivatedMods.push("pragmaticparty");
         break;
+      }
+      case "bofoundation": {
+        let noSpaces = npc_info.name.replaceAll(" ", "");
+        tipAdditions += 800 / noSpaces.length;
+        allActivatedMods.push("bofoundation");
+        break;
+      }
       case "thewhisk": {
         let chance = Math.floor(Math.random() * 100) + 1;
         if (chance <= 30) {
@@ -290,6 +331,12 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
         break;
     }
   }
+
+  presentationStat*=presentationMod;
+  punctualityStat*=punctualityMod;
+  pleasantryStat*=pleasantryMod;
+  precisionStat*=precisionMod;
+
 
   // rat effect handling
   // let ratsNotAdded = game.registry.get("RatsToAdd") || 0

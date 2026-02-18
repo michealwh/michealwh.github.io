@@ -555,6 +555,8 @@ var ShopState = {
     this.bouncy_sfx = this.sound.add("bouncy_open");
     this.box_sfx = this.sound.add("box_sfx");
     this.box_sfx.volume = 0.8;
+    this.bitspooky_sfx = this.sound.add("bitspooky1");
+    this.bitspooky_sfx.volume = .6;
 
     this.add.image(0, 0, "shop_bg").setOrigin(0, 0);
 

@@ -104,6 +104,9 @@ import scentedbounce_box from "../assets/game/shop/scentedbounce_box.png";
 import glumtrident_box from "../assets/game/shop/glumtrident_box.png";
 import bouncezine_box from "../assets/game/shop/bouncezine_box.png";
 import condimentcaroler_box from "../assets/game/shop/condimentcaroler_box.png";
+import toddsrequest_box from "../assets/game/shop/toddsrequest_box.png";
+import bottomfeeder_box from "../assets/game/shop/bottomfeeder_box.png";
+import bofoundation_box from "../assets/game/shop/thebofoundation_box.png";
 
 import blueball from "../assets/game/shop/bluebouncyball.png";
 import redball from "../assets/game/shop/redbouncyball.png";
@@ -133,6 +136,9 @@ import scentedbounce from "../assets/game/shop/scentedbounce.png";
 import glumtrident from "../assets/game/shop/glumtrident.png";
 import bouncezine from "../assets/game/shop/bouncezine.png";
 import condimentcaroler from "../assets/game/shop/condimentcaroler.png";
+import toddsrequest from "../assets/game/shop/toddsrequest.png";
+import bottomfeeder from "../assets/game/shop/bottomfeeder.png";
+import bofoundation from "../assets/game/shop/thebofoundation.png";
 
 // UI ASSETS
 import chef_icon from "../assets/ui/chef_icon.png";
@@ -194,6 +200,7 @@ import success_sfx2 from "../assets/sounds/success_sfx2.mp3";
 import spooky_sfx1 from "../assets/sounds/spooky_sfx1.mp3";
 import spooky_sfx2 from "../assets/sounds/spooky_sfx2.mp3";
 import spooky_sfx3 from "../assets/sounds/spooky_sfx3.mp3";
+import bitspooky_sfx1 from "../assets/sounds/bitspooky_sfx2.mp3";
 
 import voice_line1 from "../assets/sounds/voice_line1.mp3";
 import voice_line2 from "../assets/sounds/voice_line2.mp3";
@@ -257,6 +264,7 @@ var LoadState = {
     this.load.audio("spooky_sfx1", spooky_sfx1);
     this.load.audio("spooky_sfx2", spooky_sfx2);
     this.load.audio("spooky_sfx3", spooky_sfx3);
+    this.load.audio("bitspooky1", bitspooky_sfx1);
 
     this.load.audio("voice_line1", voice_line1);
     this.load.audio("voice_line2", voice_line2);
@@ -401,6 +409,9 @@ var LoadState = {
     this.load.image("glumtrident", glumtrident);
     this.load.image("bouncezine", bouncezine);
     this.load.image("condimentcaroler", condimentcaroler);
+    this.load.image("toddsrequest", toddsrequest);
+    this.load.image("bottomfeeder", bottomfeeder);
+    this.load.image("bofoundation",bofoundation);
 
     this.load.image("chair1_box", chair1_box);
     this.load.image("table1_box", table1_box);
@@ -421,6 +432,9 @@ var LoadState = {
     this.load.image("glumtrident_box", glumtrident_box);
     this.load.image("bouncezine_box", bouncezine_box);
     this.load.image("condimentcaroler_box", condimentcaroler_box);
+    this.load.image("toddsrequest_box", toddsrequest_box);
+    this.load.image("bottomfeeder_box", bottomfeeder_box);
+    this.load.image("bofoundation_box",bofoundation_box)
 
     this.load.spritesheet("penguin_sheet", penguinclap, {
       frameWidth: 64,
