@@ -451,7 +451,7 @@ var LoadState = {
     // });
     this.scene.launch("DataState");
 
-    const defaultGlobs = 0;
+    const defaultGlobs = 10000;
     const defaultHealth = 5;
     const defaultIngredientMax = 2;
     const defaultCustomers = [0, 1];
