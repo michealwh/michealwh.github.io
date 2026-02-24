@@ -48,7 +48,7 @@ var days = {
       \nPresentation: ${100}%  Punctuality: ${100}%\nPrecision: ${100}%   Pleasantry: ${50}%`
     },
 
-    18: {
+    17: {
       events: ["rats"],
       c_standards: [100, 100, 100, 60],
       description: `The aroma of cheddar has wafted to a nearby rat's nest. You will now deal with rat infestations. Each rat in your kitchen will drop your Pleasantry ratings by 10%.`

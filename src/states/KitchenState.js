@@ -569,6 +569,12 @@ var KitchenState = {
     this.pepperjackBtn = pepperjackBtn;
     this.swisscheeseBtn = swisscheeseBtn;
 
+    this.bouncyBallCounter = this.add.text(0, 1000, "Bouncy Balls: 0", {
+      fontFamily: "font1",
+      fontSize: "20px",
+      fill: "#d13d3d",
+    }).setOrigin(0,1).setVisible(false);
+
     this.ratFrame = this.add
       .image(500, 500, "order_background")
       .setOrigin(0.5, 0.5)
@@ -771,6 +777,14 @@ var KitchenState = {
       for (let i = 0; i < count; i++) {
         ratHandler(this);
       }
+    }
+
+    if (this.registry.get("BouncyBallsInKitchen") && this.registry.get("BouncyBallsInKitchen").length > 0) {
+      let count = this.registry.get("BouncyBallsInKitchen").length;
+      this.bouncyBallCounter.setText("Bouncy Balls: " + count);
+      this.bouncyBallCounter.setVisible(true);
+    } else if(this.bouncyBallCounter.visible == true){
+      this.bouncyBallCounter.setVisible(false);
     }
 
     if (

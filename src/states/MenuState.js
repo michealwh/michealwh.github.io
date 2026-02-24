@@ -128,6 +128,11 @@ const healthHandler = (game) => {
 
 const ratHandler = (game) => {
 
+  if(game.ratHandlerCalled===true){
+    return
+  }
+  game.ratHandlerCalled=true;
+  //console.log("rat handler called")
   const ratToll = 10;
 
   const getRatDelay = () => {
@@ -176,6 +181,9 @@ var MenuState = {
   preload() {},
 
   create() {
+
+    this.ratHandlerCalled = false;
+
     const gearBtn = this.add
       .image(40, 45, "gear_icon")
       .setOrigin(0.5, 0.5)
@@ -573,7 +581,7 @@ var MenuState = {
     });
 
 
-    if (this.registry.get("RatsAdded") === true) {
+    if (this.registry.get("RatsAdded") === true && this.ratHandlerCalled===false) {
       //console.log("initializing rat handler menu state");
       ratHandler(this);
     }
@@ -584,16 +592,15 @@ var MenuState = {
         globUpdateHandler(game);
       } else if (key === "Health") {
         healthHandler(game);
-      } else if (key === "RatsAdded") {
-        //console.log("rats added menu state");
-        // let ratCount = game.registry.get("RatsToAdd") || 0
-        // game.registry.set("RatsToAdd",ratCount+1)
-        ratHandler(game);
       }
     });
   },
 
   update() {
+
+    if(this.registry.get("RatsAdded") ===true && this.ratHandlerCalled ===false){
+      ratHandler(this)
+    }
     if (this.registry.get("Order_Began") === true) {
       this.registry.set("Order_Began", false);
       this.time_order_began = this.time.now;

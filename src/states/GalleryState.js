@@ -786,7 +786,7 @@ const NoteUpdater = (game) => {
   let currentRowCount = 0;
   let currentColCount = 0;
   let currentRowY = initialRowY;
-
+  //console.log("new notes:", newNotes);
   let currentPage = 0;
   game.noteCurrentPage = 0;
   game.noteTotalPages = 1;

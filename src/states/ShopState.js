@@ -129,6 +129,18 @@ const confirmButtonHandler = (game, object) => {
             (item) => item !== game.activeItemInfo.key
           );
           game.allItemKeys = newKeys;
+          let newPlesKeys = game.allPleasantryKeys.filter(
+              (item) => item !== game.activeItemInfo.key
+            );
+            game.allPleasantryKeys = newPlesKeys;
+            let newCheapKeys = game.allCheapItemKeys.filter(
+              (item) => item !== game.activeItemInfo.key
+            );
+            game.allCheapItemKeys = newCheapKeys;
+            let newExpensiveKeys = game.allExpensiveItemKeys.filter(
+              (item) => item !== game.activeItemInfo.key
+            );
+            game.allExpensiveItemKeys = newExpensiveKeys;
         } else if (game.activeItemInfo.repeatable > 0) {
           game[game.activeItemInfo.key + "Left"] -= 1;
           if (game[game.activeItemInfo.key + "Left"] <= 0) {
@@ -661,6 +673,12 @@ var ShopState = {
           //this[item + "Button"].tint = "0x2E2E2E";
           //this[item + "Button"].input.enabled = false;
           let newKeys = this.allItemKeys.filter((otheritem) => otheritem !== item);
+          let newPlesKeys = this.allPleasantryKeys.filter((otheritem) => otheritem !== item);
+          let newCheapKeys = this.allCheapItemKeys.filter((otheritem) => otheritem !== item);
+          let newExpensiveKeys = this.allExpensiveItemKeys.filter((otheritem) => otheritem !== item);
+          this.allPleasantryKeys = newPlesKeys;
+          this.allCheapItemKeys = newCheapKeys;
+          this.allExpensiveItemKeys = newExpensiveKeys;
           this.allItemKeys = newKeys;
           ////console.log("new all item keys:",this.allItemKeys);
         } else if (itemInfo.repeatable > 0) {

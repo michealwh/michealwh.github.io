@@ -186,23 +186,25 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
         break
       }
       case "bottomfeeder":
-          { let produceCount = 0;
-          let passed=true;
-          for (let i=0; i< recieved_order_copy.length;i++){
-            if (recieved_order_copy[i] === "lettuce" || recieved_order_copy[i] === "tomato" || recieved_order_copy[i] === "onion"){
+        {
+          let produceCount = 0;
+          let passed = true;
+          for (let i = 0; i < recieved_order_copy.length; i++) {
+            if (recieved_order_copy[i] === "lettuce" || recieved_order_copy[i] === "tomato" || recieved_order_copy[i] === "onion") {
               produceCount++;
-              if (produceCount !== i){
-                passed=false;
+              if (produceCount !== i) {
+                passed = false;
                 break;
               }
-              //console.log("found produce", recieved_order_copy[i], "at",i);
+              //console.log("found produce", recieved_order_copy[i], "at", i);
             }
           }
-          if (passed){
-            precisionMod+=.2
+          if (passed) {
+            precisionMod += .2
             allActivatedMods.push("bottomfeeder");
           }
-        break; }
+          break;
+        }
       case "stevenswish": {
         if (CurrentDay % 2 == 0) {
           tipMod += 0.4;
@@ -313,7 +315,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
           allActivatedMods.push("scentedbounce");
         }
         presentationStat += bouncyBallsInKitchen.length;
-        //console.log( "presentation stat increased by", bouncyBallsInKitchen.length);
+        //console.log("presentation stat increased by", bouncyBallsInKitchen.length);
         //console.log("new presentation stat:", presentationStat);
         break;
       }
@@ -332,10 +334,10 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
     }
   }
 
-  presentationStat*=presentationMod;
-  punctualityStat*=punctualityMod;
-  pleasantryStat*=pleasantryMod;
-  precisionStat*=precisionMod;
+  presentationStat *= presentationMod;
+  punctualityStat *= punctualityMod;
+  pleasantryStat *= pleasantryMod;
+  precisionStat *= precisionMod;
 
 
   // rat effect handling
@@ -493,50 +495,38 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
           (notes_info.startday && CurrentDay >= notes_info.startday) ||
           (CurrentDay >= defaultStartDay && !notes_info.startday)
         ) {
-          let all_collected_notes = game.registry.get("Notes") || {};
+          let all_collected_notes = { ...game.registry.get("Notes") } || {};
           let npc_collected = all_collected_notes[game.npcName];
-          let notes = notes_info.notes;
-          let order = notes_info.order;
-          if (!(npc_collected && npc_collected.length >= notes.length)) {
-            let noteSuccess = Math.floor(
-              Math.random() * game.formattedNotes[game.npcName].chance
-            );
-            //console.log("note success:", noteSuccess);
-            if (noteSuccess === 0) {
-              if (order === "chrono") {
-                if (npc_collected === undefined) {
-                  all_collected_notes[game.npcName] = [0];
-                  selectedNote = notes[0];
-                } else {
-                  for (let i = 0; i < notes.length; i++) {
-                    if (npc_collected.includes(i) === false) {
-                      selectedNote = notes[i];
-
-                      all_collected_notes[game.npcName].push(i);
-                      break;
-                    }
-                  }
-                }
-              } else if (order === "random") {
-                //console.log("not implemented");
-                if (npc_collected === undefined) {
-                  all_collected_notes[game.npcName] = [];
-                  npc_collected = [];
-                }
-                let foundNote = false;
-                while (foundNote == false) {
-                  const index = Math.floor(Math.random() * notes.length);
-                  if (npc_collected.includes(index) === false) {
-                    selectedNote = notes[index];
-
-                    all_collected_notes[game.npcName].push(index);
-                    foundNote = true;
-                  }
-                }
-              }
-              game.registry.set("Notes", all_collected_notes);
+          const { notes, order, chance } = notes_info;
+          const noteSuccess = Math.floor(Math.random() * chance);
+          const alreadyCollectedAll = npc_collected && npc_collected.length >= notes.length;
+          //console.log("note success:", noteSuccess);
+          if (!alreadyCollectedAll && noteSuccess === 0) {
+            if(!npc_collected){
+              all_collected_notes[game.npcName] = [];
+              npc_collected = all_collected_notes[game.npcName];
             }
+            if (order === "chrono") {
+                const nextIndex = notes.findIndex((note, index) => !npc_collected.includes(index));
+                if (nextIndex !== -1) {
+                  selectedNote = notes[nextIndex];
+                  all_collected_notes[game.npcName].push(nextIndex);
+                }
+            } else if (order === "random") {
+              const uncollected = notes.reduce((acc, note, index) => {
+                if (!npc_collected.includes(index)) acc.push(index);
+                return acc;
+              }, []);
+
+              if (uncollected.length > 0) {
+                const index = uncollected[Math.floor(Math.random() * uncollected.length)];
+                selectedNote = notes[index];
+                all_collected_notes[game.npcName].push(index);
+              }
+            }
+            game.registry.set("Notes", all_collected_notes);
           }
+
         }
       }
       if (selectedNote !== null) {
@@ -580,7 +570,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
       let healthsToBeLost = 0;
       if (!savedThisTime) {
         healthsToBeLost += 1;
-        //console.log( "current health after first loss:",game.registry.get("Health"));
+        //console.log("current health after first loss:", game.registry.get("Health"));
       } else {
         modifierAnimation(game, "aqualificprism", true);
       }

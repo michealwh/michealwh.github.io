@@ -884,6 +884,8 @@ const dayEndHandler = (game, just_launched, previousSave) => {
     if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rats")) {
       //console.log("setting rats added to true");
       game.registry.set("RatsAdded", true);
+      game.registry.set("KitchenRatCount", 0);
+      game.registry.set("RatsToAdd" , 0);
     }
 
     if (game.secretShopperDay === true) {

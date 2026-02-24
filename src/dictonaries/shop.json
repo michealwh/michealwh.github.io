@@ -106,7 +106,7 @@
       "description": "customer's punctuality standards are dropped by 4%.",
       "type": "modifier",
       "scale": 1.5,
-      "cost": 68.99,
+      "cost": 48.99,
       "repeatable": true
     },
 
