@@ -113,13 +113,25 @@
     "alittlehelp": {
       "key": "alittlehelp",
       "title": "A Little Help",
-      "description": "every rat in your kitchen gives +4% punctuality.",
+      "description": "every rat in your kitchen gives x1.1 punctuality.",
       "quote":"Let me get that for you.",
       "type": "modifier",
       "scale": 1.5,
       "cost": 109.99,
       "repeatable": true,
       "day":15
+    },
+
+    "uraniumdistraction": {
+      "key": "uraniumdistraction",
+      "title": "Uranium Distraction",
+      "description": "for ever RC patty in your kitchen, a rat will become radiated -5% from it's effects.",
+      "quote": "Customer's fascinated by the rodent's new glow are more likely to forget their disgust.",
+      "type": "modifier",
+      "scale": 1.2,
+      "cost": 105.99,
+      "repeatable": false,
+      "day": 15
     },
 
     "cryochamber": {
@@ -293,16 +305,7 @@
   },
 
   "offsale": {
-    "uraniumdistraction": {
-      "key": "uraniumdistraction",
-      "title": "Uranium Distraction",
-      "description": "for ever rc patty in your kitchen, a rat will slowly eat it -5% from it's effects.",
-      "type": "modifier",
-      "scale": 1.2,
-      "cost": 105.99,
-      "repeatable": false,
-      "day": 15
-    },
+    
     "lessismore": {
       "key": "lessismore",
       "title": "Less Is More",

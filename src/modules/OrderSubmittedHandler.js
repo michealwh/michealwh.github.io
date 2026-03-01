@@ -313,12 +313,12 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
         break;
       }
       case "alittlehelp": {
-        const alittlehelpMod = 4;
+        const alittlehelpMod = .1;
         const ratsNotAdded = game.registry.get("RatsToAdd") || 0;
         const ratsAdded = game.registry.get("KitchenRatCount") || 0;
         if (ratsNotAdded + ratsAdded > 0) {
           allActivatedMods.push("alittlehelp");
-          punctualityStat += ((ratsNotAdded + ratsAdded) * alittlehelpMod);
+          punctualityMod += ((ratsNotAdded + ratsAdded) * alittlehelpMod);
         }
         break;
       }

@@ -49,6 +49,9 @@ import monrock from "../assets/game/special/morock.png";
 import rethnor from "../assets/game/special/rethnor.png";
 
 import rat_creature from "../assets/game/special/rat_creature.png";
+import rat_creature_r from "../assets/game/special/rat_creature_r.png";
+
+import particle1 from "../assets/game/special/particle2.png";
 
 // SPRITESHEET ASSETS
 
@@ -365,6 +368,9 @@ var LoadState = {
     this.load.image("rethnor", rethnor);
 
     this.load.image("rat_creature", rat_creature);
+    this.load.image("rat_creature_r", rat_creature_r);
+
+    this.load.image("particle1", particle1);
 
     this.load.image("kitchen", jebsKitchen);
     this.load.image("trashcan", trash_can);
@@ -634,6 +640,14 @@ var LoadState = {
         ingredientList.push(patty);
       }
       this.registry.set("RCPattysInKitchen", []);
+
+
+      const uraniumdistractioneffect = this.registry.get("UraniumDistractionEffect") || 0;
+      if (uraniumdistractioneffect > 0) {
+        const curentPles = this.registry.get("Average_Pleasantry") || 0;
+        this.registry.set("Average_Pleasantry", curentPles - uraniumdistractioneffect);
+        this.registry.set("UraniumDistractionEffect", 0);
+      }
     }
     //this.registry.set("FurnitureShopEvent", undefined);
 

@@ -25,8 +25,9 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
     let rcPattysInKitchen = game.registry.get("RCPattysInKitchen") || [];
     const uuid = Phaser.Math.RND.uuid();
     object.id = uuid;
-    game.rcPattyList.push(object);
-    rcPattysInKitchen.push(object.texture.key);
+    object.health = 60*5;
+    game.rcPattyList.push(object); // for actual object changes like uranium distraction
+    rcPattysInKitchen.push(object.texture.key); // for orders and saving ingredients
     game.registry.set("RCPattysInKitchen", rcPattysInKitchen);
   }
   object.setCollideWorldBounds(true);
@@ -299,11 +300,23 @@ const ratMinigameSetup = (game) => {
               let count = game.registry.get("KitchenRatCount");
               game.registry.set("KitchenRatCount", count - 1);
               game.ratList = game.ratList.filter((rat) => rat.id !== game.activeRat.id);
+              if(game.activeRat.rcPattyId){
+                game.rcPattyBusyIdList = game.rcPattyBusyIdList.filter(id => id !== game.activeRat.rcPattyId);
+              }
+              if(game.activeRat.particles){
+                game.activeRat.particles.destroy();
+              }
+              const uraniumDistractionEffect = game.registry.get("UraniumDistractionEffect") || 0;
               const currentPleasantry = game.registry.get("Average_Pleasantry"); // removing rat mod
               const ratDiscount = game.registry.get("RatDiscount") || 0;
+              let ratIndividualDiscount = 0;
+              if (game.activeRat.rcPattyId){
+                ratIndividualDiscount = 5;
+                game.registry.set("UraniumDistractionEffect", uraniumDistractionEffect - 5);
+              }
               game.registry.set(
                 "Average_Pleasantry",
-                currentPleasantry + (ratToll - ratDiscount)
+                currentPleasantry + (ratToll - ratDiscount - ratIndividualDiscount)
               );
               game.canRatMinigame = true;
             }
@@ -336,12 +349,19 @@ const ratMinigameShow = (game, rat) => {
 };
 
 const ratHandler = (game) => {
+
+
+  let ratSizes = [.05,.1,.15,.2,.25,.3,.3,.35,.4,.4,.4,.4,.45,.45,.5,.5,.55,.55,.6,.6,.7,.8];
+
+  
+
   const rat = game.physics.add
     .image(50, 1000, "rat_creature")
     .setOrigin(0.5, 1)
     .setInteractive();
   rat.scale = 0;
-  let targetScale = (Math.random() * 8 + 1) * 0.1;
+  let targetScale = ratSizes[Math.floor(Math.random() * ratSizes.length)];
+  //console.log("spawning rat with target scale", targetScale)
   let ratSpeed = 150 * (1 - targetScale);
   game.tweens.add({
     targets: rat,
@@ -466,66 +486,126 @@ const uraniumDistractionHandler = (game) => {
   if(!uraniumDistractionActive){
     return
   }
-  //console.log("starting uranium setup")
-    // initial setup
+
+  const uraniumDistractionMod = 5;
+  let rcPattyList = game.rcPattyList;
+  let rats = game.ratList;
+
+  const initialSetup = () => {
+    // connecting as many rats to rc patties as possible
     let pleasantryAddition = 0;
-    const uraniumDistractionMod = 5;
-    let rcPattyList = game.rcPattyList;
-    const rats = game.ratList;
     for(let i = 0; i < rats.length; i++){
       const rat = rats[i];
-      const equivalentRCPatty = rcPattyList[i]; // object
+      const equivalentRCPatty = rcPattyList.find(p => !game.rcPattyBusyIdList.includes(p.id));
       if(equivalentRCPatty){
-        game.rcPattyTakenList.push(equivalentRCPatty.id);
+        game.rcPattyBusyIdList.push(equivalentRCPatty.id);
         rat.rcPattyId = equivalentRCPatty.id;
         pleasantryAddition += uraniumDistractionMod;
-        equivalentRCPatty.ratIndex = rat.ratIndex;
+        equivalentRCPatty.ratId = rat.id;
+        rat.setTexture("rat_creature_r");
+        const particles = game.add.particles(0, 0, "particle1", {
+              speed: 10,
+              frequency: 1000,
+              lifespan: 5000,
+              scale: { start: 5, end: 0 },
+              blendMode: "ADD",
+            });
+            particles.setParticleGravity(1,1);
+            particles.startFollow(rat,0,-80/rat.scale);
+            rat.particles = particles;
       } else {
         break;
       }
     }
+    game.registry.set("UraniumDistractionEffect", pleasantryAddition);
     let currentPleasantry = game.registry.get("Average_Pleasantry") || 0;
     game.registry.set("Average_Pleasantry", currentPleasantry + pleasantryAddition);
+  }
+
+  //console.log("starting uranium setup")
+  initialSetup();
 
     // loop to check
     const checkUraniumDistraction = () => {
+
+      if (game.registry.get("UraniumDistractionActive") === false){
+        rats = game.ratList;
+        let pleasantryChanges = 0;
+        for (let i=0; i < rats.length; i++){
+          const rat = rats[i]
+          if(rat.rcPattyId){
+            rat.rcPattyId = null;
+              rat.setTexture("rat_creature");
+              rat.particles.destroy();
+              pleasantryChanges -= uraniumDistractionMod;
+          }
+        }
+        const currentPleasantry = game.registry.get("Average_Pleasantry")
+        game.registry.set("UraniumDistractionEffect",0);
+        game.registry.set("Average_Pleasantry",currentPleasantry+pleasantryChanges)
+
+        return
+      }
+
       //console.log("looping thru uranium check")
       let currentPleasantry = game.registry.get("Average_Pleasantry") || 0;
       let pleasantryChanges = 0;
-      const rats = game.ratList;
-
+      rats = game.ratList;
+      rcPattyList = game.rcPattyList;
       for (let i=0; i < rats.length; i++){
         const rat = rats[i];
-        //console.log("checking rat", rat.ratName, "with patty id", rat.rcPattyId);
+        ////console.log("checking rat", rat.ratName, "with patty id", rat.rcPattyId);
         if(rat.rcPattyId){
-          if (rcPattyList.some(p => p.id === rat.rcPattyId)){
-            //console.log("rat", rat.ratName, "is still distracted by rc patty", rat.rcPattyId);
+          const rcPatty = rcPattyList.find(p => p.id === rat.rcPattyId);
+          if (rcPatty){
+            // rcPatty.health -= 1;
+            // if(rcPatty.health <= 0){
+            //   game.rcPattyBusyIdList = game.rcPattyBusyIdList.filter(id => id !== rat.rcPattyId);
+            //   rat.rcPattyId = null;
+            //   rat.setTexture("rat_creature");
+            //   pleasantryChanges -= uraniumDistractionMod;
+            // }
+            ////console.log("rat", rat.ratName, "is still distracted by rc patty", rat.rcPattyId);
             // found
           } else {
-            //console.log("rat", rat.ratName, "is no longer distracted as their equivalent rc patty is gone");
+            game.rcPattyBusyIdList = game.rcPattyBusyIdList.filter(id => id !== rat.rcPattyId);
             // attempt to find new match
-            const newEquivalentRCPatty = rcPattyList.find(p => !game.rcPattyTakenList.includes(p.id));
+            const newEquivalentRCPatty = rcPattyList.find(p => !game.rcPattyBusyIdList.includes(p.id));
             if(newEquivalentRCPatty){
-              game.rcPattyTakenList.push(newEquivalentRCPatty.id);
+              game.rcPattyBusyIdList.push(newEquivalentRCPatty.id);
               rat.rcPattyId = newEquivalentRCPatty.id;
-              newEquivalentRCPatty.ratIndex = rat.ratIndex;
+              newEquivalentRCPatty.ratId = rat.id;
             } else {
+              rats[i].rcPattyId = null;
+              rat.setTexture("rat_creature");
+              rat.particles.destroy();
               pleasantryChanges -= uraniumDistractionMod;
             }
           }
         } else {
-          //console.log("rat", rat.ratName, "is not currently distracted but there are rc patties in the kitchen, attempting to find match");
-          const newEquivalentRCPatty = rcPattyList.find(p => !game.rcPattyTakenList.includes(p.id));
+          const newEquivalentRCPatty = rcPattyList.find(p => !game.rcPattyBusyIdList.includes(p.id));
           if(newEquivalentRCPatty){
-            game.rcPattyTakenList.push(newEquivalentRCPatty.id);
+            game.rcPattyBusyIdList.push(newEquivalentRCPatty.id);
             rat.rcPattyId = newEquivalentRCPatty.id;
-            newEquivalentRCPatty.ratIndex = rat.ratIndex;
+            newEquivalentRCPatty.ratId = rat.id;
+            rat.setTexture("rat_creature_r");
+            const particles = game.add.particles(0, 0, "particle1", {
+              speed: 10,
+              frequency: 1000,
+              lifespan: 5000,
+              scale: { start: 5, end: 0 },
+              blendMode: "ADD",
+            });
+            particles.setParticleGravity(1,1);
+            particles.startFollow(rat,0,-80*rat.scale);
+            rat.particles = particles;
             pleasantryChanges += uraniumDistractionMod;
           }
         }
 
       }
       if(pleasantryChanges !== 0){
+        game.registry.set("UraniumDistractionEffect", game.registry.get("UraniumDistractionEffect") + pleasantryChanges);
         game.registry.set("Average_Pleasantry", currentPleasantry + pleasantryChanges);
       }
     }
@@ -548,7 +628,7 @@ var KitchenState = {
     // this.bgMusic.volume = 0.1;
     // this.bgMusic.play()
     this.EventEmitter = new Phaser.Events.EventEmitter();
-    this.max_ingredients = 10;
+    this.max_ingredients = 100;
 
     this.active_ingredients = [];
 
@@ -556,9 +636,10 @@ var KitchenState = {
     this.adding_items = false;
 
     this.permrcpattyAdded = false;
+    this.uraniumdistractionAdded = false;
     this.ratList = [];
     this.rcPattyList = [];
-    this.rcPattyTakenList = [];
+    this.rcPattyBusyIdList = [];
 
     this.registry.set("Burger", this.used_ingredients);
 
@@ -682,12 +763,12 @@ var KitchenState = {
       fontFamily: "font1",
       fontSize: "20px",
       fill: "#d13d3d",
-    }).setOrigin(0,1)
+    }).setOrigin(0,1).setDepth(20)
     this.ratCounter = this.add.text(0, 980, "Rats: 0", {
       fontFamily: "font1",
       fontSize: "20px",
       fill: "#d13d3d",
-    }).setOrigin(0,1)
+    }).setOrigin(0,1).setDepth(20)
 
     this.ratFrame = this.add
       .image(500, 500, "order_background")
@@ -873,8 +954,6 @@ var KitchenState = {
       objectDragCheck(pointer);
     });
 
-    //uraniumDistractionHandler(this);
-
     //ratHandler(this);
   },
   update() {
@@ -899,6 +978,11 @@ var KitchenState = {
       this.permrcpattyAdded = true;
       this.rcpattyBtn.visible = true;
       foodButtonHandler(this.rcpattyBtn, this);
+    }
+
+    if(this.registry.get("UraniumDistractionActive") === true && this.uraniumdistractionAdded == false){
+      this.uraniumdistractionAdded=true;
+      uraniumDistractionHandler(this);
     }
 
     if (this.registry.get("BouncyBallsInKitchen") && this.registry.get("BouncyBallsInKitchen").length > 0) {
@@ -976,6 +1060,9 @@ var KitchenState = {
               rcPattysInKitchen.splice(i, 1);
             }
             this.registry.set("RCPattysInKitchen", rcPattysInKitchen);
+            //console.log("removing rc patty from kitchen registry"),this.rcPattyList;
+            this.rcPattyList = this.rcPattyList.filter(p => p.id !== object.id);
+            //console.log("rc patty list after removal", this.rcPattyList);
           }
 
           this.trash_sfx.play();
@@ -1040,6 +1127,10 @@ var KitchenState = {
                 rcPattysInKitchen.splice(i, 1);
               }
               this.registry.set("RCPattysInKitchen", rcPattysInKitchen);
+              //console.log("removing rc patty from kitchen registry"),this.rcPattyList;
+              this.rcPattyList = this.rcPattyList.filter(p => p.id !== object.id);
+              //console.log("rc patty list after removal", this.rcPattyList);
+              //console.log("removing rc patty from kitchen registry in this");
             }
 
             this.registry.set("Burger_Information", Burger_Information);
