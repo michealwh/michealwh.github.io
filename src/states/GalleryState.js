@@ -96,14 +96,26 @@ const showNPCTab = (game, shouldShow) => {
 const showModifierTab = (game, shouldShow) => {
   if (shouldShow) {
     game.infoTitle.text = "Modifiers";
-
-    for (let i = 0; i < game.modifierAssets.length; i++) {
-      game.modifierAssets[i].visible = true;
+    const count = (game.modCurrentPage +1) * 6*3*3;
+    for (let i = count-(6*3*3); i < count; i++) {
+      if (game.modifierAssets[i]) {
+        game.modifierAssets[i].visible = true;
+      } else {
+        break;
+      }
+    }
+    if (game.modCurrentPage + 1 < game.modTotalPages) {
+      game.modNextPageBtn.visible = true;
+    }
+    if (game.modCurrentPage !== 0) {
+      game.modBackPageBtn.visible = true;
     }
   } else {
     for (let i = 0; i < game.modifierAssets.length; i++) {
       game.modifierAssets[i].visible = false;
     }
+    game.modNextPageBtn.visible = false;
+    game.modBackPageBtn.visible = false;
   }
 };
 
@@ -139,7 +151,10 @@ const hideInfo = (game) => {
   for (let i = 0; i < game.npcInfoFrameAssets.length; i++) {
     game.npcInfoFrameAssets[i].visible = false;
   }
+  game.npcInfoText.text = "";
   game.modInfoImage.visible = false;
+  game.modInfoText.visible = false;
+  game.modQuoteText.visible = false;
   game.modSellOneBtn.visible = false;
   game.modSellTenBtn.visible = false;
   game.modSellAllBtn.visible = false;
@@ -162,6 +177,9 @@ const setupNPCTab = (game) => {
       let npc_info = npc_dictionary.npcs[target];
       game.npcInfoTitle.text = npc_info.name;
       game.npcInfoImage.x = -50;
+      if(npc_info.name.includes("Glorb")){
+        game.npcInfoImage.x = -120;
+      }
       game.npcInfoImage.y = 70;
       if (npc_info.name === "Random") {
         const first_index = Math.floor(
@@ -180,7 +198,7 @@ const setupNPCTab = (game) => {
         infotext += npc_info.description;
       } else {
         infotext +=
-          "another cog in the machine. another sheep in the flock. another twig in a stream.";
+          "Another cog in the machine. Another sheep in the flock. Another twig in a stream.";
       }
       if (npc_info.standards) {
         infotext += "\n\nStandards:";
@@ -233,14 +251,10 @@ const setupNPCTab = (game) => {
     .setDepth(7);
   game.npcInfoImage.scale = 0.8;
   game.npcInfoText = game.add
-    .text(
-      550,
-      350,
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-      {
+    .text(530,350,"",{
         fontFamily: "font1",
         fontSize: "30px",
-        wordWrap: { width: 250 },
+        wordWrap: { width: 300 },
         fill: "black",
       }
     )
@@ -318,7 +332,7 @@ const NPCUpdater = (game) => {
   }
 };
 
-const ModifierAsset = (game, modifier, x, y, quantity) => {
+const ModifierAsset = (game, modifier, x, y, quantity, curPage) => {
   let boxAsset = game.add
     .image(x, y, modifier + "_box")
     .setOrigin(0.5, 0.5)
@@ -350,8 +364,63 @@ const ModifierAsset = (game, modifier, x, y, quantity) => {
     .setOrigin(0.5, 0.5)
     .setDepth(5);
 
+    let showValue = false;
+    if (game.currentTab === game.modifierTab && curPage === 0){
+      showValue = true;
+    }
+    boxAsset.visible = showValue;
+    boxTitleText.visible = showValue;
+    boxQuantityText.visible = showValue;
+
   return [boxAsset, boxTitleText, boxQuantityText];
 };
+
+const setupModTab = (game) => {
+  game.modCurrentPage = 0;
+
+  game.modNextPageBtn.on("pointerdown", (pointer, gameObject) => {
+    //console.log("next page");
+    game.click_sfx.play();
+
+    game.tweens.add({
+      targets: game.modNextPageBtn,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        game.modCurrentPage += 1;
+        showModifierTab(game, false);
+        showModifierTab(game, true);
+      },
+    });
+  });
+  game.modBackPageBtn.on("pointerdown", (pointer, gameObject) => {
+    //console.log("back page");
+    game.click_sfx.play();
+
+    game.tweens.add({
+      targets: game.modBackPageBtn,
+      scale: 0.15,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        game.modCurrentPage -= 1;
+        // if(game.modCurrentPage==0){
+        //   game.modBackPageBtn.visible=false
+        // }
+        // game.modNextPageBtn.visible=true;
+        showModifierTab(game, false);
+        showModifierTab(game, true);
+      },
+    });
+  });
+}
 
 const ModUpdater = (game) => {
   //console.log("IN MOD UPDATER");
@@ -359,7 +428,10 @@ const ModUpdater = (game) => {
   for (let i = 0; i < game.modifierAssets.length; i++) {
     game.modifierAssets[i].destroy();
   }
-
+ /* ["pragmaticparty","burgerpolish","toddsrequest","stevenswish","magicdirt","thewhisk","bofoundation",
+    "aqualificprism", "killercheddar","ratnip","alittlehelp","cryochamber","burgertime","scentedbounce","rcpattyperm","bottomfeeder","sauceshow",
+  "glumtrident","bouncezine","condimentcaroler","glumdevil","chair1","table1","slorgbanner","slorgplush"]
+  */
   const modifiers_list = game.lastModifiers || [];
   let modCountList = {};
 
@@ -373,13 +445,34 @@ const ModUpdater = (game) => {
     }
   }
 
+  const maxRow = 3;
   const maxCol = 6;
+  const initialRowY = 350;
+  let currentRowCount = 0;
   let currentColCount = 0;
-  let currentRowY = 350;
+  let currentRowY = initialRowY;
+
+  let currentPage = 0;
+  game.modCurrentPage = 0;
+  game.modTotalPages = 1;
+
+
+  game.modNextPageBtn.visible = false;
+  game.modBackPageBtn.visible = false;
 
   Object.keys(modCountList).forEach((item) => {
     if (currentColCount >= maxCol) {
       currentRowY += 140;
+      currentRowCount += 1;
+      if (currentRowCount >= maxRow){
+        currentPage += 1;
+        game.modTotalPages +=1;
+        if (game.currentTab === game.modTab){
+          game.modNextPageBtn.visible = true;
+        }
+        currentRowY = initialRowY;
+        currentRowCount = 0;
+      }
       currentColCount = 0;
     }
     currentColCount += 1;
@@ -388,7 +481,8 @@ const ModUpdater = (game) => {
       item,
       currentColCount * 120 + 87,
       currentRowY,
-      modCountList[item]
+      modCountList[item],
+      currentPage
     );
 
     let showValue = false;
@@ -409,16 +503,24 @@ const ModUpdater = (game) => {
         game.currModInfo = mod_info;
         game.npcInfoTitle.text = mod_info.title;
         game.modInfoImage.setTexture(mod_info.key);
+        game.modInfoImage.scale = mod_info.scale ? mod_info.scale-.5 : 0.4;
         let infotext = "Desciption: ";
         if (mod_info.description) {
           infotext += mod_info.description;
         } else {
           infotext += "generic item.";
         }
-        game.npcInfoText.text = infotext;
+        game.modInfoText.text = infotext;
+        game.modInfoText.visible=true
         game.modInfoImage.visible = true;
+        if (mod_info.quote) {
+          game.modQuoteText.text = `"${mod_info.quote}"`;
+        } else {
+          game.modQuoteText.text = `And so it was.`
+        }
+        game.modQuoteText.visible = true;
 
-        if (!game.currModInfo.description.includes("pleasantry") && game.currModInfo.type !== "furniture") {
+        if ((!game.currModInfo.description.includes("pleasantry") || game.currModInfo.type !== "furniture") && !game.currModInfo.description.includes("permanent")) { // made an or to account for ratnip, since it affects pleasantry but isn't a pleasantry mod
           game.modSellOneBtn.visible = true;
           game.modSellTenBtn.visible = true;
           game.modSellAllBtn.visible = true;
@@ -618,6 +720,27 @@ const ModSellHandler = (game) => {
           //console.log("sold mod at index:",i)
           newModifiers.splice(i-soldCount,1);
           soldCount +=1;
+          //handle loss of modifier consequences
+          if (game.currModInfo.key === "pragmaticparty"){
+            const currentPleasantry = game.registry.get("Average_Pleasantry") || 0;
+            game.registry.set("Average_Pleasantry", currentPleasantry - 1);
+          } else if (game.currModInfo.key === "killercheddar"){
+            let currentRatChance = game.registry.get("currentRatChance") || 0
+            game.registry.set("currentRatChance", (currentRatChance - 1))
+          } else if (game.currModInfo.key === "ratnip"){
+            //console.log("REMOVING RATNIP MOD")
+            const ratNipDiscount = 4;
+            let ratDiscount = game.registry.get("RatDiscount") || 0;
+            game.registry.set("RatDiscount", (ratDiscount - ratNipDiscount));
+            const totalRats = (game.registry.get("RatsToAdd") || 0) + (game.registry.get("KitchenRatCount") || 0);
+            if(totalRats > 0){
+              const currentPleasantry = game.registry.get("Average_Pleasantry") || 0;
+              const pleasantrySubtraction = totalRats * ratNipDiscount;
+              game.registry.set("Average_Pleasantry", (currentPleasantry - pleasantrySubtraction));
+            }
+          } else if (game.currModInfo.key === "uraniumdistraction"){
+            game.registry.set("UraniumDistractionActive", false);
+          }
         } else {
           amountRemaining +=1;
         }
@@ -630,15 +753,6 @@ const ModSellHandler = (game) => {
     showModSellFrame(game, false);
     if(amountRemaining <= 0){
       hideInfo(game);
-    }
-
-    //handle loss of modifier consequences
-    if (game.currModInfo.key === "pragmaticparty"){
-      const currentPleasantry = game.registry.get("Average_Pleasantry") || 0;
-      game.registry.set("Average_Pleasantry", currentPleasantry - 1);
-    } else if (game.currModInfo.key === "killercheddar"){
-      let currentRatChance = game.registry.get("currentRatChance") || 0
-      game.registry.set("currentRatChance", (currentRatChance - 1))
     }
   });
 };
@@ -966,34 +1080,66 @@ var GalleryState = {
     this.noteTitle.angle = -90;
 
     this.modInfoImage = this.add
-      .image(300, 330, "chair1")
-      .setOrigin(0, 0)
+      .image(500, 440, "chair1")
+      .setOrigin(0.5, 0.5)
       .setDepth(7);
 
-    this.modInfoImage.rotation = Phaser.Math.DegToRad(15);
+    this.modInfoText = this.add.text(500,595, "",{
+        fontFamily: "font1",
+        fontSize: "30px",
+        wordWrap: { width: 550 },
+        fill: "#00FF21",
+      }
+    )
+    .setOrigin(0.5, 0.5)
+    .setDepth(7);
+
+    this.modQuoteText = this.add.text(500, 680, ``, {
+        fontFamily: "font1",
+        fontStyle: "italic",
+        fontSize: "25px",
+        fill: "#00E516",
+        wordWrap: { width: 400 },
+        align: "center",
+      }).setOrigin(0.5, 0.5).setDepth(7).setVisible(false);
+
+    //this.modInfoImage.rotation = Phaser.Math.DegToRad(15);
     this.modInfoImage.scale = 0.8;
     this.modInfoImage.visible = false;
 
+    this.modNextPageBtn = this.add
+    .image(680, 250, "next_button")
+    .setOrigin(0.5, 0.5)
+    .setDepth(5)
+    .setInteractive();
+    this.modNextPageBtn.scale = 0.2;
+    this.modBackPageBtn = this.add
+      .image(320, 250, "prev_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(5)
+      .setInteractive();
+    this.modBackPageBtn.scale = 0.2;
+
     this.modSellOneBtn = this.add
-      .image(350, 700, "sell_one_button")
+      .image(760, 685, "sell_one_button")
       .setOrigin(0.5, 0.5)
       .setDepth(7)
       .setInteractive();
-    this.modSellOneBtn.scale = 0.2;
+    this.modSellOneBtn.scale = 0.12;
     this.modSellOneBtn.visible = false
     this.modSellTenBtn = this.add
-      .image(500, 700, "sell_ten_button")
+      .image(760, 715, "sell_ten_button")
       .setOrigin(0.5, 0.5)
       .setDepth(7)
       .setInteractive();
-    this.modSellTenBtn.scale = 0.2;
+    this.modSellTenBtn.scale = 0.12;
     this.modSellTenBtn.visible = false
     this.modSellAllBtn = this.add
-      .image(650, 700, "sell_all_button")
+      .image(760, 745, "sell_all_button")
       .setOrigin(0.5, 0.5)
       .setDepth(7)
       .setInteractive();
-    this.modSellAllBtn.scale = 0.2;
+    this.modSellAllBtn.scale = 0.12;
     this.modSellAllBtn.visible = false
 
     this.sellFrame = this.add.image(500, 500-1000, "order_background").setOrigin(0.5, 0.5).setDepth(9).setTint(0x076b22);
@@ -1007,6 +1153,7 @@ var GalleryState = {
     this.modSellFrameVisible=false;
     setupNPCTab(this);
     setupNoteTab(this);
+    setupModTab(this);
     ModUpdater(this);
     inputHandler(this, this.npcTab, this.npcTitle);
     inputHandler(this, this.modifierTab, this.modifierTitle);
@@ -1020,7 +1167,6 @@ var GalleryState = {
     this.currentTitle.setDepth(3);
     this.currentTab.setTint(0x0200ff, 0x076b22, 0x076b22, 0x076b22);
     showNPCTab(this, true);
-
     NoteUpdater(this);
   },
 

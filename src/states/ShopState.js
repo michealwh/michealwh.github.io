@@ -256,7 +256,7 @@ const shuffleItems = (game, animate, previousSave) => {
     let item2 = shuffledItems[1];
     let item3 = shuffledItems[2];
 
-    game.dailyItems = [item1, item2, item3, "bouncyball"];
+    game.dailyItems = [item1, item2, item3, "bouncyball","rcpatty"];
   } else {
     let shuffledItems = game.allItemKeys;
     let shuffledPles = game.allPleasantryKeys;
@@ -275,7 +275,7 @@ const shuffleItems = (game, animate, previousSave) => {
     let itemList = [item1, item2, item3];
     shuffleArray(itemList);
 
-    game.dailyItems = [itemList[0], itemList[1], itemList[2], "bouncyball"];
+    game.dailyItems = [itemList[0], itemList[1], itemList[2], "bouncyball","rcpatty"];
   }
 
   game.registry.set("Daily_Shop_Items", game.dailyItems);
@@ -378,6 +378,7 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
   let mouseEnter = false;
   object.on("pointerover", (pointer, gameObject) => {
     let shopItemInfo = shop_dictionary.purchasables[game.dailyItems[itemIndex]];
+    //console.log(game.dailyItems[itemIndex],game.dailyItems)
     if (game.promptOpen === false) {
       mouseEnter = true;
       if (object.x + object.width / 4 + game.infoFrame.width > 1000) {
@@ -535,15 +536,17 @@ var ShopState = {
     this.promptOpen = false;
     this.day = 1;
     this.activeItemInfo = {};
-    this.dailyItems = ["magicdirt", "chair1", "table1", "bouncyball"];
+    this.dailyItems = ["magicdirt", "chair1", "table1", "bouncyball", "rcpatty"];
     this.allItemKeys = [];
 
     this.allPleasantryKeys = [];
     this.allCheapItemKeys = [];
     this.allExpensiveItemKeys = [];
 
+    this.rcpattyAdded = false;
+
     for (const item in shop_dictionary.purchasables) {
-      if (item === "bouncyball") continue;
+      if (item === "bouncyball" || item === "rcpatty") continue;
       const itemInfo = shop_dictionary.purchasables[item];
       this.allItemKeys.push(item);
       if (
@@ -638,17 +641,31 @@ var ShopState = {
 
     // bouncy ball
     this.shopItem4 = this.add
-      .image(500, 800, "bouncyball_box")
+      .image(500, 800, "bouncyball_box") // 500, 800
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
     this.shopItem4.scale = 0.8;
     this.shopButton4 = this.add
-      .image(500, 940, "purchase_button")
+      .image(500, 940, "purchase_button") // 500, 940
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
     purchaseButtonhandler(this, this.shopButton4, 3);
+
+    this.shopItem5 = this.add
+      .image(610, 800, "rcpatty_box")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    this.shopItem5.scale = 0.8;
+    this.shopButton5 = this.add
+      .image(610, 940, "purchase_button")
+      .setOrigin(0.5, 0.5)
+      .setDepth(4)
+      .setInteractive();
+    this.shopItem5.visible=false;
+    this.shopButton5.visible=false;
 
     this.rerollButton = this.add
       .image(820, 340, "reroll_button")
@@ -807,6 +824,14 @@ var ShopState = {
       this.registry.set("Reroll_Info", [this.reRollCost, true]);
       //console.log("rerollcost", this.reRollCost, totalMoney);
       shuffleItems(this);
+    }
+    if(this.registry.get("RCPattyAdded") === true && this.rcpattyAdded === false){
+      this.rcpattyAdded = true;
+      this.shopItem5.visible=true;
+      this.shopButton5.visible=true;
+      this.shopItem4.x=390;
+      this.shopButton4.x=390;
+      purchaseButtonhandler(this, this.shopButton5, 4);
     }
   },
 };

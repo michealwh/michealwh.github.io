@@ -56,7 +56,7 @@ var notes = {
   "Glorbdon": {
     key: "Glorbdon",
     order: "random",
-    chance: 8,
+    chance: 6,
     startday: 5,
     notes: [
       {
@@ -79,7 +79,7 @@ var notes = {
   "Glorbert": {
     key: "Glorbert",
     order: "chrono",
-    chance: 8,
+    chance: 6,
     startday: 5,
     notes: [
       {
@@ -97,7 +97,7 @@ var notes = {
   "Glorbina":{
     key: "Glorbina",
     order: "random",
-    chance: 8,
+    chance: 6,
     startday: 5,
     notes: [
       {
@@ -168,7 +168,7 @@ var notes = {
       },
       {
         title: "Untitled",
-        description: "I get so worried about our problems I forget our kids are growing up.\nI hope they aren't like us."
+        description: "I get so worried about our own problems I forget our kids are growing up.\nI hope they aren't like us."
       },
       {
         title: "Untitled",
@@ -274,7 +274,8 @@ var notes = {
       },
       {
         title: "Untitled",
-        description: "You should come by Grettle Park Cafe sometime.\nI work there on weekends."
+        description: "When was the last time you were fully conscious? I'm talking feeling every part of a moment. You weren't thinking of the past or the future. You were fully there. You were fully here. So often I find myself not here.\nI float away so easily.",
+        fontSize: 20
       },
       {
         title: "Untitled",
@@ -332,6 +333,20 @@ var notes = {
       }
     ],
   },
+  "The Green Maiden": {
+    key: "The Green Maiden",
+    order: "random",
+    chance: 5,
+    startday: 5,
+    notes: [
+      {
+        title: "The Past Is Not Now",
+        description:
+          "Under the pear tree, on top of grit.\nThe feelings of yesterday and I sit.\nMountains of wrath block the view, if only I had knew.\nHe turns red, swells up and shouts.\nRemains of my confidence, they begin to sprout.",
+        fontSize: 20
+        },
+    ]
+  },
   "Orville Braswell" : {
     key: "Orville Braswell",
     order: "random",
@@ -370,7 +385,7 @@ var notes = {
       },
       {
         title: "Withdrawn",
-        description: "Stretched out.\nThreads sewn with doubt.\nJeans outgrown.\nI reap what they have sown.\nI've learned to hate this home.\nNow it is not my own."
+        description: "Stretched out.\nThreads sewn with doubt.\nJeans outgrown.\nI reap what they have sown.\nI've learned to hate this home.\nIt is not my own."
       }
     ],
   },

@@ -853,6 +853,7 @@ const dayEndHandler = (game, just_launched, previousSave) => {
       }
 
       if (game.thisDaysInfo.events.includes("bouncyball")) {
+        //console.log("bouncy balls are allowed up here")
         game.bouncyballsAllowed = true;
         game.registry.set("BouncyBallsAllowed", true);
       }
@@ -871,6 +872,11 @@ const dayEndHandler = (game, just_launched, previousSave) => {
     }
     game.registry.set("SecretShopperDay", game.secretShopperDay)
 
+    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rcpatty")){
+      game.registry.set("RCPattyAdded",true);
+      //console.log("rc patty added up here")
+
+    }
 
     if (game.thisDaysInfo && game.thisDaysInfo.events.includes("cheese")) {
       game.registry.set("CheeseAdded", true);
@@ -968,6 +974,8 @@ const dayEndHandler = (game, just_launched, previousSave) => {
 
       if (game.thisDaysInfo.events.includes("bouncyball")) {
         game.bouncyballsAllowed = true;
+        game.registry.set("BouncyBallsAllowed", true);
+        //console.log("bouncy balls are allowed down here")
       }
     }
 
@@ -981,6 +989,11 @@ const dayEndHandler = (game, just_launched, previousSave) => {
       game.secretShopperDay = true;
     } else {
       game.secretShopperDay = false;
+    }
+
+    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rcpatty")){
+      //console.log("rc patty added down here")
+      game.registry.set("RCPattyAdded",true);
     }
 
     if (game.thisDaysInfo && game.thisDaysInfo.events.includes("cheese")) {

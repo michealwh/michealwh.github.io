@@ -26,6 +26,11 @@ var days = {
       c_standards: [80,80,90,0],
       description: `While you read that 1,585 burgers were consumed in the United States.`
     },
+    8:{
+      events: ["rcpatty"],
+      c_standards: [80,80,90,0],
+      description: `Head Quarters has permitted your site access to their new pilot program: uranium-fed beef patties.`
+    },
     10: {
       events: ["secretshopper"],
       c_standards: [85, 85, 90, 5],

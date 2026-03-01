@@ -66,6 +66,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
   const expected_order = game.registry.get("Order");
   let moneyAddition = 0;
   let ingredients_missed = [];
+  let ingredientPresentationBonus = 0;
 
   for (let i = 0; i < expected_order.length; i++) {
     let index = recieved_order.indexOf(expected_order[i]);
@@ -77,8 +78,13 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
     }
     if (index !== -1) {
       recieved_order.splice(index, 1);
+    } else if (expected_order[i] === "beefpatty" && recieved_order.indexOf("rcpatty") !== -1) {  // check for special ingredients
+        //console.log("rc patty used as beef patty");
+        ingredientPresentationBonus += 20;
+        recieved_order.splice(recieved_order.indexOf("rcpatty"), 1);
     } else {
-      ingredients_missed.push(expected_order[i]);
+        //console.log("missed ingredient", expected_order,recieved_order);
+        ingredients_missed.push(expected_order[i]);
     }
   }
 
@@ -90,7 +96,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
     ) /
       expected_order.length) *
     100;
-  let presentationStat = parseInt(game.registry.get("Current_Presentation"));
+  let presentationStat = parseInt(game.registry.get("Current_Presentation")) + ingredientPresentationBonus;
   let punctualityStat = parseInt(game.registry.get("Current_Punctuality"));
   let pleasantryStat = parseInt(game.registry.get("Average_Pleasantry")) || 0;
 
@@ -205,6 +211,28 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
           }
           break;
         }
+      case "sauceshow": {
+        let sauceCount = 0;
+        let passedbottom = false;
+        let passedtop = false;
+        for (let i = 0; i < recieved_order_copy.length; i++) {
+            if (recieved_order_copy[i] === "ketchup" || recieved_order_copy[i] === "mustard" || recieved_order_copy[i] === "bbq" || recieved_order_copy[i] === "ranch") {
+              sauceCount++;
+              if (recieved_order_copy[i-1] === "bottomBun") {
+                passedbottom = true;
+              } else if (recieved_order_copy[i+1] === "topBun") {
+                passedtop = true;
+                break;
+              }
+              //console.log("found sauce", recieved_order_copy[i], "at", i);
+            }
+          }
+          if ((passedbottom && passedtop) || sauceCount < 2) {
+            presentationMod += .3
+            allActivatedMods.push("sauceshow");
+          }
+        break;
+      }
       case "stevenswish": {
         if (CurrentDay % 2 == 0) {
           tipMod += 0.4;
@@ -228,7 +256,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
       }
       case "bofoundation": {
         let noSpaces = npc_info.name.replaceAll(" ", "");
-        tipAdditions += 800 / noSpaces.length;
+        tipAdditions += (800 / noSpaces.length);
         allActivatedMods.push("bofoundation");
         break;
       }
@@ -284,13 +312,14 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
         chanceOfNoLossLife += 1;
         break;
       }
-      case "ratnip": {
+      case "alittlehelp": {
+        const alittlehelpMod = 4;
         const ratsNotAdded = game.registry.get("RatsToAdd") || 0;
         const ratsAdded = game.registry.get("KitchenRatCount") || 0;
         if (ratsNotAdded + ratsAdded > 0) {
-          allActivatedMods.push("ratnip");
+          allActivatedMods.push("alittlehelp");
+          punctualityStat += ((ratsNotAdded + ratsAdded) * alittlehelpMod);
         }
-        tipAdditions += (ratsNotAdded + ratsAdded) * 5;
         break;
       }
       case "cryochamber": {
@@ -466,7 +495,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
 
       let ratio = statsTotal / chanceTotal;
       const currentHealth = game.registry.get("Health");
-      const targetChance = 10; // chance of winning a life back
+      const targetChance = 20; // chance of winning a life back
       let chance = Math.floor(Math.random() * targetChance) + 1;
       chance += ratio / 2;
       if (ratio >= 1.5 && currentHealth < 5 && chance >= targetChance) {

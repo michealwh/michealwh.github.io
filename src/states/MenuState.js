@@ -168,7 +168,9 @@ const ratHandler = (game) => {
         }
       }
       const currentPleasantry = game.registry.get("Average_Pleasantry")
-      game.registry.set("Average_Pleasantry",currentPleasantry-ratToll);
+      const ratDiscount = game.registry.get("RatDiscount") || 0;
+      //console.log("ratdiscount is currently",ratDiscount)
+      game.registry.set("Average_Pleasantry",currentPleasantry-(ratToll-ratDiscount));
       game.registry.set("RatsToAdd",ratCount+1)
       game.ratLoop.delay=getRatDelay()
     },

@@ -21,6 +21,14 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
     bouncyBallsInKitchen.push(object.texture.key);
     game.registry.set("BouncyBallsInKitchen", bouncyBallsInKitchen);
   }
+  if(object.texture.key.includes("rcpatty")){
+    let rcPattysInKitchen = game.registry.get("RCPattysInKitchen") || [];
+    const uuid = Phaser.Math.RND.uuid();
+    object.id = uuid;
+    game.rcPattyList.push(object);
+    rcPattysInKitchen.push(object.texture.key);
+    game.registry.set("RCPattysInKitchen", rcPattysInKitchen);
+  }
   object.setCollideWorldBounds(true);
 
   object.on("dragstart", (pointer, dragX, dragY) => {
@@ -109,7 +117,7 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
 };
 
 const newKitchenItem = (game, image_key) => {
-  const object = game.physics.add.image(500, 500, image_key).setOrigin(0, 0);
+  const object = game.physics.add.image(400, 500, image_key).setOrigin(0, 0);
   object.body.setAllowGravity(true);
   object.scale = 1;
   physicsObjectHandler(object, game, false);
@@ -290,10 +298,12 @@ const ratMinigameSetup = (game) => {
             } else {
               let count = game.registry.get("KitchenRatCount");
               game.registry.set("KitchenRatCount", count - 1);
+              game.ratList = game.ratList.filter((rat) => rat.id !== game.activeRat.id);
               const currentPleasantry = game.registry.get("Average_Pleasantry"); // removing rat mod
+              const ratDiscount = game.registry.get("RatDiscount") || 0;
               game.registry.set(
                 "Average_Pleasantry",
-                currentPleasantry + ratToll
+                currentPleasantry + (ratToll - ratDiscount)
               );
               game.canRatMinigame = true;
             }
@@ -343,17 +353,19 @@ const ratHandler = (game) => {
       rat.body.onWorldBounds = true;
     },
   });
+  const uuid = Phaser.Math.RND.uuid();
   let ratName =
     npc_dictionary.rat_names[
     Math.floor(Math.random() * npc_dictionary.rat_names.length)
     ];
   rat.ratName = ratName;
+  rat.id = uuid;
   rat.setBounce(1);
   rat.setDepth(1000);
   rat.setCollideWorldBounds(true);
   let count = game.registry.get("KitchenRatCount") || 0;
   game.registry.set("KitchenRatCount", count + 1);
-
+  game.ratList.push(rat);
   rat.on("pointerdown", (pointer, gameObject) => {
     if (game.canRatMinigame !== false) {
       game.rat_sfx2.play();
@@ -445,6 +457,88 @@ const submitButtonhandler = (object, game) => {
     }
   });
 };
+
+
+// WIP
+const uraniumDistractionHandler = (game) => {
+  let uraniumDistractionActive = game.registry.get("UraniumDistractionActive");
+
+  if(!uraniumDistractionActive){
+    return
+  }
+  //console.log("starting uranium setup")
+    // initial setup
+    let pleasantryAddition = 0;
+    const uraniumDistractionMod = 5;
+    let rcPattyList = game.rcPattyList;
+    const rats = game.ratList;
+    for(let i = 0; i < rats.length; i++){
+      const rat = rats[i];
+      const equivalentRCPatty = rcPattyList[i]; // object
+      if(equivalentRCPatty){
+        game.rcPattyTakenList.push(equivalentRCPatty.id);
+        rat.rcPattyId = equivalentRCPatty.id;
+        pleasantryAddition += uraniumDistractionMod;
+        equivalentRCPatty.ratIndex = rat.ratIndex;
+      } else {
+        break;
+      }
+    }
+    let currentPleasantry = game.registry.get("Average_Pleasantry") || 0;
+    game.registry.set("Average_Pleasantry", currentPleasantry + pleasantryAddition);
+
+    // loop to check
+    const checkUraniumDistraction = () => {
+      //console.log("looping thru uranium check")
+      let currentPleasantry = game.registry.get("Average_Pleasantry") || 0;
+      let pleasantryChanges = 0;
+      const rats = game.ratList;
+
+      for (let i=0; i < rats.length; i++){
+        const rat = rats[i];
+        //console.log("checking rat", rat.ratName, "with patty id", rat.rcPattyId);
+        if(rat.rcPattyId){
+          if (rcPattyList.some(p => p.id === rat.rcPattyId)){
+            //console.log("rat", rat.ratName, "is still distracted by rc patty", rat.rcPattyId);
+            // found
+          } else {
+            //console.log("rat", rat.ratName, "is no longer distracted as their equivalent rc patty is gone");
+            // attempt to find new match
+            const newEquivalentRCPatty = rcPattyList.find(p => !game.rcPattyTakenList.includes(p.id));
+            if(newEquivalentRCPatty){
+              game.rcPattyTakenList.push(newEquivalentRCPatty.id);
+              rat.rcPattyId = newEquivalentRCPatty.id;
+              newEquivalentRCPatty.ratIndex = rat.ratIndex;
+            } else {
+              pleasantryChanges -= uraniumDistractionMod;
+            }
+          }
+        } else {
+          //console.log("rat", rat.ratName, "is not currently distracted but there are rc patties in the kitchen, attempting to find match");
+          const newEquivalentRCPatty = rcPattyList.find(p => !game.rcPattyTakenList.includes(p.id));
+          if(newEquivalentRCPatty){
+            game.rcPattyTakenList.push(newEquivalentRCPatty.id);
+            rat.rcPattyId = newEquivalentRCPatty.id;
+            newEquivalentRCPatty.ratIndex = rat.ratIndex;
+            pleasantryChanges += uraniumDistractionMod;
+          }
+        }
+
+      }
+      if(pleasantryChanges !== 0){
+        game.registry.set("Average_Pleasantry", currentPleasantry + pleasantryChanges);
+      }
+    }
+
+    // loops every second
+    game.time.addEvent({
+      delay: 1000,
+      callback: checkUraniumDistraction,
+      callbackScope: game,
+      loop: true,
+  })
+}
+
 var KitchenState = {
   preload() { },
 
@@ -460,6 +554,12 @@ var KitchenState = {
 
     this.used_ingredients = [];
     this.adding_items = false;
+
+    this.permrcpattyAdded = false;
+    this.ratList = [];
+    this.rcPattyList = [];
+    this.rcPattyTakenList = [];
+
     this.registry.set("Burger", this.used_ingredients);
 
     this.food_sfx = this.sound.add("food_sfx1");
@@ -497,8 +597,17 @@ var KitchenState = {
     beefpattyBtn.body.setAllowGravity(false);
     foodButtonHandler(beefpattyBtn, this);
 
+    const rcpattyBtn = this.physics.add
+      .image(450 + 70, 700 + 10, "rcpatty")
+      .setOrigin(0.5, 0.5)
+      .setInteractive();
+
+    rcpattyBtn.body.setAllowGravity(false);
+    rcpattyBtn.visible = false;
+    this.rcpattyBtn = rcpattyBtn;
+
     const lettuceBtn = this.physics.add
-      .image(450 + 70, 700 + 10, "lettuce")
+      .image(300 + 70, 545+5, "lettuce")
       .setOrigin(0.5, 0.5)
       .setInteractive();
 
@@ -573,7 +682,12 @@ var KitchenState = {
       fontFamily: "font1",
       fontSize: "20px",
       fill: "#d13d3d",
-    }).setOrigin(0,1).setVisible(false);
+    }).setOrigin(0,1)
+    this.ratCounter = this.add.text(0, 980, "Rats: 0", {
+      fontFamily: "font1",
+      fontSize: "20px",
+      fill: "#d13d3d",
+    }).setOrigin(0,1)
 
     this.ratFrame = this.add
       .image(500, 500, "order_background")
@@ -759,6 +873,8 @@ var KitchenState = {
       objectDragCheck(pointer);
     });
 
+    //uraniumDistractionHandler(this);
+
     //ratHandler(this);
   },
   update() {
@@ -779,12 +895,26 @@ var KitchenState = {
       }
     }
 
+    if(this.registry.get("PermanentRCPatty") == true && this.permrcpattyAdded == false){
+      this.permrcpattyAdded = true;
+      this.rcpattyBtn.visible = true;
+      foodButtonHandler(this.rcpattyBtn, this);
+    }
+
     if (this.registry.get("BouncyBallsInKitchen") && this.registry.get("BouncyBallsInKitchen").length > 0) {
       let count = this.registry.get("BouncyBallsInKitchen").length;
       this.bouncyBallCounter.setText("Bouncy Balls: " + count);
       this.bouncyBallCounter.setVisible(true);
     } else if(this.bouncyBallCounter.visible == true){
       this.bouncyBallCounter.setVisible(false);
+    }
+
+    if (this.registry.get("KitchenRatCount") && this.registry.get("KitchenRatCount") > 0) {
+      let count = this.registry.get("KitchenRatCount");
+      this.ratCounter.setText("Rats: " + count);
+      this.ratCounter.setVisible(true);
+    } else if(this.ratCounter.visible == true){
+      this.ratCounter.setVisible(false);
     }
 
     if (
@@ -833,12 +963,21 @@ var KitchenState = {
     if (this.active_ingredients.length > 0) {
       for (let i = 0; i < this.active_ingredients.length; i++) {
         const objectTrashed = (object, trashcan) => {
-          if (object.texture.key.includes("ball")) {
+          if (object.texture.key.includes("ball") || (object.texture.key.includes("rcpatty") && this.permrcpattyAdded == false)) {
             return;
           }
           if (object === this.active_drag_object) {
             this.objectDragging = false;
           }
+          if(object.texture.key.includes("rcpatty") && this.permrcpattyAdded == true){
+            let rcPattysInKitchen = this.registry.get("RCPattysInKitchen") || [];
+            let i = rcPattysInKitchen.indexOf(object.texture.key);
+            if (i !== -1) {              
+              rcPattysInKitchen.splice(i, 1);
+            }
+            this.registry.set("RCPattysInKitchen", rcPattysInKitchen);
+          }
+
           this.trash_sfx.play();
           this.active_ingredients.splice(i, 1);
           const game = this;
@@ -894,6 +1033,13 @@ var KitchenState = {
                 bouncyBallsInKitchen.splice(i, 1);
               }
               this.registry.set("BouncyBallsInKitchen", bouncyBallsInKitchen);
+            } else if (object.texture.key.includes("rcpatty")) {
+              let rcPattysInKitchen = this.registry.get("RCPattysInKitchen") || [];
+              let i = rcPattysInKitchen.indexOf(object.texture.key);
+              if (i !== -1) {
+                rcPattysInKitchen.splice(i, 1);
+              }
+              this.registry.set("RCPattysInKitchen", rcPattysInKitchen);
             }
 
             this.registry.set("Burger_Information", Burger_Information);

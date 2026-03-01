@@ -4,9 +4,10 @@
       "key": "magicdirt",
       "title": "Magic Dirt",
       "description": "50% chance to make all stats at least 90% every 5th customer.",
+      "quote": "Sourced from someone with a conical purple hat.",
       "type": "modifier",
       "cost": 20.99,
-      "scale": 2,
+      "scale": 1.8,
       "repeatable": true
     },
 
@@ -14,15 +15,17 @@
       "key": "stevenswish",
       "title": "Steven's Wish",
       "description": "tip modifier by x1.4 on even days.",
+      "quote": "And for half of eternity it was granted.",
       "type": "modifier",
       "cost": 24.68,
-      "scale": 2,
+      "scale": 1.8,
       "repeatable": true
     },
     "toddsrequest": {
       "key": "toddsrequest",
       "title": "Todd's Request",
       "description": "+5% precision boost on odd days.",
+      "quote": "I never wanted to be odd, it just happened.",
       "type": "modifier",
       "cost": 22.99,
       "scale": 1.5,
@@ -32,9 +35,10 @@
       "key": "burgerpolish",
       "title": "Burger Polish",
       "description": "+3% increase in presentation on all orders.",
+      "quote": "Burgers are better with shine.",
       "type": "modifier",
       "cost": 34.99,
-      "scale": 2,
+      "scale": 1.8,
       "repeatable": true
     },
 
@@ -42,9 +46,10 @@
       "key": "pragmaticparty",
       "title": "Pragmatic Party",
       "description": "+1% increase in all P stats.",
+      "quote":"A taste of HR's company pizza party.",
       "type": "modifier",
       "cost": 54.99,
-      "scale": 2,
+      "scale": 1.2,
       "repeatable": true
     },
 
@@ -52,16 +57,18 @@
       "key": "thewhisk",
       "title": "The Whisk",
       "description": "30% chance of tip modifier by x2 customer's average standards.",
+      "quote":"An instrument of great kitchen potential.",
       "type": "modifier",
       "cost": 42.29,
-      "scale": 2,
+      "scale": 1.5,
       "repeatable": true
     },
 
     "bofoundation": {
       "key": "bofoundation",
       "title": "The Bo Foundation",
-      "description": " tips get +$800/(the number of letters in a customer's name).",
+      "description": "tips get +$800/(the number of letters in a customer's name).",
+      "quote":"Take pride in your name and it's length.",
       "type": "modifier",
       "cost": 319.99,
       "scale": 1.2,
@@ -72,9 +79,10 @@
       "key": "aqualificprism",
       "title": "Aqualific Prism",
       "description": "1% chance you don't lose a life from a failed order.",
+      "quote":"Life begins right where it ends.",
       "type": "modifier",
       "cost": 124.99,
-      "scale": 2,
+      "scale": 1.5,
       "repeatable": true
     },
 
@@ -82,6 +90,7 @@
       "key": "killercheddar",
       "title": "Killer Cheddar",
       "description": "20% chance a rat infestation is dealt with.",
+      "quote":"You offer sustenance with strings attached.",
       "type": "modifier",
       "cost": 344.99,
       "scale": 2,
@@ -92,7 +101,8 @@
     "ratnip": {
       "key": "ratnip",
       "title": "Ratnip",
-      "description": "$5 added on to each tip for every rat in your kitchen.",
+      "description": "rats effect pleasantry by 4% less.",
+      "quote":"Dazed in the kitchen.",
       "type": "modifier",
       "scale": 2,
       "cost": 124.99,
@@ -100,10 +110,23 @@
       "day":15
     },
 
+    "alittlehelp": {
+      "key": "alittlehelp",
+      "title": "A Little Help",
+      "description": "every rat in your kitchen gives +4% punctuality.",
+      "quote":"Let me get that for you.",
+      "type": "modifier",
+      "scale": 1.5,
+      "cost": 109.99,
+      "repeatable": true,
+      "day":15
+    },
+
     "cryochamber": {
       "key": "cryochamber",
       "title": "Cryochamber",
       "description": "customer's punctuality standards are dropped by 4%.",
+      "quote":"Developed by Slorg's Truth Architect Team. Your customers are unaware of how long it's been.",
       "type": "modifier",
       "scale": 1.5,
       "cost": 48.99,
@@ -114,6 +137,7 @@
       "key": "burgertime",
       "title": "Burger Time",
       "description": "+2% punctuality for each ingredient on the burger.",
+      "quote":"Clock of greasy goodness.",
       "type": "modifier",
       "cost": 99.99,
       "scale": 1.2,
@@ -124,19 +148,43 @@
       "key": "scentedbounce",
       "title": "Scented Bounce",
       "description": "+1% presentation for each bouncy ball in your kitchen.",
+      "quote":"The smell of rubber is not appetizing.",
       "type": "modifier",
       "cost": 69.99,
       "scale": 1.2,
       "repeatable": true
     },
 
+    "rcpattyperm": {
+      "key": "rcpattyperm",
+      "title": "Regenerative Rad Cow",
+      "description": "rad cow patties are permanently added to your kitchen.",
+      "quote":"Straight from Slorg Labs. You harvest beef when needed.",
+      "type": "modifier",
+      "cost": 139.99,
+      "scale": 1.2,
+      "repeatable": false
+    },
+
     "bottomfeeder": {
       "key": "bottomfeeder",
       "title": "Bottom Feeder",
       "description": "placing produce on the bottom of the burger will give x1.2 precision.",
+      "quote":"Vegetation is satiating.",
       "type": "modifier",
       "cost": 108.99,
       "scale": 1,
+      "repeatable": true
+    },
+
+    "sauceshow": {
+      "key": "sauceshow",
+      "title": "Sauce Show",
+      "description": "sauce placed on the top and bottom of the burger gives x1.3 presentation.",
+      "quote": "Grab a bottle or a packet. Watch.",
+      "type": "modifier",
+      "cost": 82.99,
+      "scale": 1.1,
       "repeatable": true
     },
 
@@ -144,6 +192,7 @@
       "key": "glumtrident",
       "title": "Glum Trident",
       "description": "+1% precision for every glum devil you have.",
+      "quote":"You know they're armed now right?",
       "type": "modifier",
       "cost": 78.99,
       "scale": 1,
@@ -155,6 +204,7 @@
       "key": "bouncezine",
       "title": "The Bounce Zine",
       "description": "20% chance of a free bouncy ball each day.",
+      "quote":"Filled with bouncy poems and fresh new ball designs.",
       "type": "modifier",
       "cost": 22.99,
       "scale": 1.5,
@@ -165,8 +215,20 @@
       "key": "bouncyball",
       "title": "Super Bouncy Ball Mystery Pack",
       "description": "made with real bounce!",
+      "quote":"How high will yours bounce?",
       "type": "ingredient",
       "cost": 5.99,
+      "repeatable": true
+    },
+
+    "rcpatty": {
+      "key": "rcpatty",
+      "title": "70% Beef Rad Cow Patty",
+      "description": "+20% presentation when substituting a beef patty.",
+      "quote":"The glow is a bonus.",
+      "type": "ingredient",
+      "cost": 12.99,
+      "scale": 1.5,
       "repeatable": true
     },
 
@@ -174,6 +236,7 @@
       "key": "condimentcaroler",
       "title": "Condiment Caroler",
       "description": "increases pleasantry by +1% for every condiment ordered.",
+      "quote": "From the tops of mustard mountains the hot honey horn can be heard.",
       "type": "furniture",
       "scale": 1.4,
       "cost": 123.45,
@@ -183,8 +246,10 @@
     "glumdevil": {
       "key": "glumdevil",
       "title": "Glorp Mart's Glum Devils",
-      "description": "increases pleasantry by +4% (secret by +10%)",
+      "description": "increases pleasantry by +4% (secret by +10%).",
+      "quote": "In an altercation earlier today over the coveted 'Secret' Glum Devil a man died. More on this at 7.",
       "type": "furniture",
+      "scale": 1.2,
       "cost": 49.99,
       "repeatable": 100
     },
@@ -192,7 +257,8 @@
     "chair1": {
       "key": "chair1",
       "title": "Dining Chair",
-      "description": "increases pleasantry by +5%",
+      "description": "increases pleasantry by +5%.",
+      "quote": "Let them rest.",
       "type": "furniture",
       "cost": 44.99,
       "repeatable": 4
@@ -200,7 +266,8 @@
     "table1": {
       "key": "table1",
       "title": "Dining Table",
-      "description": "increases pleasantry by +10%",
+      "description": "increases pleasantry by +10%.",
+      "quote": "Place your meal here.",
       "type": "furniture",
       "cost": 74.99,
       "repeatable": 2
@@ -208,7 +275,8 @@
     "slorgbanner": {
       "key": "slorgbanner",
       "title": "Slorg's Eatery Flag",
-      "description": "increases pleasantry by +40%",
+      "description": "increases pleasantry by +40%.",
+      "quote": "The HR issued company flag.",
       "type": "furniture",
       "cost": 399.99,
       "repeatable": false
@@ -216,7 +284,8 @@
     "slorgplush": {
       "key": "slorgplush",
       "title": "Slorg's Plush",
-      "description": "increases pleasantry by +20%",
+      "description": "increases pleasantry by +20%.",
+      "quote":"They wanted a less human face to the company.",
       "type": "furniture",
       "cost": 119.99,
       "repeatable": 1
@@ -224,6 +293,16 @@
   },
 
   "offsale": {
+    "uraniumdistraction": {
+      "key": "uraniumdistraction",
+      "title": "Uranium Distraction",
+      "description": "for ever rc patty in your kitchen, a rat will slowly eat it -5% from it's effects.",
+      "type": "modifier",
+      "scale": 1.2,
+      "cost": 105.99,
+      "repeatable": false,
+      "day": 15
+    },
     "lessismore": {
       "key": "lessismore",
       "title": "Less Is More",

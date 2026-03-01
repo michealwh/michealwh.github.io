@@ -80,6 +80,7 @@ import ranchBottle from "../assets/game/food/ranchBottle.png";
 import cheddar from "../assets/game/food/cheddar.png";
 import pepperjack from "../assets/game/food/pepperjackcheese.png";
 import swisscheese from "../assets/game/food/swisscheese.png";
+import rcpatty from "../assets/game/food/rcpatty.png";
 
 // SHOP ASSETS
 import purple_bg from "../assets/game/purple_bg.png";
@@ -107,6 +108,11 @@ import condimentcaroler_box from "../assets/game/shop/condimentcaroler_box.png";
 import toddsrequest_box from "../assets/game/shop/toddsrequest_box.png";
 import bottomfeeder_box from "../assets/game/shop/bottomfeeder_box.png";
 import bofoundation_box from "../assets/game/shop/thebofoundation_box.png";
+import sauceshow_box from "../assets/game/shop/sauceshow_box.png";
+import alittlehelp_box from "../assets/game/shop/alittlehelp_box.png";
+import radpatty_box from "../assets/game/shop/radpatty_box.png";
+import rcpattyperm_box from "../assets/game/shop/radpattyperm_box.png";
+import uraniumdistraction_box from "../assets/game/shop/uraniumdistraction_box.png";
 
 import blueball from "../assets/game/shop/bluebouncyball.png";
 import redball from "../assets/game/shop/redbouncyball.png";
@@ -139,6 +145,10 @@ import condimentcaroler from "../assets/game/shop/condimentcaroler.png";
 import toddsrequest from "../assets/game/shop/toddsrequest.png";
 import bottomfeeder from "../assets/game/shop/bottomfeeder.png";
 import bofoundation from "../assets/game/shop/thebofoundation.png";
+import sauceshow from "../assets/game/shop/sauceshow.png";
+import alittlehelp from "../assets/game/shop/alittlehelp.png";
+import rcpattyperm from "../assets/game/shop/radpattyperm.png";
+import uraniumdistraction from "../assets/game/shop/uraniumdistraction.png";
 
 // UI ASSETS
 import chef_icon from "../assets/ui/chef_icon.png";
@@ -377,6 +387,7 @@ var LoadState = {
     this.load.image("cheddar", cheddar);
     this.load.image("pepperjack", pepperjack);
     this.load.image("swisscheese", swisscheese);
+    this.load.image("rcpatty", rcpatty);
 
     this.load.image("shop_bg", purple_bg);
     this.load.image("rarebouncyball25", rarebouncyball25);
@@ -412,6 +423,10 @@ var LoadState = {
     this.load.image("toddsrequest", toddsrequest);
     this.load.image("bottomfeeder", bottomfeeder);
     this.load.image("bofoundation",bofoundation);
+    this.load.image("sauceshow", sauceshow);
+    this.load.image("alittlehelp", alittlehelp);
+    this.load.image("rcpattyperm", rcpattyperm);
+    this.load.image("uraniumdistraction", uraniumdistraction);
 
     this.load.image("chair1_box", chair1_box);
     this.load.image("table1_box", table1_box);
@@ -435,6 +450,11 @@ var LoadState = {
     this.load.image("toddsrequest_box", toddsrequest_box);
     this.load.image("bottomfeeder_box", bottomfeeder_box);
     this.load.image("bofoundation_box",bofoundation_box)
+    this.load.image("sauceshow_box",sauceshow_box);
+    this.load.image("alittlehelp_box",alittlehelp_box);
+    this.load.image("rcpatty_box", radpatty_box);
+    this.load.image("rcpattyperm_box", rcpattyperm_box);
+    this.load.image("uraniumdistraction_box", uraniumdistraction_box);
 
     this.load.spritesheet("penguin_sheet", penguinclap, {
       frameWidth: 64,
@@ -560,6 +580,7 @@ var LoadState = {
       this.registry.set("Items", []);
       this.registry.set("Notes", {});
       this.registry.set("Modifiers", []);
+      this.registry.set("RCPattyAdded",false);
       this.registry.set("CheeseAdded", false);
       this.registry.set("RatsAdded", false);
 
@@ -605,6 +626,14 @@ var LoadState = {
         ingredientList.push(ball);
       }
       this.registry.set("BouncyBallsInKitchen", []);
+      const rcpatties = this.registry.get("RCPattysInKitchen") || [];
+      //console.log("rcpatties from save:", rcpatties);
+      for (let i = 0; i < rcpatties.length; i++) {
+        let patty = rcpatties[i];
+        //console.log("loading patty into kitchen from save:", patty);
+        ingredientList.push(patty);
+      }
+      this.registry.set("RCPattysInKitchen", []);
     }
     //this.registry.set("FurnitureShopEvent", undefined);
 

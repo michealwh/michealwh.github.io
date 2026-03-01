@@ -80,6 +80,13 @@ var SettingsState = {
       wordWrap: { width: 300 },
       align: 'center'
     }).setOrigin(0.5, 0)
+
+    this.version_text = this.add.text(210,242,"v. 1.0.0-b",{
+      fontFamily: "font1",
+      fontSize: "20px",
+      fill: "black",
+      wordWrap: { width: 300 },
+      align: 'center'}).setOrigin(.5,0)
   },
   update() {
     if (this.registry.get("Day")) {

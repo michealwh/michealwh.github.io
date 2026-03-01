@@ -225,6 +225,12 @@ const purchaseActions = {
       },
     });
   },
+  rcpatty: function (game) {
+    itemReveal(game, "rcpatty")
+    let itemList = game.registry.get("NewKitchenItemEvent");
+    itemList.push("rcpatty");
+    game.registry.set("NewKitchenItemEvent", itemList);
+  },
   chair1: function (game) {
     itemReveal(game, "chair1");
     let furnitureList = game.registry.get("FurnitureShopEvent") || [];
@@ -351,10 +357,33 @@ const purchaseActions = {
     game.registry.set("currentRatChance", (currentRatChance + 1))
   },
   ratnip: function (game) {
+
+    const ratNipDiscount = 4;
+
     itemReveal(game, "ratnip")
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("ratnip")
     game.registry.set("Modifiers", currentModList)
+    const ratDiscount = game.registry.get("RatDiscount") || 0;
+    game.registry.set("RatDiscount", ratDiscount + ratNipDiscount);
+
+    const totalRatCount = (game.registry.get("KitchenRatCount") || 0) + (game.registry.get("RatsToAdd") || 0);
+    const currentPleasantry = game.registry.get("Average_Pleasantry") || 0;
+    const pleasantryAddition = totalRatCount * ratNipDiscount;
+    game.registry.set("Average_Pleasantry", (currentPleasantry + pleasantryAddition));
+  },
+  alittlehelp: function (game) {
+    itemReveal(game, "alittlehelp")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("alittlehelp")
+    game.registry.set("Modifiers", currentModList)
+  },
+  uraniumdistraction: function (game) {
+    itemReveal(game, "uraniumdistraction")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("uraniumdistraction")
+    game.registry.set("Modifiers", currentModList)
+    game.registry.set("UraniumDistractionActive", true);
   },
   cryochamber: function (game) {
     itemReveal(game, "cryochamber")
@@ -374,6 +403,14 @@ const purchaseActions = {
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("scentedbounce")
     game.registry.set("Modifiers", currentModList)
+  },
+
+  rcpattyperm: function (game) {
+    itemReveal(game, "rcpattyperm")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("rcpattyperm")
+    game.registry.set("Modifiers", currentModList)
+    game.registry.set("PermanentRCPatty", true);
   },
 
   glumtrident: function (game) {
@@ -401,6 +438,13 @@ const purchaseActions = {
     itemReveal(game, "bottomfeeder")
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("bottomfeeder")
+    game.registry.set("Modifiers", currentModList)
+  },
+
+  sauceshow: function (game) {
+    itemReveal(game, "sauceshow")
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("sauceshow")
     game.registry.set("Modifiers", currentModList)
   },
 
