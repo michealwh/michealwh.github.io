@@ -550,7 +550,7 @@ var ShopState = {
       const itemInfo = shop_dictionary.purchasables[item];
       this.allItemKeys.push(item);
       if (
-        itemInfo.description.includes("pleasantry") ||
+        (itemInfo.description.includes("pleasantry") && item !== "ratnip") ||
         item === "pragmaticparty"
       ) {
         this.allPleasantryKeys.push(item);
