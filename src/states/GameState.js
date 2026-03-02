@@ -700,7 +700,10 @@ const dayEndHandler = (game, just_launched, previousSave) => {
     if (game.dailyCustomerMax < 8) {
       const moreCustomersSuccess = (game.currentDay + 1) % 4;
       if (moreCustomersSuccess == 0) {
-        let moreCustomers = Math.floor(Math.random() * 2) + 1;
+        let moreCustomers = 1;
+        if((game.currentDay+1)%8){
+          moreCustomers=2;
+        }
         if (game.dailyCustomerMax + moreCustomers > 8) {
           moreCustomers = 1;
         }
