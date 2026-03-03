@@ -2009,6 +2009,7 @@ var GameState = {
         this.currentLockedCustomers.push(i);
       }
     }
+    //test
     this.todays_customers = this.registry.get("Todays_Customers") || [];
 
     if (this.todays_customers.length == 0) { // no previous save
