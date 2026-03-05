@@ -1898,7 +1898,7 @@ var GameState = {
     this.qNoButton.visible = false;
 
     questionButtonHandler(this);
-
+      // test
     // furniture creation
     const chair1 = this.add
       .image(10, 457, "chair1")
