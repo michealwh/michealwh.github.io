@@ -183,6 +183,9 @@ import next_button from "../assets/ui/next_button.png";
 import sell_one_button from "../assets/ui/sell_one_button.png";
 import sell_ten_button from "../assets/ui/sell_ten_button.png";
 import sell_all_button from "../assets/ui/sell_all_button.png";
+import buy_one_button from "../assets/ui/buy_one_button.png";
+import buy_ten_button from "../assets/ui/buy_ten_button.png";
+import buy_max_button from "../assets/ui/buy_max_button.png";
 
 // SOUND ASSETS
 import door_open from "../assets/sounds/door_opening.mp3";
@@ -326,6 +329,9 @@ var LoadState = {
     this.load.image("sell_one_button", sell_one_button);
     this.load.image("sell_ten_button", sell_ten_button);
     this.load.image("sell_all_button", sell_all_button);
+    this.load.image("buy_one_button", buy_one_button);
+    this.load.image("buy_ten_button", buy_ten_button);
+    this.load.image("buy_max_button", buy_max_button);
 
     this.load.image("sky", skyBg);
     this.load.image("room", roomBg);

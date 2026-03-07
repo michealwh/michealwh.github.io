@@ -96,8 +96,9 @@ const showNPCTab = (game, shouldShow) => {
 const showModifierTab = (game, shouldShow) => {
   if (shouldShow) {
     game.infoTitle.text = "Modifiers";
-    const count = (game.modCurrentPage +1) * 6*3*3;
-    for (let i = count-(6*3*3); i < count; i++) {
+    // 6x3 is 18 per page then x3 for title,image,count
+    const count = (game.modCurrentPage +1) * (6*3*3);
+    for (let i = count - (6*3*3); i < count; i++) {
       if (game.modifierAssets[i]) {
         game.modifierAssets[i].visible = true;
       } else {
@@ -376,7 +377,6 @@ const ModifierAsset = (game, modifier, x, y, quantity, curPage) => {
 };
 
 const setupModTab = (game) => {
-  game.modCurrentPage = 0;
 
   game.modNextPageBtn.on("pointerdown", (pointer, gameObject) => {
     //console.log("next page");
@@ -428,7 +428,8 @@ const ModUpdater = (game) => {
   for (let i = 0; i < game.modifierAssets.length; i++) {
     game.modifierAssets[i].destroy();
   }
- /* ["pragmaticparty","burgerpolish","toddsrequest","stevenswish","magicdirt","thewhisk","bofoundation",
+  game.modifierAssets = []
+ /* ["pragmaticparty","pragmaticparty","burgerpolish","toddsrequest","stevenswish","magicdirt","thewhisk","bofoundation",
     "aqualificprism", "killercheddar","ratnip","alittlehelp","cryochamber","burgertime","scentedbounce","rcpattyperm","bottomfeeder","sauceshow",
   "glumtrident","bouncezine","condimentcaroler","glumdevil","chair1","table1","slorgbanner","slorgplush"]
   */
@@ -465,9 +466,10 @@ const ModUpdater = (game) => {
       currentRowY += 140;
       currentRowCount += 1;
       if (currentRowCount >= maxRow){
+        
         currentPage += 1;
         game.modTotalPages +=1;
-        if (game.currentTab === game.modTab){
+        if (game.currentTab === game.modifierTab){
           game.modNextPageBtn.visible = true;
         }
         currentRowY = initialRowY;
@@ -485,14 +487,14 @@ const ModUpdater = (game) => {
       currentPage
     );
 
-    let showValue = false;
-    if (game.currentTab === game.modifierTab) {
-      showValue = true;
-    }
+    // let showValue = false;
+    // if (game.currentTab === game.modifierTab) {
+    //   showValue = true;
+    // }
 
     for (let i = 0; i < modAssets.length; i++) {
       game.modifierAssets.push(modAssets[i]);
-      modAssets[i].visible = showValue;
+      //modAssets[i].visible = showValue;
     }
 
     function showModInfo(show, target) {
@@ -981,6 +983,7 @@ var GalleryState = {
   create() {
     this.currentTab = null;
 
+    this.modCurrentPage =0;
     this.noteCurrentPage = 0;
 
     this.lastUnlockedCustomers = this.registry

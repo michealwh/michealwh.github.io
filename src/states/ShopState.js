@@ -24,9 +24,21 @@ const showPrompt = (game, show, showBtns) => {
       onComplete: function () { },
     });
     if (showBtns == true) {
+      if (game.activeItemInfo !== "reroll") {
+        game.tweens.add({
+          targets: [game.buyoneButton, game.buytenButton, game.buymaxButton],
+          y: 420,
+          ease: "Power1",
+          duration: 500,
+          repeat: 0,
+          yoyo: false,
+          onComplete: function () { }
+        });
+      }
+
       game.tweens.add({
         targets: [game.promptCostText],
-        y: 480,
+        y: 500,
         ease: "Power1",
         duration: 500,
         repeat: 0,
@@ -53,6 +65,15 @@ const showPrompt = (game, show, showBtns) => {
       repeat: 0,
       yoyo: false,
       onComplete: function () { },
+    });
+    game.tweens.add({
+      targets: [game.buyoneButton, game.buytenButton, game.buymaxButton],
+      y: -470,
+      ease: "Power1",
+      duration: 500,
+      repeat: 0,
+      yoyo: false,
+      onComplete: function () { }
     });
     game.tweens.add({
       targets: [game.promptCostText],
@@ -103,7 +124,7 @@ const confirmButtonHandler = (game, object) => {
           let new_globs = current_globs - game.reRollCost;
           game.registry.set("Globble", new_globs.toFixed(2));
           //console.log("Set Globs to:", game.registry.get("Globble"));
-          game.rerollButton.input.enabled = false;
+          //game.rerollButton.input.enabled = false;
           shuffleItems(game, true);
           game.rerollButton.tint = "0x2E2E2E";
           showPrompt(game, false);
@@ -119,7 +140,7 @@ const confirmButtonHandler = (game, object) => {
           });
           return;
         }
-        let new_globs = current_globs - game.activeItemInfo.cost;
+        let new_globs = current_globs - (game.activeItemInfo.cost * game.activeItemAmount);
         game.registry.set("Globble", new_globs.toFixed(2));
         //console.log("Set Globs to:", game.registry.get("Globble"));
         if (!game.activeItemInfo.repeatable) {
@@ -130,19 +151,19 @@ const confirmButtonHandler = (game, object) => {
           );
           game.allItemKeys = newKeys;
           let newPlesKeys = game.allPleasantryKeys.filter(
-              (item) => item !== game.activeItemInfo.key
-            );
-            game.allPleasantryKeys = newPlesKeys;
-            let newCheapKeys = game.allCheapItemKeys.filter(
-              (item) => item !== game.activeItemInfo.key
-            );
-            game.allCheapItemKeys = newCheapKeys;
-            let newExpensiveKeys = game.allExpensiveItemKeys.filter(
-              (item) => item !== game.activeItemInfo.key
-            );
-            game.allExpensiveItemKeys = newExpensiveKeys;
+            (item) => item !== game.activeItemInfo.key
+          );
+          game.allPleasantryKeys = newPlesKeys;
+          let newCheapKeys = game.allCheapItemKeys.filter(
+            (item) => item !== game.activeItemInfo.key
+          );
+          game.allCheapItemKeys = newCheapKeys;
+          let newExpensiveKeys = game.allExpensiveItemKeys.filter(
+            (item) => item !== game.activeItemInfo.key
+          );
+          game.allExpensiveItemKeys = newExpensiveKeys;
         } else if (game.activeItemInfo.repeatable > 0) {
-          game[game.activeItemInfo.key + "Left"] -= 1;
+          game[game.activeItemInfo.key + "Left"] -= (game.activeItemAmount);
           if (game[game.activeItemInfo.key + "Left"] <= 0) {
             game.activeButton.tint = "0x2E2E2E";
             game.activeButton.input.enabled = false;
@@ -173,7 +194,9 @@ const confirmButtonHandler = (game, object) => {
           currentItemList.push(game.activeItemInfo.key);
           game.registry.set("Items", currentItemList);
         }
-        purchaseActions[game.activeItemInfo.key](game);
+        for (let i = 0; i < (game.activeItemAmount); i++) {
+          purchaseActions[game.activeItemInfo.key](game);
+        }
       },
     });
   });
@@ -217,15 +240,15 @@ const shuffleItems = (game, animate, previousSave) => {
     game.shopItem2.setTexture(game.dailyItems[1] + "_box");
     game.shopItem3.setTexture(game.dailyItems[2] + "_box");
 
-    if ( !game.allItemKeys.includes(game.dailyItems[0])){
+    if (!game.allItemKeys.includes(game.dailyItems[0])) {
       game.shopButton1.tint = "0x2E2E2E";
       game.shopButton1.input.enabled = false;
     }
-     if ( !game.allItemKeys.includes(game.dailyItems[1])){
+    if (!game.allItemKeys.includes(game.dailyItems[1])) {
       game.shopButton2.tint = "0x2E2E2E";
       game.shopButton2.input.enabled = false;
     }
-     if ( !game.allItemKeys.includes(game.dailyItems[2])){
+    if (!game.allItemKeys.includes(game.dailyItems[2])) {
       game.shopButton3.tint = "0x2E2E2E";
       game.shopButton3.input.enabled = false;
     }
@@ -256,7 +279,7 @@ const shuffleItems = (game, animate, previousSave) => {
     let item2 = shuffledItems[1];
     let item3 = shuffledItems[2];
 
-    game.dailyItems = [item1, item2, item3, "bouncyball","rcpatty"];
+    game.dailyItems = [item1, item2, item3, "bouncyball", "rcpatty"];
   } else {
     let shuffledItems = game.allItemKeys;
     let shuffledPles = game.allPleasantryKeys;
@@ -275,7 +298,7 @@ const shuffleItems = (game, animate, previousSave) => {
     let itemList = [item1, item2, item3];
     shuffleArray(itemList);
 
-    game.dailyItems = [itemList[0], itemList[1], itemList[2], "bouncyball","rcpatty"];
+    game.dailyItems = [itemList[0], itemList[1], itemList[2], "bouncyball", "rcpatty"];
   }
 
   game.registry.set("Daily_Shop_Items", game.dailyItems);
@@ -347,8 +370,34 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
         debounce = false;
         let currentGlobs = game.registry.get("Globble");
         if (currentGlobs >= shopItemInfo.cost) {
-          game.promptText.text = "Purchase: " + shopItemInfo.title;
-          game.promptCostText.text = "$" + shopItemInfo.cost;
+          let amount = 1;
+          const currentBalance = game.registry.get("Globble")
+          const baseCost = game.activeItemInfo.cost;
+          let maxAmount = Math.floor(currentBalance / baseCost);
+          if (game.activeItemInfo.repeatable === false) {
+            maxAmount = 1
+          } else {
+            const amountRepeatable = (game[game.activeItemInfo.key + "Left"])
+            if (amountRepeatable < maxAmount) {
+              maxAmount = amountRepeatable;
+            }
+          }
+          if (game.activeHowManyButton === game.buymaxButton) {
+            game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x" + maxAmount;
+            amount = maxAmount;
+          } else if (game.activeHowManyButton === game.buytenButton) {
+            if (maxAmount < 10) {
+              game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x" + maxAmount;
+              amount = maxAmount;
+            } else {
+              amount = 10;
+              game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x10";
+            }
+          } else {
+            game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x1";
+          }
+          game.activeItemAmount = amount;
+          game.promptCostText.text = "$" + (shopItemInfo.cost * amount).toFixed(2);
           showPrompt(game, true, true);
         } else {
           let dialog_options = [
@@ -378,7 +427,7 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
   let mouseEnter = false;
   object.on("pointerover", (pointer, gameObject) => {
     let shopItemInfo = shop_dictionary.purchasables[game.dailyItems[itemIndex]];
-    //console.log(game.dailyItems[itemIndex],game.dailyItems)
+    //console.log(game.dailyItems[itemIndex], game.dailyItems)
     if (game.promptOpen === false) {
       mouseEnter = true;
       if (object.x + object.width / 4 + game.infoFrame.width > 1000) {
@@ -397,7 +446,7 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
       game.infoFrame.y = object.y - 5;
       game.infoText.y = object.y - 100;
       game.infoText.text =
-        "C: $" + shopItemInfo.cost + "\nD: " + shopItemInfo.description;
+        "C: $" + (shopItemInfo.cost).toFixed(2) + "\nD: " + shopItemInfo.description;
       game.tweens.add({
         targets: [game.infoFrame],
         scale: 1.5,
@@ -430,6 +479,70 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
     }
   });
 };
+
+const howManyButtonHandler = (game, object, amount) => {
+
+  let maxButton = false;
+  if (object === game.buymaxButton) {
+    maxButton = true;
+  }
+
+  let debounce = false;
+  object.on("pointerdown", (pointer, gameObject) => {
+    if (game.activeHowManyButton === object || debounce) {
+      return;
+    }
+    debounce = true;
+    game.tweens.add({
+      targets: object,
+      scale: 0.1,
+      rotation: 0,
+      ease: "Linear",
+      duration: 100,
+      repeat: 0,
+      yoyo: true,
+      onComplete: function () {
+        object.scale = 0.12;
+        debounce = false;
+        const currentBalance = game.registry.get("Globble")
+        const baseCost = game.activeItemInfo.cost;
+        let maxAmount = Math.floor(currentBalance / baseCost);
+        if (game.activeItemInfo.repeatable === false) {
+          maxAmount = 1
+        } else {
+          const amountRepeatable = (game[game.activeItemInfo.key + "Left"])
+          if (amountRepeatable < maxAmount) {
+            maxAmount = amountRepeatable;
+          }
+        }
+        if (maxButton) {
+          game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x" + maxAmount;
+          game.promptCostText.text = "$" + (game.activeItemInfo.cost * maxAmount).toFixed(2);
+          game.activeItemAmount = maxAmount;
+        } else if (amount === 10 && maxAmount < 10) {
+          game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x" + maxAmount;
+          game.promptCostText.text = "$" + (game.activeItemInfo.cost * maxAmount).toFixed(2);
+          game.activeItemAmount = maxAmount;
+        } else {
+          game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x" + amount;
+          game.promptCostText.text = "$" + (game.activeItemInfo.cost * amount).toFixed(2);
+          game.activeItemAmount = amount;
+
+        }
+        game.activeHowManyButton = object;
+        const buttons = [game.buyoneButton, game.buytenButton, game.buymaxButton]
+        for (let i = 0; i < buttons.length; i++) {
+          if (buttons[i] !== object) {
+            buttons[i].tint = "0x9385a4";
+          } else {
+            buttons[i].clearTint()
+          }
+        }
+
+      }
+    })
+  })
+}
 
 const reRollButtonhandler = (game, object) => {
   const rerollButton = object;
@@ -664,8 +777,8 @@ var ShopState = {
       .setOrigin(0.5, 0.5)
       .setDepth(4)
       .setInteractive();
-    this.shopItem5.visible=false;
-    this.shopButton5.visible=false;
+    this.shopItem5.visible = false;
+    this.shopButton5.visible = false;
 
     this.rerollButton = this.add
       .image(820, 340, "reroll_button")
@@ -810,6 +923,23 @@ var ShopState = {
       .setInteractive()
       .setDepth(8);
     cancelButtonHandler(this, this.cancelBtn);
+
+    // buy buttons settings
+    this.buyoneButton = this.add.image(400, -460, "buy_one_button").setDepth(8).setInteractive().setOrigin(.5, .5).setScale(.12)
+      .setVisible(true);
+    this.activeHowManyButton = this.buyoneButton;
+    howManyButtonHandler(this, this.buyoneButton, 1)
+    this.buytenButton = this.add.image(500, -460, "buy_ten_button").setDepth(8).setInteractive().setOrigin(.5, .5).setScale(.12)
+      .setVisible(true);
+    this.buytenButton.tint = "0x9385a4";
+    howManyButtonHandler(this, this.buytenButton, 10)
+    this.buymaxButton = this.add.image(600, -460, "buy_max_button").setDepth(8).setInteractive().setOrigin(.5, .5).setScale(.12)
+      .setVisible(true);
+    this.buymaxButton.tint = "0x9385a4";
+    howManyButtonHandler(this, this.buymaxButton, -1)
+
+
+
   },
   update() {
     if (this.registry.get("Day") !== this.day) {
@@ -825,12 +955,12 @@ var ShopState = {
       //console.log("rerollcost", this.reRollCost, totalMoney);
       shuffleItems(this);
     }
-    if(this.registry.get("RCPattyAdded") === true && this.rcpattyAdded === false){
+    if (this.registry.get("RCPattyAdded") === true && this.rcpattyAdded === false) {
       this.rcpattyAdded = true;
-      this.shopItem5.visible=true;
-      this.shopButton5.visible=true;
-      this.shopItem4.x=390;
-      this.shopButton4.x=390;
+      this.shopItem5.visible = true;
+      this.shopButton5.visible = true;
+      this.shopItem4.x = 390;
+      this.shopButton4.x = 390;
       purchaseButtonhandler(this, this.shopButton5, 4);
     }
   },

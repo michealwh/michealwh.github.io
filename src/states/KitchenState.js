@@ -628,7 +628,7 @@ var KitchenState = {
     // this.bgMusic.volume = 0.1;
     // this.bgMusic.play()
     this.EventEmitter = new Phaser.Events.EventEmitter();
-    this.max_ingredients = 100;
+    this.max_ingredients = Infinity;
 
     this.active_ingredients = [];
 

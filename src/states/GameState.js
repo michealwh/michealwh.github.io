@@ -1384,7 +1384,7 @@ const furnitureHandler = (game, furnitureList, previousSave) => {
       const glum = game.add
         .image(xPos, yPos, object)
         .setOrigin(1, 0)
-        .setDepth(yPos - 668);
+        .setDepth(yPos - 667);
       glum.scale = 1;
     }
     if (!previousSave) {
@@ -1898,7 +1898,7 @@ var GameState = {
     this.qNoButton.visible = false;
 
     questionButtonHandler(this);
-      // test
+
     // furniture creation
     const chair1 = this.add
       .image(10, 457, "chair1")
@@ -2009,7 +2009,6 @@ var GameState = {
         this.currentLockedCustomers.push(i);
       }
     }
-    //test
     this.todays_customers = this.registry.get("Todays_Customers") || [];
 
     if (this.todays_customers.length == 0) { // no previous save
