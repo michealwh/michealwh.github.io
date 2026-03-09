@@ -249,7 +249,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
       case "pragmaticparty": {
         presentationStat += 1;
         punctualityStat += 1;
-        precisionStat += 1;
+        precisionStat -= 1;
         //pleasantryStat += 1;
         allActivatedMods.push("pragmaticparty");
         break;
@@ -475,7 +475,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
         parseFloat(new_total_globs) + parseFloat((pleasantryStat / 100) * 20);
       if (npc_info.sprite_sheet) {
         // if its the glorb then make it smile
-        game.npc.play("glob_happy");
+        game.npc.play(npc_dictionary.npcs[game.current_customer_index].sprite_sheet.happy);
       }
       new_total_globs += moneyAddition;
       game.registry.set("Globble", new_total_globs.toFixed(2));
@@ -641,7 +641,7 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
       }
       //game.registry.set("ChangedHealth", true);
       if (npc_info.sprite_sheet) {
-        game.npc.play("glob_angry");
+        game.npc.play(npc_dictionary.npcs[game.current_customer_index].sprite_sheet.angry);
       }
     }
 

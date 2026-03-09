@@ -413,7 +413,7 @@ const customerHandler = (customer, game, previousSave) => {
           npc_dictionary.npcs[game.current_customer_index].sprite_sheet &&
           !game.secretShopperCustomer
         ) {
-          object.play("glob_talk");
+          object.play(npc_dictionary.npcs[game.current_customer_index].sprite_sheet.talk);
           //game.talk_sfx.play();
         }
         dialogHandler(text, game, true);
@@ -1807,6 +1807,72 @@ var GameState = {
       this.anims.create({
         key: "glob_angry",
         frames: this.anims.generateFrameNumbers("glob_man_sheet", {
+          frames: [3],
+        }),
+        frameRate: 1,
+        repeat: 0,
+      });
+    }
+
+    if (!this.anims.get("glob_talk2")) {
+      this.anims.create({
+        key: "glob_talk2",
+        frames: this.anims.generateFrameNumbers("glob_man2_sheet", {
+          frames: [1, 0],
+        }),
+        frameRate: 8,
+        repeat: 2,
+      });
+    }
+
+    if (!this.anims.get("glob_happy2")) {
+      this.anims.create({
+        key: "glob_happy2",
+        frames: this.anims.generateFrameNumbers("glob_man2_sheet", {
+          frames: [2],
+        }),
+        frameRate: 1,
+        repeat: 0,
+      });
+    }
+
+    if (!this.anims.get("glob_angry2")) {
+      this.anims.create({
+        key: "glob_angry2",
+        frames: this.anims.generateFrameNumbers("glob_man2_sheet", {
+          frames: [3],
+        }),
+        frameRate: 1,
+        repeat: 0,
+      });
+    }
+
+    if (!this.anims.get("glob_talk3")) {
+      this.anims.create({
+        key: "glob_talk3",
+        frames: this.anims.generateFrameNumbers("glob_man3_sheet", {
+          frames: [1, 0],
+        }),
+        frameRate: 8,
+        repeat: 2,
+      });
+    }
+
+    if (!this.anims.get("glob_happy3")) {
+      this.anims.create({
+        key: "glob_happy3",
+        frames: this.anims.generateFrameNumbers("glob_man3_sheet", {
+          frames: [2],
+        }),
+        frameRate: 1,
+        repeat: 0,
+      });
+    }
+
+    if (!this.anims.get("glob_angry3")) {
+      this.anims.create({
+        key: "glob_angry3",
+        frames: this.anims.generateFrameNumbers("glob_man3_sheet", {
           frames: [3],
         }),
         frameRate: 1,

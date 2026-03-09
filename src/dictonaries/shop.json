@@ -45,10 +45,10 @@
     "pragmaticparty": {
       "key": "pragmaticparty",
       "title": "Pragmatic Party",
-      "description": "+1% increase in all P stats.",
+      "description": "+1% in all 'P' stats except precision which gets -1%.",
       "quote":"A taste of HR's company pizza party.",
       "type": "modifier",
-      "cost": 54.99,
+      "cost": 47.99,
       "scale": 1.2,
       "repeatable": true
     },
@@ -288,7 +288,7 @@
       "key": "slorgbanner",
       "title": "Slorg's Eatery Flag",
       "description": "increases pleasantry by +40%.",
-      "quote": "The HR issued company flag.",
+      "quote": "Any corpatriot would fly this HR issued company flag with immense pride.",
       "type": "furniture",
       "cost": 399.99,
       "repeatable": false

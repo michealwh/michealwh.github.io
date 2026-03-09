@@ -56,6 +56,8 @@ import particle1 from "../assets/game/special/particle2.png";
 // SPRITESHEET ASSETS
 
 import glob_man_sheet from "../assets/game/spritesheets/glob_man_sprite_sheet.png";
+import glob_man2_sheet from "../assets/game/spritesheets/glob_man2_sprite_sheet.png"
+import glob_man3_sheet from "../assets/game/spritesheets/glob_man3_sprite_sheet.png"
 import penguinclap from "../assets/game/spritesheets/penguinclap2.png";
 
 // KITCHEN ASSETS
@@ -296,6 +298,14 @@ var LoadState = {
 
     //this.load.audio("cluttered_ambience2", cluttered_ambience2);
     this.load.spritesheet("glob_man_sheet", glob_man_sheet, {
+      frameWidth: 1000,
+      frameHeight: 1000,
+    });
+    this.load.spritesheet("glob_man2_sheet", glob_man2_sheet, {
+      frameWidth: 1000,
+      frameHeight: 1000,
+    });
+        this.load.spritesheet("glob_man3_sheet", glob_man3_sheet, {
       frameWidth: 1000,
       frameHeight: 1000,
     });

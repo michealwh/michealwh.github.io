@@ -55,9 +55,14 @@
             "scale": 1,
             "description": "He's made of money sure, but he's also made of compassion, persistence, and bravery."
         },
-        {
+         {
             "name": "Glorbina",
             "sprite": "glob_man2",
+            "sprite_sheet": {
+                "talk": "glob_talk2",
+                "happy": "glob_happy2",
+                "angry": "glob_angry2"
+            },
             "start_scale": 0.05,
             "scale": 1,
             "description": "Many fortunes will come your way if you appease her."
@@ -65,16 +70,21 @@
         {
             "name": "Glorbert",
             "sprite": "glob_man3",
+            "sprite_sheet": {
+                "talk": "glob_talk3",
+                "happy": "glob_happy3",
+                "angry": "glob_angry3"
+            },
             "start_scale": 0.05,
             "scale": 1,
             "description": "Of wealth and joy."
         },
         {
-            "name": "Grugory Hefert",
+            "name": "Gregory Hefert",
             "sprite": "cool_gruy",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "A father first and an assistant manager at the local GlobMart second."
+            "description": "A father first and an assistant manager at the local Glob General second."
         },
         {
             "name": "Mortimer Galf",
@@ -164,14 +174,14 @@
             "sprite": "shorts_guy2",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "Works at the laundromat."
+            "description": "Works at the laundromat. He regularly smells of soap."
         },
         {
             "name": "Marvin Blackburn",
             "sprite": "shorts_guy3",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "A loyal customer."
+            "description": "A man of practicalism and logic."
         },
         {
              "name": "Laura Hefert",
@@ -206,13 +216,13 @@
     "rat_names": [
         "Flinar",
         "Erlareo",
-        "Hagluin",
+        "Haglin",
         "Lyra",
         "Roshia",
         "Sylmare",
         "Haldir",
         "Kleez",
-        "Gragbuilb",
+        "Gragbulb",
         "Chardocks",
         "Gerd",
         "Merd",

@@ -112,8 +112,8 @@ var notes = {
       },
     ],
   },
-  "Grugory Hefert": {
-    key: "Grugory Hefert",
+  "Gregory Hefert": {
+    key: "Gregory Hefert",
     order: "random",
     chance: 4,
     startday: 4,
