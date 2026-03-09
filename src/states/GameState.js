@@ -1635,6 +1635,11 @@ const loadGameButtonsHandler = (game) => {
             }
             furnitureHandler(game, addedFurniture, true);
           }
+          if (game.registry.get("CondimentCarolerAdded") === true){
+            game.condimentcaroler.visible=true;
+          } else {
+            game.condimentcaroler.visible=false;
+          }
 
           if (game.registry.get("RatsAdded") === true) {
             let totalRats = 0;
@@ -2023,7 +2028,7 @@ var GameState = {
     slorgplush.visible = false;
     this.availablePlushes = [slorgplush];
     this.addedPlushes = [];
-    const condimentcaroler = this.add.image(10, 450, "condimentcaroler").setOrigin(0, 0).setDepth(3);
+    const condimentcaroler = this.add.image(10, 450, "condimentcaroler").setOrigin(0, 0).setDepth(3).setVisible(false);
     this.condimentcaroler = condimentcaroler
 
     const carolerText = this.add.text(240, 450, "+2", {
@@ -2032,12 +2037,6 @@ var GameState = {
     }).setOrigin(0, 0).setDepth(2);
     carolerText.visible = false;
     this.carolerText = carolerText
-
-    if (this.registry.get("CondimentCarolerAdded") === true){
-      condimentcaroler.visible=true;
-    } else {
-      condimentcaroler.visible=false;
-    }
 
     // previous save frame setup
     this.loadFrame = this.add.image(500, 500 - 1000, "order_background").setOrigin(0.5, 0.5).setDepth(9 + uiDepth);

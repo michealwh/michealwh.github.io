@@ -174,14 +174,14 @@
             "sprite": "shorts_guy2",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "Works at the laundromat. He regularly smells of soap."
+            "description": "Works at the laundromat. He regularly smells of detergent."
         },
         {
             "name": "Marvin Blackburn",
             "sprite": "shorts_guy3",
             "start_scale": 0.05,
             "scale": 1,
-            "description": "A man of practicalism and logic."
+            "description": "Disciplined in the ways of arbitrariness and aleatory reasoning."
         },
         {
              "name": "Laura Hefert",

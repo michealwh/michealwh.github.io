@@ -2,7 +2,7 @@ var notes = {
   "Morris Maulde": {
     key: "Morris Maulde",
     order: "random",
-    chance: 3,
+    chance: 4,
     startday: 5,
     notes: [
       {
@@ -116,7 +116,7 @@ var notes = {
     key: "Gregory Hefert",
     order: "random",
     chance: 4,
-    startday: 4,
+    startday: 7,
     notes: [
       {
         title: "Untitled",
@@ -149,7 +149,7 @@ var notes = {
     key: "Laura Hefert",
     order: "random",
     chance: 4,
-    startday: 4,
+    startday: 7,
     notes: [
       {
         title: "Untitled",
@@ -159,16 +159,16 @@ var notes = {
       {
         title: "Untitled",
         description:
-          "My little Tommy and Jamie are just the cutest. Tyrants in training if you ask me.",
+          "I care for them because it gives me purpose.\nWhere do you get yours?",
       },
       {
         title: "Untitled",
         description:
-          "Is it bad to hope your son will be a better man than his father? Oh I just worry.",
+          "Is it bad to hope your son won't be like his father? I just worry.",
       },
       {
         title: "Untitled",
-        description: "I get so worried about our own problems I forget our kids are growing up.\nI hope they aren't like us."
+        description: "I get so caught up in our own problems I forget our kids are growing up.\nI hope they aren't like us."
       },
       {
         title: "Untitled",
@@ -310,7 +310,7 @@ var notes = {
       },
       {
         title: "Untitled",
-        description: "Have you noticed how Slorg always wears sunglasses in public now? I wonder why."
+        description: "Have you noticed how Slorg always wears sunglasses in public now?"
       },
 
     ]
