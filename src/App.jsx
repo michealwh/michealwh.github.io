@@ -16,6 +16,9 @@ import greenGif from "./assets/website/greenlo.gif";
 
 function App() {
 
+  var oldConsoleLog = console.log;
+  console.log = () => {};
+
   const theme = createTheme({
     typography: {
       fontFamily: [
