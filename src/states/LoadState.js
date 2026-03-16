@@ -118,6 +118,7 @@ import alittlehelp_box from "../assets/game/shop/alittlehelp_box.png";
 import radpatty_box from "../assets/game/shop/radpatty_box.png";
 import rcpattyperm_box from "../assets/game/shop/radpattyperm_box.png";
 import uraniumdistraction_box from "../assets/game/shop/uraniumdistraction_box.png";
+import sinusorb_box from "../assets/game/shop/sinusorb_box.png";
 
 import blueball from "../assets/game/shop/bluebouncyball.png";
 import redball from "../assets/game/shop/redbouncyball.png";
@@ -154,6 +155,10 @@ import sauceshow from "../assets/game/shop/sauceshow.png";
 import alittlehelp from "../assets/game/shop/alittlehelp.png";
 import rcpattyperm from "../assets/game/shop/radpattyperm.png";
 import uraniumdistraction from "../assets/game/shop/uraniumdistraction.png";
+import sinusOrb from "../assets/game/shop/sinusOrbStill2.png"
+import sinusOrbBreathing from "../assets/game/shop/sinusOrbBreathing2.png"
+import sinusOrbMoving from "../assets/game/shop/sinusOrbMoving2.png"
+
 
 // UI ASSETS
 import chef_icon from "../assets/ui/chef_icon.png";
@@ -449,6 +454,9 @@ var LoadState = {
     this.load.image("alittlehelp", alittlehelp);
     this.load.image("rcpattyperm", rcpattyperm);
     this.load.image("uraniumdistraction", uraniumdistraction);
+    this.load.image("sinusorb",sinusOrb);
+    this.load.image("sinusorbbreathing",sinusOrbBreathing);
+    this.load.image("sinusorbmoving",sinusOrbMoving);
 
     this.load.image("chair1_box", chair1_box);
     this.load.image("table1_box", table1_box);
@@ -477,6 +485,7 @@ var LoadState = {
     this.load.image("rcpatty_box", radpatty_box);
     this.load.image("rcpattyperm_box", rcpattyperm_box);
     this.load.image("uraniumdistraction_box", uraniumdistraction_box);
+    this.load.image("sinusorb_box",sinusorb_box)
 
     this.load.spritesheet("penguin_sheet", penguinclap, {
       frameWidth: 64,

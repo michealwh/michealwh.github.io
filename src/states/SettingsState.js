@@ -112,6 +112,9 @@ var SettingsState = {
     }
      if (this.registry.get("Average_Pleasantry")) {
       this.ples_text.text = "Pleasantry: " + this.registry.get("Average_Pleasantry") + "%"
+      if(this.registry.get("SinusMod")){
+        this.ples_text.text = `Pleasantry: ${Math.floor(Number(this.registry.get("Average_Pleasantry")) * Number(this.registry.get("SinusMod")))}%`
+      }
     } else {
       this.ples_text.text = "Pleasantry: 0%"
     }

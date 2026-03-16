@@ -6,6 +6,7 @@ import notes_dictionary from "../dictonaries/notes.jsx";
 import shop_dictionary from "../dictonaries/shop.json";
 import OrderSubmittedHandler from "../modules/OrderSubmittedHandler";
 import days_info from "../dictonaries/days";
+import { rgbToHex } from "@mui/material";
 
 const dialogYMove = 500;
 const uiDepth = 200;
@@ -1395,6 +1396,139 @@ const furnitureHandler = (game, furnitureList, previousSave) => {
   }
 };
 
+
+const sinusOrbSetup = (game,orb) => {
+  //console.log("in setup")
+  orb.on("pointerdown",(pointer,gameObject) => {
+    if(this.registry.get("DayOver") === true){
+      return
+    }
+    game.food_sfx1.play()
+    //console.log("orb clicked")
+    game.orbReset = true;
+    const ogX = orb.x;
+    const ogY = orb.y;
+    const oldSinusMod = Number(game.registry.get("SinusMod")) || 1
+    const changes = (Math.sin(Date.now()/10000))/3
+    //console.log(changes)
+    let newSinusMod = (oldSinusMod + changes).toFixed(2)
+    game.registry.set("SinusMod",newSinusMod)
+    const updateText = game.add.text(ogX, ogY, `Sinus mod: x${newSinusMod}`, {
+      fontFamily: "font1",
+      fontSize: "20px",
+      fill: "#ffffff",
+    }).setOrigin(.5,.5).setDepth(20)
+    orb.x = Math.random()*800 + 100
+    orb.y = Math.random()*800 + 100
+    game.time.addEvent({
+      delay: 100,
+      callback: function(){
+        game.orbReset=false;
+      }
+    })
+    game.time.addEvent({
+      delay: 1000,
+      callback: function(){
+        updateText.destroy()
+      }
+    })
+  })
+}
+
+const sinusOrbLoop = (game,orb) => {
+
+  if(game.orbReset === true){
+    return
+  }
+  function getRgb(color) {
+    let [r, g, b] = color.replace('rgb(','')
+    .replace(')','')
+    .split(',')
+    .map(str => Number(str));;
+    return {
+      r,
+      g,
+      b
+    }
+  }
+  function interpolateColor(colorA, colorB, val){
+    ////console.log(val)
+    const rgbA = getRgb(colorA),
+    rgbB = getRgb(colorB);
+    ////console.log(rgbA['r'])
+    ////console.log(rgbB)
+
+    const colorVal = (prop) => {
+      return Math.round(rgbA[prop] * (1-val) + rgbB[prop] * val);
+    }
+    return {
+      r: colorVal('r'),
+      g: colorVal('g'),
+      b: colorVal('b'),
+    }
+  }
+
+  const xBounds = [100,900]
+  const yBounds = [100,900]
+  const bStrength = .1;
+  const cDistance = 100
+  const cStrength = .1;
+
+  const pointer = game.input.activePointer;
+  ////console.log("loopin",pointer.x,orb.x)
+  let c = [0,0];
+
+  const sinusValue = (Math.sin(Date.now()/10000)+1)/2
+
+  ////console.log(sinusValue)
+  const badColor = 'rgb(255, 144, 144)'
+  const goodColor = 'rgb(128, 219, 255)'
+
+  const result = interpolateColor(badColor,goodColor,sinusValue)
+
+  ////console.log(result)
+  const newColor = `rgb(${result.r},${result.g},${result.b})`
+  const otherColor = rgbToHex(newColor).replace('#','0x')
+  ////console.log(otherColor)
+  ////console.log(newColor)
+  ////console.log(newColor)
+  orb.setTint(otherColor)
+
+  if(Math.abs(pointer.x-orb.x)<cDistance && Math.abs(pointer.y-orb.y)<cDistance){
+    ////console.log("too close")
+    c[0] = ((c[0] - (pointer.x-(orb.x)))*cStrength);
+    c[1] = ((c[1] - (pointer.y-(orb.y)))*cStrength);
+    ////console.log((pointer.x-(orb.x)))
+    ////console.log((c[0] - (pointer.x-(orb.x))))
+    ////console.log(((c[0] - (pointer.x-(orb.x)))*cStrength))
+  }
+  let b = [0,0];
+  if (orb.x >xBounds[1]){
+    b[0]-=(bStrength*Math.abs(orb.x-xBounds[1]));
+  } else if (orb.x < xBounds[0]){
+    b[0]+=(bStrength*Math.abs(orb.x-xBounds[0]));
+  }
+
+  if (orb.y >yBounds[1]){
+    b[1]-=(bStrength*Math.abs(orb.y-yBounds[1]));
+  } else if (orb.y < yBounds[0]){
+    b[1]+=(bStrength*Math.abs(orb.y-yBounds[0]))
+  }
+  const xChange = c[0]+b[0]
+  const yChange = c[1]+b[1]
+  if ((c[0]+c[1]) > 0){
+    orb.setTexture("sinusorbbreathing")
+    //const rotation = Phaser.Math.Angle.BetweenPoints( orb, pointer)
+    //orb.rotation=rotation;
+  } else {
+    orb.setTexture("sinusorb")
+    orb.rotation=Math.max((orb.rotation-.2),0);
+  }
+  orb.x+=xChange
+  orb.y+=yChange
+
+}
+
 const introFrameHandler = (game) => {
   // game.introBeginButton.on("pointerover",(pointer,gameObject)=>{
   //   game.tweens.add({
@@ -1769,6 +1903,7 @@ var GameState = {
     this.good_review_sfx = this.sound.add("success_sfx2").setVolume(0.8);
     this.click_sfx = this.sound.add("submit_click");
     this.food_click_sfx = this.sound.add("food_click");
+    this.food_sfx1 = this.sound.add("food_sfx1")
     this.game_over_sfx = this.sound.add("game_over_sfx");
     this.door_open_sfx = this.sound.add("door_open").setVolume(1);
     this.door_rattle_sfx = this.sound.add("door_rattling").setVolume(0.2);
@@ -2192,6 +2327,23 @@ var GameState = {
   },
 
   update() {
+
+    if(this.registry.get("SinusOrbAdded")){
+        if(this.sinusOrb){
+          if(this.registry.get("DayOver") === true){
+            this.sinusOrb.visible=false;
+          } else {
+            this.sinusOrb.visible=true;
+            sinusOrbLoop(this,this.sinusOrb);
+          }
+        } else {
+          this.sinusOrb = this.add.image(500, 500, "sinusorb")
+          .setOrigin(0.5, 0.5)
+          .setDepth(20).setScale(.5).setInteractive();
+          //orb.body.setAllowGravity(false);
+          sinusOrbSetup(this,this.sinusOrb)
+        }
+    }
     if (Phaser.Input.Keyboard.JustDown(this.keyX)) {
       if (
         this.handsToHideTimedEvent &&

@@ -309,6 +309,13 @@ const purchaseActions = {
     game.registry.set("Modifiers", currentModList)
     game.registry.set("CondimentCarolerAdded",true)
   },
+  sinusorb: function(game) {
+    itemReveal(game,"sinusorb")
+    game.registry.set("SinusOrbAdded",true);
+    let currentModList = game.registry.get("Modifiers") || [];
+    currentModList.push("sinusorb")
+    game.registry.set("Modifiers", currentModList)
+  },
   magicdirt: function (game) {
     itemReveal(game, "magicdirt")
     let currentModList = game.registry.get("Modifiers") || [];

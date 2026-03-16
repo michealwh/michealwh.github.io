@@ -169,6 +169,8 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
 
   let allActivatedMods = [];
 
+  pleasantryMod=(game.registry.get("SinusMod") || 1)
+
   for (let i = 0; i < Modifiers.length; i++) {
     switch (Modifiers[i]) {
       case "magicdirt": {
