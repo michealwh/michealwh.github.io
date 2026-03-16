@@ -1400,7 +1400,7 @@ const furnitureHandler = (game, furnitureList, previousSave) => {
 const sinusOrbSetup = (game,orb) => {
   //console.log("in setup")
   orb.on("pointerdown",(pointer,gameObject) => {
-    if(this.registry.get("DayOver") === true){
+    if(game.registry.get("DayOver") === true){
       return
     }
     game.food_sfx1.play()
