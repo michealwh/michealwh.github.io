@@ -1409,7 +1409,7 @@ const sinusOrbSetup = (game,orb) => {
     const ogX = orb.x;
     const ogY = orb.y;
     const oldSinusMod = Number(game.registry.get("SinusMod")) || 1
-    const changes = (Math.sin(Date.now()/10000))/3
+    const changes = (Math.sin((Date.now()/10000)+orb.timeDiff))/3
     //console.log(changes)
     let newSinusMod = (oldSinusMod + changes).toFixed(2)
     game.registry.set("SinusMod",newSinusMod)
@@ -1421,7 +1421,7 @@ const sinusOrbSetup = (game,orb) => {
     orb.x = Math.random()*800 + 100
     orb.y = Math.random()*800 + 100
     game.time.addEvent({
-      delay: 100,
+      delay: 50,
       callback: function(){
         game.orbReset=false;
       }
@@ -1473,12 +1473,14 @@ const sinusOrbLoop = (game,orb) => {
   const bStrength = .1;
   const cDistance = 100
   const cStrength = .1;
+  const sDistance = 30;
+  const sStrength = .2;
 
   const pointer = game.input.activePointer;
   ////console.log("loopin",pointer.x,orb.x)
   let c = [0,0];
 
-  const sinusValue = (Math.sin(Date.now()/10000)+1)/2
+  const sinusValue = (Math.sin((Date.now()/10000)+orb.timeDiff)+1)/2
 
   ////console.log(sinusValue)
   const badColor = 'rgb(255, 144, 144)'
@@ -1489,18 +1491,21 @@ const sinusOrbLoop = (game,orb) => {
   ////console.log(result)
   const newColor = `rgb(${result.r},${result.g},${result.b})`
   const otherColor = rgbToHex(newColor).replace('#','0x')
-  ////console.log(otherColor)
-  ////console.log(newColor)
-  ////console.log(newColor)
   orb.setTint(otherColor)
+
+  let s = [0,0]
+
+  for(let i =0; i<game.sinusOrbs.length; i++){
+    if(Math.abs(game.sinusOrbs[i].x -orb.x)<sDistance && Math.abs(game.sinusOrbs[i].y-orb.y)<sDistance){
+      s[0] += ((s[0] - (game.sinusOrbs[i].x-(orb.x)))*sStrength);
+      s[1] += ((s[1] - (game.sinusOrbs[i].y-(orb.y)))*sStrength);
+    }
+  }
 
   if(Math.abs(pointer.x-orb.x)<cDistance && Math.abs(pointer.y-orb.y)<cDistance){
     ////console.log("too close")
     c[0] = ((c[0] - (pointer.x-(orb.x)))*cStrength);
     c[1] = ((c[1] - (pointer.y-(orb.y)))*cStrength);
-    ////console.log((pointer.x-(orb.x)))
-    ////console.log((c[0] - (pointer.x-(orb.x))))
-    ////console.log(((c[0] - (pointer.x-(orb.x)))*cStrength))
   }
   let b = [0,0];
   if (orb.x >xBounds[1]){
@@ -1514,8 +1519,8 @@ const sinusOrbLoop = (game,orb) => {
   } else if (orb.y < yBounds[0]){
     b[1]+=(bStrength*Math.abs(orb.y-yBounds[0]))
   }
-  const xChange = c[0]+b[0]
-  const yChange = c[1]+b[1]
+  const xChange = c[0]+b[0]+s[0]
+  const yChange = c[1]+b[1]+s[1]
   if ((c[0]+c[1]) > 0){
     orb.setTexture("sinusorbbreathing")
     //const rotation = Phaser.Math.Angle.BetweenPoints( orb, pointer)
@@ -2323,25 +2328,35 @@ var GameState = {
     this.registry.set("Day", this.currentDay);
     //this.registry.set("Health", 5);
 
+    this.sinusOrbCount = 0;
+    this.sinusOrbs = []
+
     this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
   },
 
   update() {
 
-    if(this.registry.get("SinusOrbAdded")){
-        if(this.sinusOrb){
-          if(this.registry.get("DayOver") === true){
-            this.sinusOrb.visible=false;
+    if(this.registry.get("SinusOrbCount")){
+        if(this.registry.get("SinusOrbCount") <= this.sinusOrbCount){
+          if(this.registry.get("DayOver") === true || this.registry.get("Paused") === true){
+            for(let i=0; i< this.sinusOrbs.length; i++){
+              this.sinusOrbs[i].visible=false;
+            }
           } else {
-            this.sinusOrb.visible=true;
-            sinusOrbLoop(this,this.sinusOrb);
+            for(let i=0; i<this.sinusOrbs.length;i++){
+              this.sinusOrbs[i].visible=true;
+              sinusOrbLoop(this,this.sinusOrbs[i]);
+            }
           }
         } else {
-          this.sinusOrb = this.add.image(500, 500, "sinusorb")
+          this.sinusOrbCount++;
+          let sinusOrb = this.add.image(Math.random()*900+50, 500, "sinusorb")
           .setOrigin(0.5, 0.5)
-          .setDepth(20).setScale(.5).setInteractive();
+          .setDepth(20).setScale(.5).setInteractive().setVisible(false);
+          sinusOrb.timeDiff = Math.random()*10000
+          this.sinusOrbs.push(sinusOrb)
           //orb.body.setAllowGravity(false);
-          sinusOrbSetup(this,this.sinusOrb)
+          sinusOrbSetup(this,sinusOrb)
         }
     }
     if (Phaser.Input.Keyboard.JustDown(this.keyX)) {

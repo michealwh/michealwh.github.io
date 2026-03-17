@@ -311,7 +311,8 @@ const purchaseActions = {
   },
   sinusorb: function(game) {
     itemReveal(game,"sinusorb")
-    game.registry.set("SinusOrbAdded",true);
+    let sinusorbCount = game.registry.get("SinusOrbCount") || 0;
+    game.registry.set("SinusOrbCount",sinusorbCount+1);
     let currentModList = game.registry.get("Modifiers") || [];
     currentModList.push("sinusorb")
     game.registry.set("Modifiers", currentModList)

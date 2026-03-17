@@ -258,12 +258,12 @@
     "sinusorb": {
       "key": "sinusorb",
       "title": "Sinus Orb",
-      "description": "pleasantry modifier from a range of -x1.3 to x1.3 every time it's clicked.",
+      "description": "pleasantry multiplier from a range of -30% to +30% every time it's clicked.",
       "quote": "The orb flows through time on a wave of good and bad. Infinitely balanced.",
       "type": "furniture",
       "scale": 1.5,
       "cost": 1010.01,
-      "repeatable": false
+      "repeatable": true
     },
 
     "glumdevil": {
