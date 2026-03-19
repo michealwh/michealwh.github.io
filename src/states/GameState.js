@@ -1403,7 +1403,6 @@ const sinusOrbSetup = (game,orb) => {
     if(game.registry.get("DayOver") === true){
       return
     }
-    game.food_sfx1.play()
     //console.log("orb clicked")
     game.orbReset = true;
     const ogX = orb.x;
@@ -1413,6 +1412,11 @@ const sinusOrbSetup = (game,orb) => {
     //console.log(changes)
     let newSinusMod = (oldSinusMod + changes).toFixed(2)
     game.registry.set("SinusMod",newSinusMod)
+    if (changes>0){
+      game.orb_sfx1.play()
+    } else {
+      game.orb_sfx2.play()
+    }
     const updateText = game.add.text(ogX, ogY, `Sinus mod: x${newSinusMod}`, {
       fontFamily: "font1",
       fontSize: "20px",
@@ -1480,13 +1484,24 @@ const sinusOrbLoop = (game,orb) => {
   ////console.log("loopin",pointer.x,orb.x)
   let c = [0,0];
 
-  const sinusValue = (Math.sin((Date.now()/10000)+orb.timeDiff)+1)/2
+  const rawSineValue = Math.sin((Date.now()/10000)+orb.timeDiff)
 
-  ////console.log(sinusValue)
+  ////console.log("rawsine",rawSineValue)
   const badColor = 'rgb(255, 144, 144)'
   const goodColor = 'rgb(128, 219, 255)'
+  const neutralColor = 'rgb(255, 219, 166)'
 
-  const result = interpolateColor(badColor,goodColor,sinusValue)
+  const transValue = Math.abs(rawSineValue)
+
+  let result;
+  if (rawSineValue<0){
+
+    result = interpolateColor(neutralColor,badColor,transValue)
+  } else {
+    result = interpolateColor(neutralColor,goodColor,transValue)
+  }
+
+  ////console.log(sinusValue)
 
   ////console.log(result)
   const newColor = `rgb(${result.r},${result.g},${result.b})`
@@ -1914,6 +1929,9 @@ var GameState = {
     this.door_rattle_sfx = this.sound.add("door_rattling").setVolume(0.2);
     this.page_flip_sfx = this.sound.add("page_flip_sfx").setVolume(0.8);
     this.carol_sfx = this.sound.add("trumpet_synth").setVolume(.5);
+    this.orb_sfx1 = this.sound.add("orb_sfx1").setVolume(.15);
+    this.orb_sfx2 = this.sound.add("orb_sfx2").setVolume(.15);
+
 
     // animation creation
     if (!this.anims.get("clap")) {

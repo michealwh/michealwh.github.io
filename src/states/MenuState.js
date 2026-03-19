@@ -612,13 +612,16 @@ var MenuState = {
       const time_finished =
         (this.time_order_finished - this.time_order_began - this.time_paused) /
         1000;
-
+      //console.log("time finished: ", time_finished)
       const ingredientCount = this.registry.get("Order").length;
       // //console.log(
       //   "Time per each ingredient:" + time_finished / ingredientCount
       // );
+
+      const pointsSubstracted = Math.floor(time_finished / (ingredientCount/1.5))
+      //console.log("points subtracted",pointsSubstracted)
       const punctualityStat = Math.floor(
-        100 - Math.min(100, time_finished / ingredientCount)
+        100 - Math.min(100, time_finished / (ingredientCount/1.5))
       );
       this.registry.set("Order_Time_Finished", time_finished);
       this.time_paused = 0;

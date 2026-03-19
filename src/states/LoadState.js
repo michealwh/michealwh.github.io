@@ -216,6 +216,9 @@ import rat_sfx2 from "../assets/sounds/rat_sfx2.mp3";
 import rat_click from "../assets/sounds/rat_click.mp3";
 import trumpet_synth from "../assets/sounds/trumpetsynth3.mp3"
 import ambient_synth from "../assets/sounds/ambientsynth.mp3"
+import orb_sfx1 from "../assets/sounds/orb_sfx1.mp3";
+import orb_sfx2 from "../assets/sounds/orb_sfx2.mp3";
+
 
 import success_sfx1 from "../assets/sounds/success_sfx1.mp3";
 import success_sfx2 from "../assets/sounds/success_sfx2.mp3";
@@ -280,6 +283,8 @@ var LoadState = {
     this.load.audio("presentation_sfx1", presentation_sfx1);
     this.load.audio("trumpet_synth",trumpet_synth);
     this.load.audio("ambient_synth",ambient_synth);
+    this.load.audio("orb_sfx1",orb_sfx1);
+    this.load.audio("orb_sfx2",orb_sfx2);
 
     this.load.audio("success_sfx1", success_sfx1);
     this.load.audio("success_sfx2", success_sfx2);

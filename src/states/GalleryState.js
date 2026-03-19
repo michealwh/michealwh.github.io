@@ -177,11 +177,14 @@ const setupNPCTab = (game) => {
 
       let npc_info = npc_dictionary.npcs[target];
       game.npcInfoTitle.text = npc_info.name;
-      game.npcInfoImage.x = -50;
+      game.npcInfoImage.x = -60;
       if(npc_info.name.includes("Glorb")){
         game.npcInfoImage.x = -120;
       }
       game.npcInfoImage.y = 70;
+      if(npc_info.name.includes("Marvin Blackburn")){
+        game.npcInfoImage.y=150;
+      }
       if (npc_info.name === "Random") {
         const first_index = Math.floor(
           Math.random() * npc_dictionary.first_names.length
