@@ -27,9 +27,9 @@ var days = {
       description: `While you read that 1,585 burgers were consumed in the United States.`
     },
     8:{
-      events: ["cheese"],
+      events: ["rcpatty"],
       c_standards: [80,80,90,0],
-      description: `Head Quarters has identified an opportunity of enhancement by integrating the menu with cheese. The company wants to cultivate a more lactose-tolerant image.`
+      description: `Head Quarters has permitted your site access to their new pilot program: uranium-fed beef patties.`
     },
     10: {
       events: ["secretshopper"],
@@ -40,9 +40,9 @@ var days = {
     },
 
     12: {
-      events: ["rats"],
+      events: ["cheese"],
       c_standards: [90, 90, 95, 20],
-      description: `The aroma of cheddar has wafted to a nearby rat's nest. You will now deal with rat infestations. Each rat in your kitchen will drop your Pleasantry ratings by 10%.`
+      description: `Head Quarters has identified an opportunity of enhancement by integrating the menu with cheese. The company wants to cultivate a more lactose-tolerant image.`
     },
 
     15: {
@@ -54,10 +54,9 @@ var days = {
     },
 
     17: {
-      events: ["rcpatty"],
-      c_standards: [100, 100, 100, 70],
-      description: `Head Quarters has permitted your site access to their new pilot program: uranium-fed beef patties.`
-
+      events: ["rats"],
+      c_standards: [100, 100, 100, 60],
+      description: `The aroma of cheddar has wafted to a nearby rat's nest. You will now deal with rat infestations. Each rat in your kitchen will drop your Pleasantry ratings by 10%.`
     },
 
     20: {

@@ -110,6 +110,11 @@ var notes = {
         description: "The TV is loud.",
         image: false,
       },
+      {
+        title: "Untitled",
+        description: "Don't get used to yourself. You'll have to change.",
+        image: false,
+      },
     ],
   },
   "Gregory Hefert": {
@@ -176,6 +181,18 @@ var notes = {
       }
     ],
   },
+  "Mortimer Galf": {
+    key: "Mortimer Galf",
+    order: "random",
+    chance: 2,
+    startday: 8,
+    notes: [
+      {
+        title: "Untitled",
+        description: `You look familiar.`,
+      },
+    ]
+  },
   "Marmaduke Gloo": {
     key: "Marmaduke Gloo",
     order: "random",
@@ -184,11 +201,11 @@ var notes = {
     notes: [
       {
         title: "Untitled",
-        description: `Jellyfish aren't actually fish. They don't have fins or gills and instead swim by opening or closing their “bells.”`,
+        description: "I saw a talk by Slorg's Senior ELNP and it was outstanding. The margin spacing on those graphs would take your breath away."
       },
       {
         title: "Untitled",
-        description: "I saw a talk by Slorg's Senior ELNP and it was outstanding. The margin spacing on those graphs would take your breath away."
+        description: `Jellyfish aren't actually fish. They don't have fins or gills and instead swim by opening or closing their “bells.”`,
       },
       {
         title: "Untitled",
@@ -333,6 +350,49 @@ var notes = {
       }
     ],
   },
+  "Gorp Toppler": {
+    key: "Gorp Toppler",
+    order: "chrono",
+    chance: 3,
+    startday: 5,
+    notes: [
+      {
+        title: "Untitled",
+        fontSize: 20,
+        description: "I applied for a technician job at Slorg Labs but I didn't get it. After the 5th interview they sent an email telling me they had decided to move on with other candidates but would reach out again if my malleability were to change. Bummer.",
+      },
+      {
+        title: "Untitled",
+        description: "I don't have layers. I accept this. I don't have an imaginative inner-world. I accept this."
+      }
+    ]
+  },
+  "Reggie Larson": {
+    key: "Reggie Larson",
+    order: "random",
+    chance: 3,
+    startday: 12,
+    notes: [
+      {
+        title: "Untitled",
+        description:
+          "I must have been a terrible person in my last life.",
+      },
+    ]
+  },
+  "Marvin Blackburn": {
+    key: "Marvin Blackburn",
+    order: "random",
+    chance: 3,
+    startday: 4,
+    notes: [
+      {
+        title: "Untitled",
+        description:
+          "A good day is a day I get a burger.",
+      },
+    ]
+  },
   "The Green Maiden": {
     key: "The Green Maiden",
     order: "random",
@@ -344,7 +404,7 @@ var notes = {
         description:
           "Under the pear tree, on top of grit.\nThe feelings of yesterday and I sit.\nMountains of wrath block the view, if only I had knew.\nHe turns red, swells up and shouts.\nRemains of my confidence, they begin to sprout.",
         fontSize: 20
-        },
+      },
     ]
   },
   "Orville Braswell" : {
@@ -389,7 +449,7 @@ var notes = {
       },
       {
         title: "Untitled",
-        description: "Why did she go back? It doesn't make any sense."
+        description: "Why did she go back? It doesn't make sense."
       }
     ],
   },

@@ -95,7 +95,7 @@
       "cost": 344.99,
       "scale": 2,
       "repeatable": true,
-      "day":10
+      "day":15
     },
 
     "ratnip": {
@@ -107,7 +107,7 @@
       "scale": 2,
       "cost": 124.99,
       "repeatable": false,
-      "day":10
+      "day":15
     },
 
     "alittlehelp": {
@@ -119,7 +119,7 @@
       "scale": 1.5,
       "cost": 109.99,
       "repeatable": true,
-      "day":10
+      "day":15
     },
 
     "uraniumdistraction": {
@@ -131,7 +131,7 @@
       "scale": 1.2,
       "cost": 105.99,
       "repeatable": false,
-      "day": 16
+      "day": 15
     },
 
     "cryochamber": {
@@ -262,8 +262,9 @@
       "quote": "The orb flows through time on a wave of good and bad. Infinitely balanced.",
       "type": "furniture",
       "scale": 1.5,
-      "cost": 1010.01,
-      "repeatable": true
+      "cost": 1199.99,
+      "repeatable": true,
+      "day": 10
     },
 
     "glumdevil": {

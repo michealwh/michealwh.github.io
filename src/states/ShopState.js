@@ -292,6 +292,9 @@ const shuffleItems = (game, animate, previousSave) => {
     }
 
     let item1 = shuffledPles[0];
+    if(shuffledPles[0] === "sinusorb" && currentDay<10){ // because its ridiculously expensive
+      item1 = shuffledPles[1];
+    }
     let item2 = shuffledItems.find((item) => item !== item1);
     let item3 = shuffledItems.find((item) => item !== item1 && item !== item2);
 
