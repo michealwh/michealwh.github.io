@@ -65,9 +65,9 @@ function Footer() {
 
           <Container maxWidth="lg" >
             <Typography variant="body2" color="text.secondary" align="center" sx = {{position: 'absolute', bottom: 0, left: 0, right: 0, textAlign: 'center'}}>
-              {'© '}
+              {`© `}
               {new Date().getFullYear()}
-              {' Brewed for you.'}
+              {` Slorg, Inc.`}
             </Typography>
             
           </Container>

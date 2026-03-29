@@ -1,3 +1,5 @@
+const CURRENT_VERSION = "1.0.0"
+
 var SettingsState = {
   preload() {
 
@@ -81,7 +83,7 @@ var SettingsState = {
       align: 'center'
     }).setOrigin(0.5, 0)
 
-    this.version_text = this.add.text(210,242,"v. 1.0.0-b",{
+    this.version_text = this.add.text(210,242,`v. ${CURRENT_VERSION}`,{
       fontFamily: "font1",
       fontSize: "20px",
       fill: "black",

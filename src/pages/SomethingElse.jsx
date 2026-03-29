@@ -19,6 +19,28 @@ import star1 from "../assets/game/star1.png";
 import toad_milkloaf from "../assets/sounds/toad_milkloaf.mp3";
 import GameComponent from "../components/GameComponent";
 
+function resizeApp() {
+    //console.log("Resizing app...");
+    let game_ratio = 500/1000;
+
+    let div = document.getElementById("phaser-container");
+    div.style.width = window.innerHeight * game_ratio + "px";
+    div.style.height = window.innerHeight + "px";
+
+    let canvas = document.getElementsByTagName("canvas")[0];
+
+    let dpi_w = parseInt(div.style.width) / canvas.width;
+    let dpi_h = parseInt(div.style.height) / canvas.height;
+
+    let height = window.innerHeight * (dpi_w / dpi_h) * .76;
+    let width = height;
+
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    div.style.width = width + "px";
+    div.style.height = height + "px";
+  }
+
 class Example extends Phaser.Scene {
   preload() {
 
@@ -125,26 +147,7 @@ const config = {
   backgroundMusic.muted = false;
   backgroundMusic.loop = true;
   
-    // const playBackgroundMusic = () => {
-    //   backgroundMusic.load()
-    //   backgroundMusic.play()
-    //   setIsPlaying(true);
-    // }
-
-    // useEffect(() => {
-
-    //   document.addEventListener("mousedown", () => {
-    //     if (!isPlaying){
-          
-    //       setIsPlaying(true);
-    //       //console.log(isPlaying)
-    //     playBackgroundMusic();
-    //     //console.log(isPlaying)
-    //   }
-    //   });
-      
-
-    // }, []);
+  window.addEventListener('resize', resizeApp);
 
   return (
     <ThemeProvider theme={theme}>

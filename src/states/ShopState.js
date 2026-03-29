@@ -373,6 +373,10 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
         debounce = false;
         let currentGlobs = game.registry.get("Globble");
         if (currentGlobs >= shopItemInfo.cost) {
+          game.activeHowManyButton = game.buyoneButton;
+          game.buyoneButton.clearTint()
+          game.buytenButton.tint = "0x9385a4";
+          game.buymaxButton.tint = "0x9385a4";
           let amount = 1;
           const currentBalance = game.registry.get("Globble")
           const baseCost = game.activeItemInfo.cost;

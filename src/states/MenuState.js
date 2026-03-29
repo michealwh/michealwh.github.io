@@ -5,7 +5,7 @@ const globUpdateHandler = (game) => {
   const currentAmount = parseFloat(game.globText.text);
   const newAmount = parseFloat(game.registry.get("Globble")).toFixed(2);
   const difference = (newAmount - currentAmount).toFixed(2);
-  //console.log("difference added to the glob",difference);
+  //console.log("difference added to the glob", difference);
   game.globText.setText(newAmount.toString());
   if (difference > 0) {
     game.addedText.setText("+" + difference);
@@ -34,7 +34,7 @@ const globUpdateHandler = (game) => {
             duration: 1000,
             repeat: 0,
             yoyo: false,
-            onComplete: function () {},
+            onComplete: function () { },
           });
         },
         callbackScope: game,
@@ -52,7 +52,7 @@ const healthHandler = (game) => {
     const difference = game.health - new_health;
     //console.log("Health decreased by " + difference);
     for (let i = 0; i < difference; i++) {
-      if (game.healthItems.length > 0 && game.health>0) {
+      if (game.healthItems.length > 0 && game.health > 0) {
         game.health -= 1;
         const targetHealthPart = game.healthItems[i];
         ////console.log("removing health part", targetHealthPart);
@@ -90,11 +90,11 @@ const healthHandler = (game) => {
         targetHealthPart.body.setAllowGravity(false);
         targetHealthPart.setVelocity(0, 0);
         let yPos = game.healthYPositions[game.lostHealthItems.length - 1];
-        targetHealthPart.y = 1000+5*i;
+        targetHealthPart.y = 1000 + 5 * i;
         ////console.log("moving to y pos",yPos)
         ////console.log("healthypos",game.healthYPositions)
-        targetHealthPart.rotation=0
-        targetHealthPart.x=955
+        targetHealthPart.rotation = 0
+        targetHealthPart.x = 955
         game.tweens.add({
           targets: targetHealthPart,
           y: yPos,
@@ -111,7 +111,7 @@ const healthHandler = (game) => {
           targets: targetHealthPart,
           rotation: 360 * (Math.PI / 180),
           ease: "Linear",
-          duration: 2000/10,
+          duration: 2000 / 10,
           repeat: 10,
           yoyo: false,
           onComplete: function () {
@@ -128,59 +128,91 @@ const healthHandler = (game) => {
 
 const ratHandler = (game) => {
 
-  if(game.ratHandlerCalled===true){
+  if (game.ratHandlerCalled === true) {
     return
   }
-  game.ratHandlerCalled=true;
+  game.ratHandlerCalled = true;
   //console.log("rat handler called")
   const ratToll = 10;
 
   const getRatDelay = () => {
     // 25-40 seconds decreasing with days
-    return Math.max(1000,((Math.floor(Math.random()*15)+25)*1000)-game.registry.get("Day"));
+    return Math.max(1000, ((Math.floor(Math.random() * 15) + 25) * 1000) - game.registry.get("Day"));
   }
 
-   game.ratLoop = game.time.addEvent({
+  game.ratLoop = game.time.addEvent({
     delay: getRatDelay(),
     callback: () => {
       //console.log("increasing rat count")
       let ratCount = game.registry.get("RatsToAdd") || 0
       let kitchenCount = game.registry.get("KitchenRatCount") || 0
-      if (game.registry.get("DayOver") === true || game.registry.get("Paused")===true){
+      if (game.registry.get("DayOver") === true || game.registry.get("Paused") === true) {
         return
       }
-      
-      if (game.registry.get("currentRatChance")){
+
+      if (game.registry.get("currentRatChance")) {
         let chanceCount = game.registry.get("currentRatChance")
         let ratInfestationFailed = false;
-        for(let i =0;i<chanceCount;i++){
+        for (let i = 0; i < chanceCount; i++) {
           //console.log("loopin rat killer")
-          let chanceOfFailure = Math.random()*100 +1
-          //console.log("chanceoffail",chanceOfFailure)
-          if(chanceOfFailure<=20){
+          let chanceOfFailure = Math.random() * 100 + 1
+          //console.log("chanceoffail", chanceOfFailure)
+          if (chanceOfFailure <= 20) {
             //console.log("no rat")
-            ratInfestationFailed=true;
+            ratInfestationFailed = true;
             break
           }
         }
-        if (ratInfestationFailed===true){
+        if (ratInfestationFailed === true) {
           return
         }
       }
       const currentPleasantry = game.registry.get("Average_Pleasantry")
       const ratDiscount = game.registry.get("RatDiscount") || 0;
-      //console.log("ratdiscount is currently",ratDiscount)
-      game.registry.set("Average_Pleasantry",currentPleasantry-(ratToll-ratDiscount));
-      game.registry.set("RatsToAdd",ratCount+1)
-      game.ratLoop.delay=getRatDelay()
+      //console.log("ratdiscount is currently", ratDiscount)
+      game.registry.set("Average_Pleasantry", currentPleasantry - (ratToll - ratDiscount));
+      game.registry.set("RatsToAdd", ratCount + 1)
+      game.ratLoop.delay = getRatDelay()
     },
     callbackScope: game,
     loop: true,
   });
 };
 
+const showCredit = (game) => {
+  game.final_song_credit.alpha = 0;
+  game.final_song_credit.visible = true;
+  game.tweens.add({
+    targets: [game.final_song_credit],
+    alpha: 1,
+    ease: "Linear",
+    duration: 1000,
+    repeat: 0,
+    yoyo: false,
+    onComplete: function () {
+      game.time.addEvent({
+        delay: 15 * 1000,
+        callback: () => {
+          game.tweens.add({
+            targets: [game.final_song_credit],
+            alpha: 0,
+            ease: "Linear",
+            duration: 1000,
+            repeat: 0,
+            yoyo: false,
+            onComplete: function () {
+              game.final_song_credit.visible = false;
+            }
+          })
+
+        }
+      })
+    }
+  });
+}
+
 var MenuState = {
-  preload() {},
+  preload() { },
 
   create() {
 
@@ -219,6 +251,11 @@ var MenuState = {
     counterBtn.scale = 0.6;
     galleryBtn.scale = 0.6;
     shopBtn.scale = 0.6;
+
+    this.final_song_credit = this.add.text(996, 1000, "the orb - dilmun", {
+      font: "20px font1",
+      fill: "#dbdbdb",
+    }).setOrigin(1, 1).setDepth(5).setVisible(false)
 
     const globIcon = this.add
       .image(1000, 55, "holy_glob")
@@ -368,12 +405,12 @@ var MenuState = {
         this.scene.bringToTop(this.lastScene);
         this.scene.bringToTop("SettingsState");
         this.scene.bringToTop();
-      } else if (this.scene.isActive("GalleryState")){
+      } else if (this.scene.isActive("GalleryState")) {
         this.scene.pause("GalleryState").run("SettingsState");
         this.scene.bringToTop(this.lastScene);
         this.scene.bringToTop("SettingsState");
         this.scene.bringToTop();
-      
+
       } else if (this.scene.isActive("SettingsState")) {
         this.scene.pause("SettingsState").run(this.lastScene);
         this.scene.bringToTop(this.lastScene);
@@ -417,7 +454,7 @@ var MenuState = {
         this.scene.pause("OrderState").run(this.lastScene);
         this.scene.bringToTop(this.lastScene);
         this.scene.bringToTop();
-      } else if (this.scene.isActive("GalleryState")){
+      } else if (this.scene.isActive("GalleryState")) {
         this.scene.pause("GalleryState").run("OrderState");
         this.scene.bringToTop(this.lastScene);
         this.scene.bringToTop("OrderState");
@@ -524,12 +561,12 @@ var MenuState = {
         this.scene.pause("GalleryState").run(this.lastScene);
         this.scene.bringToTop(this.lastScene);
         this.scene.bringToTop();
-      } else if (this.scene.isActive("OrderState")){
+      } else if (this.scene.isActive("OrderState")) {
         this.scene.pause("OrderState").run("GalleryState");
         this.scene.bringToTop(this.lastScene);
         this.scene.bringToTop("GalleryState");
         this.scene.bringToTop()
-       } else if (this.scene.isActive("KitchenState")) {
+      } else if (this.scene.isActive("KitchenState")) {
         this.lastScene = "KitchenState";
         this.scene.pause("KitchenState").run("GalleryState");
         this.scene.bringToTop("GalleryState");
@@ -583,7 +620,7 @@ var MenuState = {
     });
 
 
-    if (this.registry.get("RatsAdded") === true && this.ratHandlerCalled===false) {
+    if (this.registry.get("RatsAdded") === true && this.ratHandlerCalled === false) {
       //console.log("initializing rat handler menu state");
       ratHandler(this);
     }
@@ -599,8 +636,11 @@ var MenuState = {
   },
 
   update() {
-
-    if(this.registry.get("RatsAdded") ===true && this.ratHandlerCalled ===false){
+    if(this.registry.get("FinalSongPlaying") === true){
+      this.registry.set("FinalSongPlaying",false);
+      showCredit(this);
+    }
+    if (this.registry.get("RatsAdded") === true && this.ratHandlerCalled === false) {
       ratHandler(this)
     }
     if (this.registry.get("Order_Began") === true) {
@@ -618,10 +658,10 @@ var MenuState = {
       //   "Time per each ingredient:" + time_finished / ingredientCount
       // );
 
-      const pointsSubstracted = Math.floor(time_finished / (ingredientCount/1.5))
-      //console.log("points subtracted",pointsSubstracted)
+      const pointsSubstracted = Math.floor(time_finished / (ingredientCount / 1.5))
+      //console.log("points subtracted", pointsSubstracted)
       const punctualityStat = Math.floor(
-        100 - Math.min(100, time_finished / (ingredientCount/1.5))
+        100 - Math.min(100, time_finished / (ingredientCount / 1.5))
       );
       this.registry.set("Order_Time_Finished", time_finished);
       this.time_paused = 0;

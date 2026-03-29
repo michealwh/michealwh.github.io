@@ -218,6 +218,7 @@ import trumpet_synth from "../assets/sounds/trumpetsynth3.mp3"
 import ambient_synth from "../assets/sounds/ambientsynth.mp3"
 import orb_sfx1 from "../assets/sounds/orb_sfx1.mp3";
 import orb_sfx2 from "../assets/sounds/orb_sfx2.mp3";
+import dilmun_theorb from "../assets/sounds/dilmun_theorb.mp3";
 
 
 import success_sfx1 from "../assets/sounds/success_sfx1.mp3";
@@ -305,6 +306,8 @@ var LoadState = {
     this.load.audio("rat_sfx", rat_sfx);
     this.load.audio("rat_sfx2", rat_sfx2);
     this.load.audio("rat_click", rat_click);
+
+    this.load.audio("dilmun_theorb",dilmun_theorb);
 
     //this.load.audio("cluttered_ambience2", cluttered_ambience2);
     this.load.spritesheet("glob_man_sheet", glob_man_sheet, {

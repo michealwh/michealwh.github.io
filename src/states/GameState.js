@@ -318,7 +318,7 @@ const customerHandler = (customer, game, previousSave) => {
 
           const number_of_ingredients =
             Math.floor(Math.random() * game.ingredientMax) + 1;
-          
+
           let order_list = "";
           game.order = [];
           for (let i = 0; i < number_of_ingredients; i++) {
@@ -332,13 +332,13 @@ const customerHandler = (customer, game, previousSave) => {
             }
             game.order.push(game.availableIngredients[ingredient_index]);
 
-            if (game.availableIngredients[ingredient_index] == "ketchup" || game.availableIngredients[ingredient_index] == "mustard" || game.availableIngredients[ingredient_index] == "ranch" || game.availableIngredients[ingredient_index] == "bbq"){
+            if (game.availableIngredients[ingredient_index] == "ketchup" || game.availableIngredients[ingredient_index] == "mustard" || game.availableIngredients[ingredient_index] == "ranch" || game.availableIngredients[ingredient_index] == "bbq") {
               //console.log("adding to condiment count")
-              condiment_count+=1;
+              condiment_count += 1;
             }
           }
-          if (condiment_count>0 && game.registry.get("CondimentCarolerAdded") === true){
-            condimentCarolHandler(game,condiment_count)
+          if (condiment_count > 0 && game.registry.get("CondimentCarolerAdded") === true) {
+            condimentCarolHandler(game, condiment_count)
           }
           game.order.unshift("beefpatty"),
             game.order.unshift("bottomBun"),
@@ -483,11 +483,11 @@ const showDayFrame = (game, show, islong) => {
       game.dayUpdateSprite = game.add
         .sprite(250, -950, "penguin_sheet2")
         .setOrigin(0.5, 0)
-        .setDepth(10);
+        .setDepth(10 + uiDepth);
       game.dayUpdateSprite2 = game.add
         .sprite(750, -950, "penguin_sheet2")
         .setOrigin(0.5, 0)
-        .setDepth(10);
+        .setDepth(10 + uiDepth);
       game.tweens.add({
         targets: [game.dayUpdateSprite, game.dayUpdateSprite2],
         y: 580,
@@ -496,6 +496,10 @@ const showDayFrame = (game, show, islong) => {
         repeat: 0,
         yoyo: false,
       });
+      if (game.daySpriteTint) {
+        game.dayUpdateSprite.setTint(game.daySpriteTint)
+        game.dayUpdateSprite2.setTint(game.daySpriteTint)
+      }
       game.dayUpdateSprite.play("clap");
       game.dayUpdateSprite2.play("clap");
     }
@@ -702,8 +706,8 @@ const dayEndHandler = (game, just_launched, previousSave) => {
       const moreCustomersSuccess = (game.currentDay + 1) % 4;
       if (moreCustomersSuccess == 0) {
         let moreCustomers = 1;
-        if((game.currentDay+1)%8){
-          moreCustomers=2;
+        if ((game.currentDay + 1) % 8) {
+          moreCustomers = 2;
         }
         if (game.dailyCustomerMax + moreCustomers > 8) {
           moreCustomers = 1;
@@ -756,9 +760,17 @@ const dayEndHandler = (game, just_launched, previousSave) => {
       if (game.currentLockedCustomers.length <= 0) {
         game.dayUpdateText.text += "You have now unlocked all customers!";
         game.dayUpdateSprite = "penguin_sheet";
+        game.daySpriteTint = "0xffffff"
       } else {
         game.dayUpdateText.text += "You have unlocked a new customer!";
       }
+    }
+    if (game.currentDay === 20) { // finished!!!
+      //console.log("adding penguin as sprite!!!")
+      game.dayUpdateSprite = "penguin_sheet";
+      game.daySpriteTint = "0x00ffff"
+      game.finalsong.play();
+      game.registry.set("FinalSongPlaying",true);
     }
 
     game.thisDaysInfo = days_info.actual_days[game.currentDay + 1];
@@ -876,8 +888,8 @@ const dayEndHandler = (game, just_launched, previousSave) => {
     }
     game.registry.set("SecretShopperDay", game.secretShopperDay)
 
-    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rcpatty")){
-      game.registry.set("RCPattyAdded",true);
+    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rcpatty")) {
+      game.registry.set("RCPattyAdded", true);
       //console.log("rc patty added up here")
 
     }
@@ -895,7 +907,7 @@ const dayEndHandler = (game, just_launched, previousSave) => {
       //console.log("setting rats added to true");
       game.registry.set("RatsAdded", true);
       game.registry.set("KitchenRatCount", 0);
-      game.registry.set("RatsToAdd" , 0);
+      game.registry.set("RatsToAdd", 0);
     }
 
     if (game.secretShopperDay === true) {
@@ -920,12 +932,15 @@ const dayEndHandler = (game, just_launched, previousSave) => {
       unlockedCustomerSuccess == 1 &&
       game.currentLockedCustomers.length > 0
     ) {
-      if (game.currentLockedCustomers.length <= 0) {
-        game.dayUpdateText.text += "You have now unlocked all customers!";
-        game.dayUpdateSprite = "penguin_sheet";
-      } else {
+      if (game.currentLockedCustomers.length > 0) {
         game.dayUpdateText.text += "You have unlocked a new customer!";
       }
+    }
+
+    if (game.currentDay === 20) { // beat the last day
+      //console.log("adding penguin as sprite!!!")
+      game.dayUpdateSprite = "penguin_sheet";
+      game.daySpriteTint = "0x00ffff"
     }
 
     game.thisDaysInfo = days_info.actual_days[game.currentDay + 1];
@@ -995,9 +1010,9 @@ const dayEndHandler = (game, just_launched, previousSave) => {
       game.secretShopperDay = false;
     }
 
-    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rcpatty")){
+    if (game.thisDaysInfo && game.thisDaysInfo.events.includes("rcpatty")) {
       //console.log("rc patty added down here")
-      game.registry.set("RCPattyAdded",true);
+      game.registry.set("RCPattyAdded", true);
     }
 
     if (game.thisDaysInfo && game.thisDaysInfo.events.includes("cheese")) {
@@ -1291,7 +1306,7 @@ const condimentCarolHandler = (game, count) => {
   const oX = 10
   const oY = 450
   const currPles = game.registry.get("Average_Pleasantry")
-  game.registry.set("Average_Pleasantry",currPles+count);
+  game.registry.set("Average_Pleasantry", currPles + count);
   game.tweens.add({
     targets: [game.condimentcaroler],
     x: oX + 40,
@@ -1303,9 +1318,9 @@ const condimentCarolHandler = (game, count) => {
     yoyo: false,
     onComplete: function () {
       game.carol_sfx.play()
-      game.carolerText.visible=true
-      game.carolerText.y=450
-      game.carolerText.alpha=1;
+      game.carolerText.visible = true
+      game.carolerText.y = 450
+      game.carolerText.alpha = 1;
       game.carolerText.setText("+" + count)
       game.tweens.add({
         targets: [game.carolerText],
@@ -1397,10 +1412,10 @@ const furnitureHandler = (game, furnitureList, previousSave) => {
 };
 
 
-const sinusOrbSetup = (game,orb) => {
+const sinusOrbSetup = (game, orb) => {
   //console.log("in setup")
-  orb.on("pointerdown",(pointer,gameObject) => {
-    if(game.registry.get("DayOver") === true){
+  orb.on("pointerdown", (pointer, gameObject) => {
+    if (game.registry.get("DayOver") === true) {
       return
     }
     //console.log("orb clicked")
@@ -1408,11 +1423,11 @@ const sinusOrbSetup = (game,orb) => {
     const ogX = orb.x;
     const ogY = orb.y;
     const oldSinusMod = Number(game.registry.get("SinusMod")) || 1
-    const changes = (Math.sin((Date.now()/10000)+orb.timeDiff))/3
+    const changes = (Math.sin((Date.now() / 10000) + orb.timeDiff)) / 3
     //console.log(changes)
     let newSinusMod = (oldSinusMod + changes).toFixed(2)
-    game.registry.set("SinusMod",newSinusMod)
-    if (changes>0){
+    game.registry.set("SinusMod", newSinusMod)
+    if (changes > 0) {
       game.orb_sfx1.play()
     } else {
       game.orb_sfx2.play()
@@ -1421,49 +1436,49 @@ const sinusOrbSetup = (game,orb) => {
       fontFamily: "font1",
       fontSize: "20px",
       fill: "#ffffff",
-    }).setOrigin(.5,.5).setDepth(20)
-    orb.x = Math.random()*800 + 100
-    orb.y = Math.random()*800 + 100
+    }).setOrigin(.5, .5).setDepth(20)
+    orb.x = Math.random() * 800 + 100
+    orb.y = Math.random() * 800 + 100
     game.time.addEvent({
       delay: 50,
-      callback: function(){
-        game.orbReset=false;
+      callback: function () {
+        game.orbReset = false;
       }
     })
     game.time.addEvent({
       delay: 1000,
-      callback: function(){
+      callback: function () {
         updateText.destroy()
       }
     })
   })
 }
 
-const sinusOrbLoop = (game,orb) => {
+const sinusOrbLoop = (game, orb) => {
 
-  if(game.orbReset === true){
+  if (game.orbReset === true) {
     return
   }
   function getRgb(color) {
-    let [r, g, b] = color.replace('rgb(','')
-    .replace(')','')
-    .split(',')
-    .map(str => Number(str));;
+    let [r, g, b] = color.replace('rgb(', '')
+      .replace(')', '')
+      .split(',')
+      .map(str => Number(str));;
     return {
       r,
       g,
       b
     }
   }
-  function interpolateColor(colorA, colorB, val){
+  function interpolateColor(colorA, colorB, val) {
     ////console.log(val)
     const rgbA = getRgb(colorA),
-    rgbB = getRgb(colorB);
+      rgbB = getRgb(colorB);
     ////console.log(rgbA['r'])
     ////console.log(rgbB)
 
     const colorVal = (prop) => {
-      return Math.round(rgbA[prop] * (1-val) + rgbB[prop] * val);
+      return Math.round(rgbA[prop] * (1 - val) + rgbB[prop] * val);
     }
     return {
       r: colorVal('r'),
@@ -1472,8 +1487,8 @@ const sinusOrbLoop = (game,orb) => {
     }
   }
 
-  const xBounds = [100,900]
-  const yBounds = [100,900]
+  const xBounds = [100, 900]
+  const yBounds = [100, 900]
   const bStrength = .1;
   const cDistance = 100
   const cStrength = .1;
@@ -1482,9 +1497,9 @@ const sinusOrbLoop = (game,orb) => {
 
   const pointer = game.input.activePointer;
   ////console.log("loopin",pointer.x,orb.x)
-  let c = [0,0];
+  let c = [0, 0];
 
-  const rawSineValue = Math.sin((Date.now()/10000)+orb.timeDiff)
+  const rawSineValue = Math.sin((Date.now() / 10000) + orb.timeDiff)
 
   ////console.log("rawsine",rawSineValue)
   const badColor = 'rgb(255, 144, 144)'
@@ -1494,58 +1509,58 @@ const sinusOrbLoop = (game,orb) => {
   const transValue = Math.abs(rawSineValue)
 
   let result;
-  if (rawSineValue<0){
+  if (rawSineValue < 0) {
 
-    result = interpolateColor(neutralColor,badColor,transValue)
+    result = interpolateColor(neutralColor, badColor, transValue)
   } else {
-    result = interpolateColor(neutralColor,goodColor,transValue)
+    result = interpolateColor(neutralColor, goodColor, transValue)
   }
 
   ////console.log(sinusValue)
 
   ////console.log(result)
   const newColor = `rgb(${result.r},${result.g},${result.b})`
-  const otherColor = rgbToHex(newColor).replace('#','0x')
+  const otherColor = rgbToHex(newColor).replace('#', '0x')
   orb.setTint(otherColor)
 
-  let s = [0,0]
+  let s = [0, 0]
 
-  for(let i =0; i<game.sinusOrbs.length; i++){
-    if(Math.abs(game.sinusOrbs[i].x -orb.x)<sDistance && Math.abs(game.sinusOrbs[i].y-orb.y)<sDistance){
-      s[0] += ((s[0] - (game.sinusOrbs[i].x-(orb.x)))*sStrength);
-      s[1] += ((s[1] - (game.sinusOrbs[i].y-(orb.y)))*sStrength);
+  for (let i = 0; i < game.sinusOrbs.length; i++) {
+    if (Math.abs(game.sinusOrbs[i].x - orb.x) < sDistance && Math.abs(game.sinusOrbs[i].y - orb.y) < sDistance) {
+      s[0] += ((s[0] - (game.sinusOrbs[i].x - (orb.x))) * sStrength);
+      s[1] += ((s[1] - (game.sinusOrbs[i].y - (orb.y))) * sStrength);
     }
   }
 
-  if(Math.abs(pointer.x-orb.x)<cDistance && Math.abs(pointer.y-orb.y)<cDistance){
+  if (Math.abs(pointer.x - orb.x) < cDistance && Math.abs(pointer.y - orb.y) < cDistance) {
     ////console.log("too close")
-    c[0] = ((c[0] - (pointer.x-(orb.x)))*cStrength);
-    c[1] = ((c[1] - (pointer.y-(orb.y)))*cStrength);
+    c[0] = ((c[0] - (pointer.x - (orb.x))) * cStrength);
+    c[1] = ((c[1] - (pointer.y - (orb.y))) * cStrength);
   }
-  let b = [0,0];
-  if (orb.x >xBounds[1]){
-    b[0]-=(bStrength*Math.abs(orb.x-xBounds[1]));
-  } else if (orb.x < xBounds[0]){
-    b[0]+=(bStrength*Math.abs(orb.x-xBounds[0]));
+  let b = [0, 0];
+  if (orb.x > xBounds[1]) {
+    b[0] -= (bStrength * Math.abs(orb.x - xBounds[1]));
+  } else if (orb.x < xBounds[0]) {
+    b[0] += (bStrength * Math.abs(orb.x - xBounds[0]));
   }
 
-  if (orb.y >yBounds[1]){
-    b[1]-=(bStrength*Math.abs(orb.y-yBounds[1]));
-  } else if (orb.y < yBounds[0]){
-    b[1]+=(bStrength*Math.abs(orb.y-yBounds[0]))
+  if (orb.y > yBounds[1]) {
+    b[1] -= (bStrength * Math.abs(orb.y - yBounds[1]));
+  } else if (orb.y < yBounds[0]) {
+    b[1] += (bStrength * Math.abs(orb.y - yBounds[0]))
   }
-  const xChange = c[0]+b[0]+s[0]
-  const yChange = c[1]+b[1]+s[1]
-  if ((c[0]+c[1]) > 0){
+  const xChange = c[0] + b[0] + s[0]
+  const yChange = c[1] + b[1] + s[1]
+  if ((c[0] + c[1]) > 0) {
     orb.setTexture("sinusorbbreathing")
     //const rotation = Phaser.Math.Angle.BetweenPoints( orb, pointer)
     //orb.rotation=rotation;
   } else {
     orb.setTexture("sinusorb")
-    orb.rotation=Math.max((orb.rotation-.2),0);
+    orb.rotation = Math.max((orb.rotation - .2), 0);
   }
-  orb.x+=xChange
-  orb.y+=yChange
+  orb.x += xChange
+  orb.y += yChange
 
 }
 
@@ -1789,10 +1804,10 @@ const loadGameButtonsHandler = (game) => {
             }
             furnitureHandler(game, addedFurniture, true);
           }
-          if (game.registry.get("CondimentCarolerAdded") === true){
-            game.condimentcaroler.visible=true;
+          if (game.registry.get("CondimentCarolerAdded") === true) {
+            game.condimentcaroler.visible = true;
           } else {
-            game.condimentcaroler.visible=false;
+            game.condimentcaroler.visible = false;
           }
 
           if (game.registry.get("RatsAdded") === true) {
@@ -1931,6 +1946,7 @@ var GameState = {
     this.carol_sfx = this.sound.add("trumpet_synth").setVolume(.5);
     this.orb_sfx1 = this.sound.add("orb_sfx1").setVolume(.15);
     this.orb_sfx2 = this.sound.add("orb_sfx2").setVolume(.15);
+    this.finalsong = this.sound.add("dilmun_theorb").setVolume(.15);
 
 
     // animation creation
@@ -2354,28 +2370,28 @@ var GameState = {
 
   update() {
 
-    if(this.registry.get("SinusOrbCount")){
-        if(this.registry.get("SinusOrbCount") <= this.sinusOrbCount){
-          if(this.registry.get("DayOver") === true || this.registry.get("Paused") === true){
-            for(let i=0; i< this.sinusOrbs.length; i++){
-              this.sinusOrbs[i].visible=false;
-            }
-          } else {
-            for(let i=0; i<this.sinusOrbs.length;i++){
-              this.sinusOrbs[i].visible=true;
-              sinusOrbLoop(this,this.sinusOrbs[i]);
-            }
+    if (this.registry.get("SinusOrbCount")) {
+      if (this.registry.get("SinusOrbCount") <= this.sinusOrbCount) {
+        if (this.registry.get("DayOver") === true || this.registry.get("Paused") === true) {
+          for (let i = 0; i < this.sinusOrbs.length; i++) {
+            this.sinusOrbs[i].visible = false;
           }
         } else {
-          this.sinusOrbCount++;
-          let sinusOrb = this.add.image(Math.random()*900+50, 500, "sinusorb")
+          for (let i = 0; i < this.sinusOrbs.length; i++) {
+            this.sinusOrbs[i].visible = true;
+            sinusOrbLoop(this, this.sinusOrbs[i]);
+          }
+        }
+      } else {
+        this.sinusOrbCount++;
+        let sinusOrb = this.add.image(Math.random() * 900 + 50, 500, "sinusorb")
           .setOrigin(0.5, 0.5)
           .setDepth(20).setScale(.5).setInteractive().setVisible(false);
-          sinusOrb.timeDiff = Math.random()*10000
-          this.sinusOrbs.push(sinusOrb)
-          //orb.body.setAllowGravity(false);
-          sinusOrbSetup(this,sinusOrb)
-        }
+        sinusOrb.timeDiff = Math.random() * 10000
+        this.sinusOrbs.push(sinusOrb)
+        //orb.body.setAllowGravity(false);
+        sinusOrbSetup(this, sinusOrb)
+      }
     }
     if (Phaser.Input.Keyboard.JustDown(this.keyX)) {
       if (
