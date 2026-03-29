@@ -1,4 +1,4 @@
-const CURRENT_VERSION = "1.0.0"
+const CURRENT_VERSION = "1.0.1"
 
 var SettingsState = {
   preload() {
