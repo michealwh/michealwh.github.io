@@ -120,10 +120,64 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
     presentationStat -= 45;
   }
 
+  let complaintLine = "";
   if (
     (recieved_order.length <= 0 && ingredients_missed.length === 0) === false
   ) {
     // check precision
+
+    if (ingredients_missed.length>0){
+
+      const dialogChance = Math.floor(Math.random()*2)
+
+      if(dialogChance===0){
+        complaintLine = "you forgot the "+ingredients_missed[0]+"."
+      } else {
+        complaintLine = "the "+ingredients_missed[0]+" is missing."
+      }
+      if (ingredients_missed[0] === "bottomBun"){
+        complaintLine = "without a bottom bun there is nothing."
+      } else if (ingredients_missed[0] === "topBun"){
+        complaintLine = "this burger is too open."
+      }
+
+    }
+    if(recieved_order.length>0){
+      for(let i=0; i < recieved_order.length; i++){
+        if (!expected_order.includes(recieved_order[i])){
+
+          let ingredient = recieved_order[i]
+          if (ingredient === "topBun" || ingredient === "bottomBun"){
+            complaintLine = "there is too much."
+            break;
+          }
+
+          const dialogChance = Math.floor(Math.random()*3)
+
+
+          if(ingredient.includes("patty")){
+            ingredient="patty"
+          }
+
+          if (dialogChance === 0){
+            complaintLine = "do i look like i'd order the "+ingredient+"?"
+            if (ingredient == "patty"){
+              complaintLine = "i didn't want this beef."
+            }
+          } else if (dialogChance === 1) {
+            complaintLine = "the "+ingredient+" makes me sick."
+          } else {
+            complaintLine = "i didn't want "+ingredient+"."
+            if(ingredient.includes("patty")){
+              complaintLine = "you've given me too many patties."
+            }
+          }
+          break
+        }
+      }
+    }
+    
+
     has_passed = false;
   }
 
@@ -570,7 +624,13 @@ const OrderSubmittedHandler = (game, dialogHandler, event) => {
       const index = Math.floor(
         Math.random() * dialog_dictionary.fail[failure_reason].length
       );
-      const bad_response = dialog_dictionary.fail[failure_reason][index];
+      let bad_response = dialog_dictionary.fail[failure_reason][index];
+      if (failure_reason === "general" && complaintLine !== ""){
+        const chanceOfInfo = Math.floor(Math.random() * 4)
+        if (chanceOfInfo === 0){
+          bad_response = complaintLine
+        }
+      }
       if (bad_response.includes("money") || bad_response.includes("refund")) {
         let new_total_globs = current_globs - 9.99; // if response has money they lose money then
         if (

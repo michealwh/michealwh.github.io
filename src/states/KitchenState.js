@@ -1,5 +1,9 @@
 import npc_dictionary from "../dictonaries/npcs.json";
 
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 const physicsObjectHandler = (object, game, currentlyHolding) => {
   object.setInteractive({
     draggable: true,
@@ -78,8 +82,8 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
 
     object.depth = game.top_ingredient.depth + 1;
 
-    let velocityY = (dragY - object.y) * 10;
-    let velocityX = (dragX - object.x) * 10;
+    let velocityY = (dragY - object.y) * 5;
+    let velocityX = (dragX - object.x) * 5;
     object.body.setAllowGravity(false);
     object.setVelocity(0, 0);
     if (dragX > 0 && dragX < game.scale.gameSize.width - object.width) {
@@ -107,11 +111,11 @@ const physicsObjectHandler = (object, game, currentlyHolding) => {
 
       return;
     }
-    ////console.log("dragend", dropped);
+    //console.log("dragend", dropped);
 
     object.body.setAllowGravity(true);
-    let velocityY = objectCurrentVelocityY;
-    let velocityX = objectCurrentVelocityX;
+    let velocityY = objectCurrentVelocityY/2;
+    let velocityX = objectCurrentVelocityX/2;
     ////console.log("after dragend: velocityX", velocityX, "velocityY", velocityY);
     object.setVelocity(velocityX, velocityY);
   });
@@ -916,21 +920,47 @@ var KitchenState = {
 
     this.top_ingredient = this.servingplate;
 
+    let dragCheckDebounce = false;
+
     const objectDragCheck = (pointer) => {
       const savedPointer = pointer;
+      if(dragCheckDebounce){
+        return;
+      }
       if (
         this.objectDragging === true &&
         this.active_drag_object != undefined
       ) {
+        dragCheckDebounce=true;
+        const savedPosX = this.active_drag_object.x
+        const savedPosY = this.active_drag_object.y
+        //console.log("active object pos",savedPosX,savedPosY)
+
         //console.log("dropping object");
         this.objectDragging = false;
         const object = this.active_drag_object;
-        this.active_drag_object.body.setAllowGravity(true);
-        const prevPosition = savedPointer.prevPosition;
-        const velocityX = (this.active_drag_object.x - prevPosition.x) / 4; // might need change to match force of normal drag
-        const velocityY = (this.active_drag_object.y - prevPosition.y) / 4;
-        object.setVelocity(velocityX, velocityY);
-        this.active_drag_object = null;
+        const game = this;
+        const velocityX = (object.x - savedPosX)*5; // might need change to match force of normal drag
+        const velocityY = (object.y - savedPosY)*5;
+        object.body.setAllowGravity(true);
+              //console.log("active object pos",object.x,object.y)
+              //console.log("setting velocity:",velocityX,velocityY);
+              //object.setVelocity(velocityX, velocityY);
+              game.active_drag_object = null;
+              dragCheckDebounce=false;
+        // this.time.addEvent({
+        //     delay: 100,
+        //     callback: function () {
+        //       const velocityX = (object.x - savedPosX)*5; // might need change to match force of normal drag
+        //       const velocityY = (object.y - savedPosY)*5;
+        //       object.body.setAllowGravity(true);
+        //       //console.log("active object pos",object.x,object.y)
+        //       //console.log("setting velocity:",velocityX,velocityY);
+        //       //object.setVelocity(velocityX, velocityY);
+        //       game.active_drag_object = null;
+        //       dragCheckDebounce=false;
+        //     },
+        //   });
         ////console.log("active drag object after drop",this.active_drag_object)
       }
     };
@@ -987,7 +1017,7 @@ var KitchenState = {
 
     if (this.registry.get("BouncyBallsInKitchen") && this.registry.get("BouncyBallsInKitchen").length > 0) {
       let count = this.registry.get("BouncyBallsInKitchen").length;
-      this.bouncyBallCounter.setText("Bouncy Balls: " + count);
+      this.bouncyBallCounter.setText("Bouncy Balls: " + numberWithCommas(count));
       this.bouncyBallCounter.setVisible(true);
     } else if(this.bouncyBallCounter.visible == true){
       this.bouncyBallCounter.setVisible(false);
@@ -995,7 +1025,7 @@ var KitchenState = {
 
     if (this.registry.get("KitchenRatCount") && this.registry.get("KitchenRatCount") > 0) {
       let count = this.registry.get("KitchenRatCount");
-      this.ratCounter.setText("Rats: " + count);
+      this.ratCounter.setText("Rats: " + numberWithCommas(count));
       this.ratCounter.setVisible(true);
     } else if(this.ratCounter.visible == true){
       this.ratCounter.setVisible(false);

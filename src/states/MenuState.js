@@ -1,17 +1,25 @@
 // NOTE THAT WHICHEVER THE STARTING SCENE IS FOR SOME REASON NEEDS TO BE IN THE IF ELSE STATEMENT FIRST BEFORE THE OTHER.
 // I.E. GAMESTATE BEFORE KITCHENSTATE
 
+let currentGlobAmount;
+
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 const globUpdateHandler = (game) => {
-  const currentAmount = parseFloat(game.globText.text);
+  const currentAmount = parseFloat(currentGlobAmount);
   const newAmount = parseFloat(game.registry.get("Globble")).toFixed(2);
+  currentGlobAmount=newAmount;
   const difference = (newAmount - currentAmount).toFixed(2);
   //console.log("difference added to the glob", difference);
-  game.globText.setText(newAmount.toString());
+  game.globText.setText(numberWithCommas(newAmount));
   if (difference > 0) {
-    game.addedText.setText("+" + difference);
+    game.addedText.setText("+" + numberWithCommas(difference));
     game.addedText.setFill("rgba(89, 141, 64, 1)");
   } else {
-    game.addedText.setText(difference.toString());
+    game.addedText.setText(numberWithCommas(difference));
     game.addedText.setFill("rgba(209, 69, 69, 1)");
   }
   game.addedText.y = 55;
@@ -267,7 +275,7 @@ var MenuState = {
     const globText = this.add.text(
       915,
       60,
-      this.registry.get("Globble").toString() || 0,
+      numberWithCommas(this.registry.get("Globble").toString() || 0),
       {
         fontFamily: "font1",
         fontSize: "50px",
@@ -281,6 +289,8 @@ var MenuState = {
       strokeThickness: 4,
     });
     this.globText = globText;
+
+    currentGlobAmount = this.registry.get("Globble");
 
     const addedText = this.add.text(915, 55, "", {
       fontFamily: "font1",
@@ -658,10 +668,10 @@ var MenuState = {
       //   "Time per each ingredient:" + time_finished / ingredientCount
       // );
 
-      const pointsSubstracted = Math.floor(time_finished / (ingredientCount / 1.5))
+      const pointsSubstracted = Math.floor(time_finished / (ingredientCount / 1.1))
       //console.log("points subtracted", pointsSubstracted)
       const punctualityStat = Math.floor(
-        100 - Math.min(100, time_finished / (ingredientCount / 1.5))
+        100 - Math.min(100, time_finished / (ingredientCount / 1.1))
       );
       this.registry.set("Order_Time_Finished", time_finished);
       this.time_paused = 0;

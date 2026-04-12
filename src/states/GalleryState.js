@@ -1,6 +1,11 @@
 import npc_dictionary from "../dictonaries/npcs.json";
 import shop_dictionary from "../dictonaries/shop.json";
 import note_dictionary from "../dictonaries/notes";
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 const inputHandler = (game, tab, title, key) => {
   const tabX = tab.x;
   const titleX = title.x;
@@ -355,7 +360,7 @@ const ModifierAsset = (game, modifier, x, y, quantity, curPage) => {
     .setDepth(5);
   //0x2dfa67, 0x076b22
   let boxQuantityText = game.add
-    .text(x + 35, y - 30, quantity.toString(), {
+    .text(x + 35, y - 30, numberWithCommas(quantity), {
       fontFamily: "font1",
       fontStyle: "bold",
       fontSize: "20px",
@@ -704,7 +709,7 @@ const ModSellHandler = (game) => {
         game.sellModAmount = amount;
         game.sellModCost = cost.toFixed(2);
         game.sellModName = name;
-        game.sellTitle.text = `Sell ${amount}x ${name} for $${(cost).toFixed(2)}?`;
+        game.sellTitle.text = `Sell ${numberWithCommas(amount)}x ${name} for $${numberWithCommas((cost).toFixed(2))}?`;
         showModSellFrame(game, true);
       }
     });

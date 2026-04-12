@@ -1,6 +1,9 @@
 import shop_dictionary from "../dictonaries/shop.json";
 
 import purchaseActions from "../modules/PurchaseActions";
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 const showPrompt = (game, show, showBtns) => {
   if (show == true) {
@@ -124,7 +127,7 @@ const confirmButtonHandler = (game, object) => {
           let new_globs = current_globs - game.reRollCost;
           game.registry.set("Globble", new_globs.toFixed(2));
           //console.log("Set Globs to:", game.registry.get("Globble"));
-          //game.rerollButton.input.enabled = false;
+          game.rerollButton.input.enabled = false;
           shuffleItems(game, true);
           game.rerollButton.tint = "0x2E2E2E";
           showPrompt(game, false);
@@ -390,11 +393,11 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
             }
           }
           if (game.activeHowManyButton === game.buymaxButton) {
-            game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x" + maxAmount;
+            game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x" + numberWithCommas(maxAmount);
             amount = maxAmount;
           } else if (game.activeHowManyButton === game.buytenButton) {
             if (maxAmount < 10) {
-              game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x" + maxAmount;
+              game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x" + numberWithCommas(maxAmount);
               amount = maxAmount;
             } else {
               amount = 10;
@@ -404,7 +407,7 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
             game.promptText.text = "Purchase: " + game.activeItemInfo.title + " x1";
           }
           game.activeItemAmount = amount;
-          game.promptCostText.text = "$" + (shopItemInfo.cost * amount).toFixed(2);
+          game.promptCostText.text = "$" + numberWithCommas((shopItemInfo.cost * amount).toFixed(2));
           showPrompt(game, true, true);
         } else {
           let dialog_options = [
@@ -453,7 +456,7 @@ const purchaseButtonhandler = (game, object, itemIndex) => {
       game.infoFrame.y = object.y - 5;
       game.infoText.y = object.y - 100;
       game.infoText.text =
-        "C: $" + (shopItemInfo.cost).toFixed(2) + "\nD: " + shopItemInfo.description;
+        "C: $" + numberWithCommas((shopItemInfo.cost).toFixed(2)) + "\nD: " + shopItemInfo.description;
       game.tweens.add({
         targets: [game.infoFrame],
         scale: 1.5,
@@ -610,7 +613,7 @@ const reRollButtonhandler = (game, object) => {
       }
       game.infoFrame.y = object.y - 5;
       game.infoText.y = object.y - 120;
-      game.infoText.text = `C: $${game.reRollCost}\nD: reroll today's shop items`;
+      game.infoText.text = `C: $${ numberWithCommas(game.reRollCost)}\nD: reroll today's shop items`;
       game.tweens.add({
         targets: [game.infoFrame],
         scale: 1.5,

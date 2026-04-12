@@ -23,6 +23,10 @@ const shuffleArray = (array) => {
   }
 };
 
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 const dialogHandler = (passage, game, startingOrder) => {
   const textStyle = {
     fontFamily: "font1",
@@ -733,7 +737,7 @@ const dayEndHandler = (game, just_launched, previousSave) => {
     }
     game.registry.set("IngredientMax", parseInt(game.ingredientMax));
 
-    game.dayText.text = "Day " + game.currentDay + " Complete!";
+    game.dayText.text = "Day " + numberWithCommas(game.currentDay) + " Complete!";
     game.dayUpdateText.text = "";
     game.dayUpdateSprite = null;
     ////console.log("unlocked customer", unlockedCustomerSuccess);
@@ -802,7 +806,7 @@ const dayEndHandler = (game, just_launched, previousSave) => {
         game.defaultPunctualityStandard += 2;
         game.defaultPrecisionStandard += 2;
         game.defaultPleasantryStandard += 2;
-        dayText += ` By end of day HR requests your standards are as follows:\nPresentation: ${game.secretshopperPresentationStandard}% Punctuality: ${game.secretshopperPunctualityStandard}%\nPrecision: ${game.secretshopperPrecisionStandard}%  Pleasantry: ${game.secretshopperPleasantryStandard}%`;
+        dayText += ` By end of day HR requests your standards are as follows:\nPresentation: ${numberWithCommas(game.secretshopperPresentationStandard)}% Punctuality: ${numberWithCommas(game.secretshopperPunctualityStandard)}%\nPrecision: ${numberWithCommas(game.secretshopperPrecisionStandard)}%  Pleasantry: ${numberWithCommas(game.secretshopperPleasantryStandard)}%`;
 
         game.registry.set("CustomerStandards", [
           game.defaultPresentationStandard,

@@ -1,4 +1,8 @@
-const CURRENT_VERSION = "1.0.1"
+const CURRENT_VERSION = "1.1.0"
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 var SettingsState = {
   preload() {
@@ -95,27 +99,27 @@ var SettingsState = {
       this.day_text.text = "Day: " + this.registry.get("Day")
     }
     if (this.registry.get("Total_Globs")) {
-      this.points_text.text = "Total Globs: "+ this.registry.get("Total_Globs")
+      this.points_text.text = "Total Globs: "+ numberWithCommas(this.registry.get("Total_Globs"))
     }
     if (this.registry.get("Total_Orders")) {
-      this.order_text.text = "Total Orders: " + this.registry.get("Total_Orders")
+      this.order_text.text = "Total Orders: " + numberWithCommas(this.registry.get("Total_Orders"))
     }
     if (this.registry.get("Total_Correct")) {
-      this.globs_text.text = "Total Correct: " + this.registry.get("Total_Correct")
+      this.globs_text.text = "Total Correct: " + numberWithCommas(this.registry.get("Total_Correct"))
     }
     if (this.registry.get("Average_Presentation")) {
-      this.pres_text.text = "Presentation: " + this.registry.get("Average_Presentation") + "%"
+      this.pres_text.text = "Presentation: " + numberWithCommas(this.registry.get("Average_Presentation")) + "%"
     }
     if (this.registry.get("Average_Punctuality")) {
-      this.punc_text.text = "Punctuality: " + this.registry.get("Average_Punctuality") + "%"
+      this.punc_text.text = "Punctuality: " + numberWithCommas(this.registry.get("Average_Punctuality")) + "%"
     }
     if (this.registry.get("Average_Precision")) {
-      this.prec_text.text = "Precision: " + this.registry.get("Average_Precision") + "%"
+      this.prec_text.text = "Precision: " + numberWithCommas(this.registry.get("Average_Precision")) + "%"
     }
      if (this.registry.get("Average_Pleasantry")) {
-      this.ples_text.text = "Pleasantry: " + this.registry.get("Average_Pleasantry") + "%"
+      this.ples_text.text = "Pleasantry: " + numberWithCommas(this.registry.get("Average_Pleasantry")) + "%"
       if(this.registry.get("SinusMod")){
-        this.ples_text.text = `Pleasantry: ${Math.floor(Number(this.registry.get("Average_Pleasantry")) * Number(this.registry.get("SinusMod")))}%`
+        this.ples_text.text = `Pleasantry: ${numberWithCommas(Math.floor(Number(this.registry.get("Average_Pleasantry")) * Number(this.registry.get("SinusMod"))))}%`
       }
     } else {
       this.ples_text.text = "Pleasantry: 0%"
