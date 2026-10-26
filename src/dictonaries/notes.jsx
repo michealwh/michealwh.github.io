@@ -117,70 +117,7 @@ var notes = {
       },
     ],
   },
-  "Gregory Hefert": {
-    key: "Gregory Hefert",
-    order: "random",
-    chance: 4,
-    startday: 7,
-    notes: [
-      {
-        title: "Untitled",
-        description:
-          "I get tempted to get milk sometimes but I know it wouldn't be good for me.",
-      },
-      {
-        title: "Untitled",
-        description:
-          "Does the sadness really go away as we grow up or do we just get better at burying it?",
-      },
-      {
-        title: "Untitled",
-        description:
-          "I think as you get older you learn to appreciate the moments alone. Just you.\nIt's really nice actually.",
-      },
-      {
-        title: "Untitled",
-        description:
-          "My children are to be my life, my heart, my soul, but they drain me.",
-      },
-      {
-        title: "Untitled",
-        description:
-          "I dream of freedom, but I'm not certain I'd use it if I had it.\nI didn't back then.",
-      },
-    ],
-  },
-  "Laura Hefert": {
-    key: "Laura Hefert",
-    order: "random",
-    chance: 4,
-    startday: 7,
-    notes: [
-      {
-        title: "Untitled",
-        description:
-          "I want everything to be perfect for my family, but I can never seem to get it right.",
-      },
-      {
-        title: "Untitled",
-        description:
-          "I care for them because it gives me purpose.\nWhere do you get yours?",
-      },
-      {
-        title: "Untitled",
-        description:
-          "Is it bad to hope your son won't be like his father? I just worry.",
-      },
-      {
-        title: "Untitled",
-        description: "I get so caught up in our own problems I forget our kids are growing up.\nI hope they aren't like us."
-      },
-      {
-        title: "Untitled",
-        description: "Do you feel listened to?"
-      }
-    ],
-  },
+
   "Mortimer Galf": {
     key: "Mortimer Galf",
     order: "random",
@@ -275,32 +212,6 @@ var notes = {
     ],
   },
 
-  "Janiyah Brooks": {
-    key: "Janiyah Brooks",
-    order: "random",
-    chance: 4,
-    startday: 5,
-    notes: [
-      {
-        title: "Untitled",
-        description: "No one can effect me.\nI am effectless."
-      },
-      {
-        title: "Untitled",
-        description: "I wish people saw my vulnerability as an opportunity to be friends not hurt me."
-      },
-      {
-        title: "Untitled",
-        description: "When was the last time you were fully conscious? I'm talking feeling every part of a moment. You weren't thinking of the past or the future. You were fully there. You were fully here. So often I find myself not here.\nI float away so easily.",
-        fontSize: 20
-      },
-      {
-        title: "Untitled",
-        description: "I remember when this place had mustard yellow wallpaper.\nIt's good they changed it."
-      }
-    ]
-  },
-
   "Krandle Hempher": {
     key: "Krandle Hempher",
     order: "random",
@@ -367,19 +278,6 @@ var notes = {
       }
     ]
   },
-  "Reggie Larson": {
-    key: "Reggie Larson",
-    order: "random",
-    chance: 3,
-    startday: 12,
-    notes: [
-      {
-        title: "Untitled",
-        description:
-          "I must have been a terrible person in my last life.",
-      },
-    ]
-  },
   "Marvin Blackburn": {
     key: "Marvin Blackburn",
     order: "random",
@@ -390,20 +288,6 @@ var notes = {
         title: "Untitled",
         description:
           "A good day is a day I get a burger.",
-      },
-    ]
-  },
-  "The Green Maiden": {
-    key: "The Green Maiden",
-    order: "random",
-    chance: 5,
-    startday: 5,
-    notes: [
-      {
-        title: "The Past Is Not Now",
-        description:
-          "Under the pear tree, on top of grit.\nThe feelings of yesterday and I sit.\nMountains of wrath block the view, if only I had knew.\nHe turns red, swells up and shouts.\nRemains of my confidence, they begin to sprout.",
-        fontSize: 20
       },
     ]
   },
